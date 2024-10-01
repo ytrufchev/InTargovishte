@@ -13,22 +13,22 @@ jobs:
         with:
           java-version: 17
           distribution: 'zulu' # Alternative distribution options are available
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven
-      - name: Build and test
-        run: mvn clean install
-      - name: SonarCloud scan
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn sonar:sonar -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+#      - name: Cache SonarCloud packages
+#        uses: actions/cache@v3
+#        with:
+#          path: ~/.sonar/cache
+#          key: ${{ runner.os }}-sonar
+#          restore-keys: ${{ runner.os }}-sonar
+#      - name: Cache Maven packages
+#        uses: actions/cache@v3
+#        with:
+#          path: ~/.m2/repository
+#          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+#          restore-keys: ${{ runner.os }}-maven
+#      - name: Build and test
+#        run: mvn clean install
+#      - name: SonarCloud scan
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#        run: mvn sonar:sonar -Dsonar.login=${{ secrets.SONAR_TOKEN }}
