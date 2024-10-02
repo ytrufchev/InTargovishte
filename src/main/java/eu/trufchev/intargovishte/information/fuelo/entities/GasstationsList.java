@@ -1,4 +1,4 @@
-package eu.trufchev.InTargovishte.information.fuelo.entities;
+package eu.trufchev.intargovishte.information.fuelo.entities;
 
 import lombok.Getter;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package eu.trufchev.InTargovishte.information.fuelo.feignclient;
+package eu.trufchev.intargovishte.information.fuelo.feignclient;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;

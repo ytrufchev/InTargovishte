@@ -1,6 +1,6 @@
-package eu.trufchev.InTargovishte.information.fuelo.services;
-import eu.trufchev.InTargovishte.information.fuelo.entities.FuelPrice;
-import eu.trufchev.InTargovishte.information.fuelo.entities.GasStation;
+package eu.trufchev.intargovishte.information.fuelo.services;
+import eu.trufchev.intargovishte.information.fuelo.entities.FuelPrice;
+import eu.trufchev.intargovishte.information.fuelo.entities.GasStation;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

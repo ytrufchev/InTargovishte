@@ -1,4 +1,4 @@
-package eu.trufchev.InTargovishte;
+package eu.trufchev.intargovishte;
 
 import feign.*;
 import okhttp3.OkHttpClient;

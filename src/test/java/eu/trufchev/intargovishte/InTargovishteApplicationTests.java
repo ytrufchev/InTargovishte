@@ -1,6 +1,5 @@
-package eu.trufchev.InTargovishte;
+package eu.trufchev.intargovishte;
 
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest

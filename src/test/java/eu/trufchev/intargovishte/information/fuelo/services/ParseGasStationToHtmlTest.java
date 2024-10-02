@@ -1,7 +1,7 @@
-package eu.trufchev.InTargovishte.information.fuelo.services;
+package eu.trufchev.intargovishte.information.fuelo.services;
 
-import eu.trufchev.InTargovishte.information.fuelo.entities.FuelPrice;
-import eu.trufchev.InTargovishte.information.fuelo.entities.GasStation;
+import eu.trufchev.intargovishte.information.fuelo.entities.FuelPrice;
+import eu.trufchev.intargovishte.information.fuelo.entities.GasStation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

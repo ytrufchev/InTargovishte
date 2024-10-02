@@ -1,4 +1,4 @@
-package eu.trufchev.InTargovishte;
+package eu.trufchev.intargovishte;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

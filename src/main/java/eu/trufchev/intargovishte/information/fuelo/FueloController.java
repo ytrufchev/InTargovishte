@@ -1,10 +1,10 @@
-package eu.trufchev.InTargovishte.information.fuelo;
+package eu.trufchev.intargovishte.information.fuelo;
 
-import eu.trufchev.InTargovishte.information.fuelo.entities.GasStation;
-import eu.trufchev.InTargovishte.information.fuelo.entities.GasstationsList;
-import eu.trufchev.InTargovishte.information.fuelo.feignclient.FueloClient;
-import eu.trufchev.InTargovishte.information.fuelo.repository.GasStationRepository;
-import eu.trufchev.InTargovishte.information.fuelo.services.ParseGasStationToHtml;
+import eu.trufchev.intargovishte.information.fuelo.entities.GasStation;
+import eu.trufchev.intargovishte.information.fuelo.entities.GasstationsList;
+import eu.trufchev.intargovishte.information.fuelo.feignclient.FueloClient;
+import eu.trufchev.intargovishte.information.fuelo.repository.GasStationRepository;
+import eu.trufchev.intargovishte.information.fuelo.services.ParseGasStationToHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
