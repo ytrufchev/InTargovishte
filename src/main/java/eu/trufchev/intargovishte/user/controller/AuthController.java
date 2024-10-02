@@ -24,12 +24,12 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
-        String loginResponse = userService.login(loginDto);
+        String token = userService.login(loginDto);
 
-        if ("Login successful".equals(loginResponse)) {
-            return ResponseEntity.ok(loginResponse);
+        if (token != null) {
+            return ResponseEntity.ok(token);
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(loginResponse);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed");
         }
     }
 }
