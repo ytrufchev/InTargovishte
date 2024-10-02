@@ -13,7 +13,7 @@ services:
       - "3306:3306"
 
   app:
-    image: intargovishte
+    image: ytrufchev/intargovishte
     container_name: intargovishte
     networks:
       - intargovishtenet
