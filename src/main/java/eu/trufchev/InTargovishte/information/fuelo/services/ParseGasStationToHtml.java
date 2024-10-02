@@ -37,7 +37,7 @@ public class ParseGasStationToHtml {
                 if (priceParts.length == 2) {
                     String price = priceParts[1].trim(); // Extract the price part
                     String formattedPrice = price.replace(",", ".");
-                    formattedPrice = formattedPrice.replaceAll("(\\d+\\.\\d{2}).*", "$1");
+                    formattedPrice = formattedPrice.replaceAll("(\\d+\\.\\d{2})[^\\d]*", "$1");
                     fuelPrices.add(new FuelPrice(fuelType, formattedPrice));
                 }
             }
