@@ -38,7 +38,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn sonar:sonar \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+          -Dsonar.login=2c2c95fad73c84315b49e76f091b2d895e2af083 \
           -Dsonar.projectKey=ytrufchev_InTargovishte \
           -Dsonar.organization=ytrufchev \
           -Dsonar.host.url=https://sonarcloud.io
