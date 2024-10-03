@@ -37,8 +37,7 @@ public class SecurityConfig {
                     authorize.requestMatchers("/v3/api-docs/**").permitAll();
                     authorize.requestMatchers("/swagger-resources/**").permitAll();
                     authorize.requestMatchers("/webjars/**").permitAll();
-                    authorize.requestMatchers("/auth/register").permitAll();
-                    authorize.requestMatchers("/auth/login").permitAll();
+                    authorize.requestMatchers("/auth/**").permitAll();
                     authorize.requestMatchers("/fuel/**").authenticated();
                     authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                 })

@@ -17,6 +17,16 @@ public class JwtTokenProvider {
     private int jwtExpirationInMs;
 
 
+    public String generateTokenWithUsername(String username) {
+        System.out.println(jwtSecret);
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationInMs))
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+    }
+
     // Generate the token
     public String generateToken(Authentication authentication) {
         String username = authentication.getName();

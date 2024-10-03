@@ -2,6 +2,7 @@ package eu.trufchev.intargovishte.user.service.impl;
 
 import eu.trufchev.intargovishte.exception.APIException;
 import eu.trufchev.intargovishte.security.JwtTokenProvider;
+import eu.trufchev.intargovishte.security.RefreshTokenService;
 import eu.trufchev.intargovishte.user.dto.LoginDto;
 import eu.trufchev.intargovishte.user.dto.RegisterDto;
 import eu.trufchev.intargovishte.user.entity.Role;
@@ -11,23 +12,24 @@ import eu.trufchev.intargovishte.user.repository.RoleRepository;
 import eu.trufchev.intargovishte.user.repository.UserRepository;
 import eu.trufchev.intargovishte.user.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
+
+    @Autowired
+    RefreshTokenService refreshTokenService;
 
     private final UserMapper userMapper;
     private final UserRepository userRepository;
@@ -62,23 +64,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public String login(LoginDto loginDto) {
         try {
-            // Authenticate the user
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginDto.getUsernameOrEmail(), loginDto.getPassword())
             );
 
-            // Set authentication context
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            return jwtTokenProvider.generateToken(authentication);
-
-        } catch (UsernameNotFoundException e) {
-            throw new APIException(HttpStatus.UNAUTHORIZED, "Invalid username or email");
+            String jwt = jwtTokenProvider.generateToken(authentication);
+            return jwt; // Return only the access token
         } catch (BadCredentialsException e) {
             throw new APIException(HttpStatus.UNAUTHORIZED, "Invalid password");
-        } catch (Exception e) {
-            throw new APIException(HttpStatus.UNAUTHORIZED, "Authentication failed" + e);
         }
+    }
+    @Override
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username); // Make sure this method exists in the repository
     }
 
 }
