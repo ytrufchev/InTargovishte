@@ -17,12 +17,15 @@ import java.util.List;
 @RequestMapping("/fuel")
 @RestController
 public class FueloController {
-    @Autowired
     FueloClient fueloClient;
-    @Autowired
     ParseGasStationToHtml parseGasStationToHtml;
-    @Autowired
     GasStationRepository gasStationRepository;
+
+    public FueloController(FueloClient fueloClient, ParseGasStationToHtml parseGasStationToHtml, GasStationRepository gasStationRepository) {
+        this.fueloClient = fueloClient;
+        this.parseGasStationToHtml = parseGasStationToHtml;
+        this.gasStationRepository = gasStationRepository;
+    }
 
     @GetMapping("/update")
     public ResponseEntity<List<GasStation>> upcomingPlays() {

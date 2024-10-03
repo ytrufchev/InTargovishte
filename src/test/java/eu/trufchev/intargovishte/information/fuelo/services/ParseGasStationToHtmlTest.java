@@ -13,12 +13,12 @@ class ParseGasStationToHtmlTest {
     private ParseGasStationToHtml parseGasStationToHtml;
 
     @BeforeEach
-    public void setUp() {
+     void setUp() {
         parseGasStationToHtml = new ParseGasStationToHtml();
     }
 
     @Test
-    public void testParseGasStationHtml() {
+     void testParseGasStationHtml() {
         // Sample HTML input (with some encoded characters)
         String html = "<h4>Station Name</h4>"
                 + "<h5>123 Main St</h5>"

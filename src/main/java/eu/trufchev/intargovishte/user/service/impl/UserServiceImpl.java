@@ -70,10 +70,7 @@ public class UserServiceImpl implements UserService {
             // Set authentication context
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            // Generate JWT token
-            String token = jwtTokenProvider.generateToken(authentication);
-
-            return token;
+            return jwtTokenProvider.generateToken(authentication);
 
         } catch (UsernameNotFoundException e) {
             throw new APIException(HttpStatus.UNAUTHORIZED, "Invalid username or email");
