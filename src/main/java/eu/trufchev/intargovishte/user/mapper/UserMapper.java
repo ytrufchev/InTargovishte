@@ -2,14 +2,10 @@ package eu.trufchev.intargovishte.user.mapper;
 
 import eu.trufchev.intargovishte.user.dto.RegisterDto;
 import eu.trufchev.intargovishte.user.entity.User;
-import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import static org.apache.commons.io.IOUtils.skip;
 
 @Component
 @AllArgsConstructor
@@ -29,6 +25,9 @@ public class UserMapper {
     }
 
     public RegisterDto toDto(User user) {
+        if (user == null) {
+            return null;  // Handle null case
+        }
         RegisterDto registerDto = new RegisterDto();
         registerDto.setName(user.getName());
         registerDto.setEmail(user.getEmail());
