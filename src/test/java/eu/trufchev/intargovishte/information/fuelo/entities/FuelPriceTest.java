@@ -6,14 +6,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FuelPriceTest {
     @Test
-    public void testSettersAndGettersForType(){
+     void testSettersAndGettersForType(){
         FuelPrice fuelPrice = new FuelPrice();
         fuelPrice.setFuelType("diesel");
 
         assertEquals("diesel", fuelPrice.getFuelType());
     }
     @Test
-    public void testSettersAndGettersForPrice(){
+     void testSettersAndGettersForPrice(){
         FuelPrice fuelPrice = new FuelPrice();
         fuelPrice.setFuelType("2.40");
 

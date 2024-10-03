@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-public class FueloControllerTest {
+ class FueloControllerTest {
 
     @Mock
     private FueloClient fueloClient;
@@ -34,14 +34,13 @@ public class FueloControllerTest {
     private FueloController fueloController;
 
     @BeforeEach
-    public void setUp() {
+     void setUp() {
         MockitoAnnotations.initMocks(this); // Initialize mocks
     }
 
     @Test
-    public void testupdateGasStations() {
+     void testupdateGasStations() {
         // Mock the response from fueloClient and parseGasStationToHtml
-        GasstationsList gasstationsList = new GasstationsList();
         GasStation gasStation = new GasStation();
 
         when(fueloClient.getGasstationDetails(anyString(), eq("bg"))).thenReturn("gas station details");
@@ -60,7 +59,7 @@ public class FueloControllerTest {
     }
 
     @Test
-    public void testAllGasStations() {
+     void testAllGasStations() {
         // Mock the repository response
         List<GasStation> gasStations = new ArrayList<>();
         gasStations.add(new GasStation());
