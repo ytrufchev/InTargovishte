@@ -27,7 +27,7 @@ public class FueloController {
     }
 
     @GetMapping("/update")
-    public ResponseEntity<List<GasStation>> upcomingPlays() {
+    public ResponseEntity<List<GasStation>> updateGasStations() {
         GasstationsList gasstationsLists = new GasstationsList();
         List<GasStation> gasStations = new ArrayList<>();
         for(int i = 0; i < gasstationsLists.getGasstations().size(); i++){
