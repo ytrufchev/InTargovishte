@@ -1,7 +1,6 @@
 package eu.trufchev.intargovishte.security;
 
 import io.jsonwebtoken.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,15 +17,6 @@ public class JwtTokenProvider {
 
     @Value("${app.jwtExpirationInMs}")
     private int jwtExpirationInMs;
-
-    private PasswordEncoder passwordEncoder;
-
-    private UserDetailsService userDetailsService;
-
-    public JwtTokenProvider(PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
-        this.passwordEncoder = passwordEncoder;
-        this.userDetailsService = userDetailsService;
-    }
 
     // Generate the token
     public String generateToken(Authentication authentication) {

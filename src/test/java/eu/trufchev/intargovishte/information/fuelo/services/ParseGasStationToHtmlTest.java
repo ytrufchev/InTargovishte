@@ -50,7 +50,7 @@ class ParseGasStationToHtmlTest {
     }
 
     @Test
-    public void testParseGasStationHtml_EmptyHtml() {
+     void testParseGasStationHtml_EmptyHtml() {
         // Test with empty HTML
         String html = "";
 
