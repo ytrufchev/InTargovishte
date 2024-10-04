@@ -7,22 +7,24 @@ on:
     branches: [ "main" ]
 
 env:
-  # Use docker.io for Docker Hub if empty
-  REGISTRY: hub.docker.com
-  IMAGE_NAME: ytrufchev/intargovishte:latest
+  # Docker Hub username or org
+  REGISTRY: ytrufchev
+  IMAGE_NAME: intargovishte
 
 jobs:
 
   publish:
-        name: publish image
-        runs-on: ubuntu-latest
+    name: publish image
+    runs-on: ubuntu-latest
 
-        steps:
-        - uses: actions/checkout@v3
-        - name: Login
-          run: |
-            echo ${{ secrets.PAT }} | docker login -u ${{ github.actor }} --password-stdin
-        - name: Build and Publish
-          run: |
-            docker build . --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-            docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Login
+      run: |
+        echo ${{ secrets.PAT }} | docker login -u ${{ github.actor }} --password-stdin
+
+    - name: Build and Publish
+      run: |
+        docker build . --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
