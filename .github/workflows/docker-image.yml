@@ -7,24 +7,33 @@ on:
     branches: [ "main" ]
 
 env:
-  # Docker Hub username or org
   REGISTRY: ytrufchev
   IMAGE_NAME: intargovishte
 
 jobs:
-
   publish:
-    name: publish image
+    name: Build and Publish Docker Image
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
 
-    - name: Login
+    # Step to build the JAR file using Maven
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Build with Maven
+      run: mvn clean package
+
+    # Now that the JAR is built, proceed to Docker
+    - name: Login to Docker Hub
       run: |
         echo ${{ secrets.PAT }} | docker login -u ${{ github.actor }} --password-stdin
 
-    - name: Build and Publish
+    - name: Build and Publish Docker Image
       run: |
         docker build . --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
         docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
