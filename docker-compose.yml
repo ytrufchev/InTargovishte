@@ -17,8 +17,6 @@ services:
     container_name: intargovishte
     networks:
       - intargovishtenet
-    build:
-      context: .
     environment:
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306

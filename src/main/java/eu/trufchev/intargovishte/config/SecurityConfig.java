@@ -38,7 +38,8 @@ public class SecurityConfig {
                     authorize.requestMatchers("/swagger-resources/**").permitAll();
                     authorize.requestMatchers("/webjars/**").permitAll();
                     authorize.requestMatchers("/auth/**").permitAll();
-                    authorize.requestMatchers("/fuel/**").authenticated();
+                    authorize.requestMatchers("/content/**").authenticated();
+                    authorize.requestMatchers("/content/plays/update").permitAll();
                     authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
