@@ -62,7 +62,7 @@ jobs:
         docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
   deploy:
-    needs: publish
+    needs: build_and_publish
     name: deploy image
     runs-on: ubuntu-latest
 
