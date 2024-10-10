@@ -20,7 +20,7 @@ public class GetPlaysResponse {
     public List<Play> getPlaysForTargovishte() {
         // Fetch cookies once and reuse them
         String cookieHeader = fetchCookiesForCity("%D0%A2%D1%8A%D1%80%D0%B3%D0%BE%D0%B2%D0%B8%D1%89%D0%B5");
-
+        System.out.println("Trying to get plays");
         if (cookieHeader == null) {
             // Handle case where cookies are not available
             return Collections.emptyList();
@@ -37,12 +37,14 @@ public class GetPlaysResponse {
 
         // Fetch upcoming events
         Response response1 = playClient.getUpcomingEventsWithCookies(formParams, cookieHeader);
+        System.out.println(response1.toString());
         if (response1 == null || response1.getProductions() == null) {
+            System.out.println("No plays found");
             return Collections.emptyList();  // Handle API failure
         }
 
         List<Production> productions = response1.getProductions();
-
+        System.out.println("Plays found and added to list");
         // Collect events for each production
         String prod = "Production:";
         List<Event> events = productions.stream()
@@ -52,10 +54,12 @@ public class GetPlaysResponse {
 
         // Convert to Play list
         ResponseToPlayList responseToPlayList = new ResponseToPlayList();
+        System.out.println("Returning plays list");
         return responseToPlayList.playsResponseToPlays(productions, events);
     }
 
     public List<Event> getEventsForTargovishte(String productionId, String cookieHeader) {
+        System.out.println("Trying to get targovishte plays");
         // Prepare form parameters for fetching events
         Map<String, Object> formParams2 = new HashMap<>();
         formParams2.put("obj", productionId);
@@ -72,6 +76,7 @@ public class GetPlaysResponse {
     // Utility method to fetch cookies
     private String fetchCookiesForCity(String cityEncoded) {
         try {
+            System.out.println("Trying to get cookies");
             feign.Response response = cookieClient.getCityPage(cityEncoded);
             List<String> rawCookies = new ArrayList<>(response.headers().getOrDefault("Set-Cookie", Collections.emptyList()));
 

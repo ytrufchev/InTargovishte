@@ -32,6 +32,15 @@ public class DramaTheatreController {
         playsRepository.saveAll(plays);  // Save new plays to the DB
         return ResponseEntity.ok(plays);
     }
+    @GetMapping("/testUp")
+    public ResponseEntity<List<Play>> upcomingTestPlays() {
+        System.out.println("Accessing testUp");
+        List<Play> plays = getPlaysResponse.getPlaysForTargovishte();
+
+        playsRepository.deleteAll();  // Deletes all plays in the DB
+        playsRepository.saveAll(plays);  // Save new plays to the DB
+        return ResponseEntity.ok(plays);
+    }
     @GetMapping("/all")
     public List<Play> playsList() {
         return (List<Play>) playsRepository.findAll();

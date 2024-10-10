@@ -14,7 +14,7 @@ public class Production {
     private int length;
     private int minAgeRestriction;
     private Photo photos;
-    private List<String> tagRefs;
+    private List<TagRef> tagRefs;
     private String title;
     private List<UpcomingEvent> upcomingEvents;
 }
