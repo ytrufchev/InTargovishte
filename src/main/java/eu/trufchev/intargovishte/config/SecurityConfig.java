@@ -39,8 +39,8 @@ public class SecurityConfig {
                     authorize.requestMatchers("/webjars/**").permitAll();
                     authorize.requestMatchers("/auth/**").permitAll();
                     authorize.requestMatchers("/stats/**").permitAll();
-                    authorize.requestMatchers("/content/plays/update").permitAll();
                     authorize.requestMatchers("/content/**").authenticated();
+                    authorize.requestMatchers("/information/**").authenticated();
                     authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
