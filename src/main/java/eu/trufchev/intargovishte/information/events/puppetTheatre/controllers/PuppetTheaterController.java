@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/puppettheater")
+@RequestMapping("content/puppettheater")
 public class PuppetTheaterController {
 
     @Autowired
