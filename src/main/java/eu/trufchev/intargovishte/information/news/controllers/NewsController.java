@@ -6,6 +6,7 @@ import eu.trufchev.intargovishte.information.news.repositories.NewsRepository;
 import eu.trufchev.intargovishte.information.news.services.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,5 +35,12 @@ public class NewsController {
         List<News> news = new ArrayList<>();
         newsRepository.findAll().forEach(news::add);
         return ResponseEntity.ok(news);
+    }
+    @Scheduled(cron = "0 0 6 * * ?", zone = "GMT+3")
+    public void updateNewsVoid() throws JsonProcessingException {
+        List<News> news = new ArrayList<>();
+        newsService.getNewsUpdates().forEach(news::add);
+        newsRepository.deleteAll();
+        newsRepository.saveAll(news);
     }
 }
