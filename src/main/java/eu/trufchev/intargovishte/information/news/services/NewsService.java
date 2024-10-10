@@ -32,7 +32,7 @@ public class NewsService {
             String date = news.get("date").asText();
             String title = news.get("title").get("rendered").asText();
             String content = Jsoup.parse(news.get("content").get("rendered").asText()).text();
-            String image = news.get("_links").get("wp:attachment").get(0).get("href").asText();
+            String image = news.get("_embedded").get("wp:featuredmedia").get(0).get("source_url").asText();
             String link = news.get("_links").get("self").get(0).get("href").asText();
             newsEntry.setId(id);
             newsEntry.setDate(date);
