@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("air")
+@RequestMapping("/information/air")
 public class AirQualityController {
     @Autowired
     AirQualityService airQualityService;

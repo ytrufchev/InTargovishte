@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("energy")
+@RequestMapping("information/energy")
 public class EnergyOutageController {
 
     @Autowired

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/vik")
+@RequestMapping("information/vik")
 public class VikOutageController {
 
     @Autowired

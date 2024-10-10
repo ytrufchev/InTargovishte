@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 
-@RequestMapping("roadconditions")
+@RequestMapping("information/roadconditions")
 @RestController
 public class RoadConditionsController {
     @Autowired
