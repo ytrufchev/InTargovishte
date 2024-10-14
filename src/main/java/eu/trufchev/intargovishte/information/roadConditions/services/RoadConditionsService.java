@@ -49,7 +49,7 @@ public class RoadConditionsService {
             // Find the <generalPublicComment> that contains "ОПУ Търговище"
             Element commentElement = roadWork.selectFirst("generalPublicComment");
             if (commentElement != null && commentElement.text().contains("ОПУ Търговище")) {
-                roadConditions.setDescription(commentElement.text());
+                roadConditions.setDescription(commentElement.text().replace("ОПУ ТърговищеlocationDescriptor", ""));
 
                 // Find the <overallEndTime> if it exists
                 Element overallEndTimeElement = roadWork.selectFirst("overallEndTime");
