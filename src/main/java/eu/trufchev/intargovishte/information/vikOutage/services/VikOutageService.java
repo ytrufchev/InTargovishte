@@ -40,16 +40,17 @@ public class VikOutageService {
                 }
 
                 // Set default values
-                String date = "Няма информация";
-                String startTime = "Няма информация";
-                String endTime = "Няма информация";
-                String description = "Няма информация";
+                String date = "";
+                String startTime = ""; // Default start time
+                String endTime = ""; // Default end time
+                String description = cleanEntry; // Initialize description with the entire entry
 
                 // Match the date
-                Pattern datePattern = Pattern.compile("(\\d{2}\\.\\d{2}\\.\\d{4})г");
+                Pattern datePattern = Pattern.compile("(\\d{2}\\.\\d{2}\\.\\d{4})");
                 Matcher dateMatcher = datePattern.matcher(cleanEntry);
                 if (dateMatcher.find()) {
                     date = dateMatcher.group(1);
+                    description = description.replace(date, "").trim(); // Remove date from description
                 }
 
                 // Match the startTime
@@ -57,6 +58,7 @@ public class VikOutageService {
                 Matcher startTimeMatcher = startTimePattern.matcher(cleanEntry);
                 if (startTimeMatcher.find()) {
                     startTime = startTimeMatcher.group(1);
+                    description = description.replace("от " + startTime, "").trim(); // Remove start time from description
                 }
 
                 // Match the endTime
@@ -64,21 +66,19 @@ public class VikOutageService {
                 Matcher endTimeMatcher = endTimePattern.matcher(cleanEntry);
                 if (endTimeMatcher.find()) {
                     endTime = endTimeMatcher.group(1);
+                    description = description.replace("до " + endTime, "").trim(); // Remove end time from description
                 }
 
-                // Match the description (everything after the '-' character)
-                Pattern descriptionPattern = Pattern.compile("\\-\\s*(.*?)(?:<|$)");
-                Matcher descriptionMatcher = descriptionPattern.matcher(cleanEntry);
-                if (descriptionMatcher.find()) {
-                    description = descriptionMatcher.group(1).replaceAll("\\<.*?\\>", "").trim();
-                }
+                // Clean up description by removing any leading or trailing whitespace
+                description = description.replaceAll("\\s+", " "); // Normalize whitespace
+                description = description.trim();
 
                 // Create the VikOutage entity and set the fields
                 VikOutage vikOutage = new VikOutage();
                 vikOutage.setDate(date);
                 vikOutage.setStartTime(startTime);
                 vikOutage.setEndTime(endTime);
-                vikOutage.setDescription(description.replace("\\", ""));
+                vikOutage.setDescription(description.replace("\\", "")); // Remove any backslashes
 
                 vikOutages.add(vikOutage);
             }
