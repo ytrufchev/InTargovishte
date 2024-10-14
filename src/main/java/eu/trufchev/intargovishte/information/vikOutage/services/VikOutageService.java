@@ -65,7 +65,9 @@ public class VikOutageService {
                 if (endTimeMatcher.find()) {
                     endTime = endTimeMatcher.group(1);
                 }
-                String desc = cleanEntry.replace(startTime, "").replace(endTime, "").replace(date, "");
+                String desc = cleanEntry.replace(startTime, "").replace(endTime, "").replace(date, "").replace("до часа", "")
+                        .replace("на г.", "")
+                        .replace("от часа", "");
                 // Create the VikOutage entity and set the fields
                 VikOutage vikOutage = new VikOutage();
                 vikOutage.setDate(date);
