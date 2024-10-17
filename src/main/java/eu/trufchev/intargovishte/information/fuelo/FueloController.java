@@ -6,6 +6,7 @@ import eu.trufchev.intargovishte.information.fuelo.feignclient.FueloClient;
 import eu.trufchev.intargovishte.information.fuelo.repository.GasStationRepository;
 import eu.trufchev.intargovishte.information.fuelo.services.ParseGasStationToHtml;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +27,7 @@ public class FueloController {
         this.gasStationRepository = gasStationRepository;
     }
 
-    @GetMapping("/update")
+    @Scheduled(cron = "0 0 9 * * *")
     public ResponseEntity<List<GasStation>> updateGasStations() {
         GasstationsList gasstationsLists = new GasstationsList();
         List<GasStation> gasStations = new ArrayList<>();

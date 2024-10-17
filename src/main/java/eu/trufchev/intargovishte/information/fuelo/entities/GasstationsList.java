@@ -17,7 +17,7 @@ public class GasstationsList {
         gasStations.add("62569"); // Йоана 2
         gasStations.add("62568"); // Йоана
         gasStations.add("1809");  // Озирис
-        gasStations.add("570");   // OMV
+        gasStations.add("577");   // OMV
         gasStations.add("1545");  // ЕКО
         gasStations.add("1885");  // Величков
         gasStations.add("1608");  // DSB Oil

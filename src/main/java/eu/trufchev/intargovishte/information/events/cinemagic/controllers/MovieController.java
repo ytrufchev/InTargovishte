@@ -33,7 +33,6 @@ public class MovieController {
     }
 
     @Scheduled(cron = "0 0 9 * * *")
-    @GetMapping("/update")
     public ResponseEntity<List<Movie>> updateMovies(){
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime sevenDaysLater = now.plusDays(7);

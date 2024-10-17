@@ -28,7 +28,6 @@ public class ProjectionsController {
     }
 
     @Scheduled(cron = "0 0 9 * * *")
-    @GetMapping("/allprojections")
     public ResponseEntity<List<Projections>> getAllProjections(){
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime sevenDaysLater = now.plusDays(7);

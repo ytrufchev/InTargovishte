@@ -4,6 +4,7 @@ import eu.trufchev.intargovishte.information.events.puppetTheatre.entities.Puppe
 import eu.trufchev.intargovishte.information.events.puppetTheatre.repositories.PuppetTheaterRepository;
 import eu.trufchev.intargovishte.information.events.puppetTheatre.services.PuppetTheaterService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +23,7 @@ public class PuppetTheaterController {
     private PuppetTheaterRepository puppetTheaterRepository;
 
 
-    @GetMapping("/update")
+    @Scheduled(cron = "0 0 9 * * *")
     public List<PuppetTheater> updatePuppetTheaterEvents() throws IOException {
         List<PuppetTheater> puppetTheater = new ArrayList<>();
         puppetTheaterService.getTheaterEvents().forEach(puppetTheater::add);

@@ -6,6 +6,7 @@ import eu.trufchev.intargovishte.information.events.dramaTheatre.repository.Play
 import eu.trufchev.intargovishte.information.events.dramaTheatre.service.GetPlaysResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +25,7 @@ public class DramaTheatreController {
     @Autowired
     GetPlaysResponse getPlaysResponse;
 
-    @GetMapping("/update")
+    @Scheduled(cron = "0 0 9 * * *")
     public ResponseEntity<List<Play>> upcomingPlays() {
         List<Play> plays = getPlaysResponse.getPlaysForTargovishte();
 
