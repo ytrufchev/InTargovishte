@@ -11,6 +11,6 @@ class GasstationsListTest {
         GasstationsList gasstationsList = new GasstationsList();
         String omv = gasstationsList.getGasstations().get(8);
 
-        assertEquals("570", omv);
+        assertEquals("577", omv);
     }
 }
