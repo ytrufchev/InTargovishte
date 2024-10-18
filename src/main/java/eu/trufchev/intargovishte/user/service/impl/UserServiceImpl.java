@@ -50,12 +50,8 @@ public class UserServiceImpl implements UserService {
             throw new APIException(HttpStatus.BAD_REQUEST, "Email already exists!");
         }
         User user = userMapper.toEntity(registerDto);
-        Set<Role> roles = new HashSet<>();
 
-        Optional<Role> optionalUserRole = Optional.ofNullable(roleRepository.findByName("ROLE_USER"));
-        optionalUserRole.ifPresent(roles::add);
-
-        user.setRoles(roles);
+        user.setRole(Role.USER);
         user.setPassword(passwordEncoder.encode(registerDto.getPassword())); // Encrypt password
         userRepository.save(user);
         return "User Registered Successfully!";

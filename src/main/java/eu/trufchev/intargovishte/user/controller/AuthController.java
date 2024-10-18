@@ -18,6 +18,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import eu.trufchev.intargovishte.user.entity.Role;
 
 import java.security.Principal;
 import java.util.HashMap;
@@ -54,6 +55,7 @@ public class AuthController {
             tokens.put("accessToken", accessToken);
             tokens.put("refreshToken", refreshToken);
             tokens.put("name", user.getName());
+            tokens.put("role", user.getRole());
             // Return the map containing accessToken and refreshToken
             return ResponseEntity.ok(tokens);
         } else {
