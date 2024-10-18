@@ -56,7 +56,6 @@ public class AuthController {
             tokens.put("accessToken", accessToken);
             tokens.put("refreshToken", refreshToken);
             tokens.put("name", user.getName());
-            tokens.put("role", user.getRole());
             // Return the map containing accessToken and refreshToken
             return ResponseEntity.ok(tokens);
         } else {

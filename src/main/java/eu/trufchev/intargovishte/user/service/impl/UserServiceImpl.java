@@ -8,7 +8,6 @@ import eu.trufchev.intargovishte.user.dto.RegisterDto;
 import eu.trufchev.intargovishte.user.entity.Role;
 import eu.trufchev.intargovishte.user.entity.User;
 import eu.trufchev.intargovishte.user.mapper.UserMapper;
-import eu.trufchev.intargovishte.user.repository.RoleRepository;
 import eu.trufchev.intargovishte.user.repository.UserRepository;
 import eu.trufchev.intargovishte.user.service.UserService;
 import lombok.AllArgsConstructor;
@@ -21,8 +20,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 @Service
 @AllArgsConstructor
