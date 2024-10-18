@@ -28,6 +28,15 @@ public class FueloController {
     }
 
     @Scheduled(cron = "0 0 9 * * *")
+    public ResponseEntity<List<GasStation>> cronUpdate(){
+        return updateGasStations();
+    }
+
+    @GetMapping("/update")
+    public ResponseEntity<List<GasStation>> manualUpdate(){
+        return updateGasStations();
+    }
+
     public ResponseEntity<List<GasStation>> updateGasStations() {
         GasstationsList gasstationsLists = new GasstationsList();
         List<GasStation> gasStations = new ArrayList<>();

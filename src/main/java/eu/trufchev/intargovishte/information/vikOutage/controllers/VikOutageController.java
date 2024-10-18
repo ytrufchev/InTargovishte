@@ -23,6 +23,13 @@ public class VikOutageController {
     VikOutageRepository vikOutageRepository;
 
     @Scheduled(cron = "0 0 9 * * *")
+    public ResponseEntity<List<VikOutage>> cronUpdate(){
+        return getTargovishteDetails();
+    }
+    @GetMapping("/update")
+    public ResponseEntity<List<VikOutage>> manualUpdate(){
+        return getTargovishteDetails();
+    }
     public ResponseEntity<List<VikOutage>> getTargovishteDetails() {
         List<VikOutage> vikOutages = new ArrayList<>();
         vikOutageService.fetchAndParseVikOutage().forEach(vikOutages::add);

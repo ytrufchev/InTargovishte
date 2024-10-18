@@ -24,6 +24,15 @@ public class PuppetTheaterController {
 
 
     @Scheduled(cron = "0 0 9 * * *")
+    public List<PuppetTheater> cronUpdate() throws IOException{
+        return updatePuppetTheaterEvents();
+    }
+
+    @GetMapping("/update")
+    public List<PuppetTheater> manualUpdate() throws IOException{
+        return updatePuppetTheaterEvents();
+    }
+
     public List<PuppetTheater> updatePuppetTheaterEvents() throws IOException {
         List<PuppetTheater> puppetTheater = new ArrayList<>();
         puppetTheaterService.getTheaterEvents().forEach(puppetTheater::add);

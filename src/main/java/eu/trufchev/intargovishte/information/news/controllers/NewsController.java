@@ -22,7 +22,16 @@ public class NewsController {
     @Autowired
     NewsRepository newsRepository;
 
+    @Scheduled(cron = "0 0 */2 * * ?", zone = "GMT+3")
+    public ResponseEntity<List<News>> cronUpdate() throws JsonProcessingException{
+        return updateNews();
+    }
+
     @GetMapping("/update")
+    public ResponseEntity<List<News>> manualUpdate() throws JsonProcessingException{
+        return updateNews();
+    }
+
     public ResponseEntity<List<News>> updateNews() throws JsonProcessingException {
         List<News> news = new ArrayList<>();
         newsService.getNewsUpdates().forEach(news::add);

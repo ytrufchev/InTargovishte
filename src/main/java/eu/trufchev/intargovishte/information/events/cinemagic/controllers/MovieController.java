@@ -33,7 +33,17 @@ public class MovieController {
     }
 
     @Scheduled(cron = "0 0 9 * * *")
-    public ResponseEntity<List<Movie>> updateMovies(){
+    public ResponseEntity<List<Movie>> updateMovies() {
+        return updateMovieList();
+    }
+
+    // Manual update endpoint
+    @GetMapping("/update")
+    public ResponseEntity<List<Movie>> manualUpdateMovies() {
+        return updateMovieList();
+    }
+
+    private ResponseEntity<List<Movie>> updateMovieList() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime sevenDaysLater = now.plusDays(7);
 
@@ -46,8 +56,11 @@ public class MovieController {
         List<MovieDTO> movieDTO = moviesClient.getMovies(dateTimeFrom, dateTimeTo, cinemaId);
         MovieDTOToMovie movieDTOToMovie = new MovieDTOToMovie();
         List<Movie> movies = movieDTOToMovie.toMovie(movieDTO);
+
+        // Clear old movies and save the updated list
         movieRepository.deleteAll();
         movieRepository.saveAll(movies);
+
         return ResponseEntity.ok(movies);
     }
 }

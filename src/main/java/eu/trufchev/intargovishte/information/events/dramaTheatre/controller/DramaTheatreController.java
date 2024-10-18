@@ -26,16 +26,16 @@ public class DramaTheatreController {
     GetPlaysResponse getPlaysResponse;
 
     @Scheduled(cron = "0 0 9 * * *")
-    public ResponseEntity<List<Play>> upcomingPlays() {
-        List<Play> plays = getPlaysResponse.getPlaysForTargovishte();
-
-        playsRepository.deleteAll();  // Deletes all plays in the DB
-        playsRepository.saveAll(plays);  // Save new plays to the DB
-        return ResponseEntity.ok(plays);
+    public  ResponseEntity<List<Play>> cronUpdate(){
+        return upcomingPlays();
     }
-    @GetMapping("/testUp")
-    public ResponseEntity<List<Play>> upcomingTestPlays() {
-        System.out.println("Accessing testUp");
+
+    @GetMapping("/update")
+    public ResponseEntity<List<Play>> manualUpdate(){
+        return upcomingPlays();
+    }
+
+    public ResponseEntity<List<Play>> upcomingPlays() {
         List<Play> plays = getPlaysResponse.getPlaysForTargovishte();
 
         playsRepository.deleteAll();  // Deletes all plays in the DB

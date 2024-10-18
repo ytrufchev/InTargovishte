@@ -25,6 +25,15 @@ public class RoadConditionsController {
     RoadConditionsRepository roadConditionsRepository;
 
     @Scheduled(cron = "0 0 9 * * *")
+    public ResponseEntity<List<RoadConditions>> cronUpdate(){
+        return updateRoadConditions();
+    }
+
+    @GetMapping("/update")
+    public ResponseEntity<List<RoadConditions>> manualUpdate(){
+        return updateRoadConditions();
+    }
+
     public ResponseEntity<List<RoadConditions>> updateRoadConditions() {
         List<RoadConditions> roadConditionsList = new ArrayList<>();
         roadConditionsService.getRoadConditions().forEach(roadConditionsList::add);
