@@ -6,6 +6,7 @@ import eu.trufchev.intargovishte.security.RefreshToken;
 import eu.trufchev.intargovishte.security.RefreshTokenService;
 import eu.trufchev.intargovishte.user.dto.LoginDto;
 import eu.trufchev.intargovishte.user.dto.RegisterDto;
+import eu.trufchev.intargovishte.user.entity.Roles;
 import eu.trufchev.intargovishte.user.entity.User;
 import eu.trufchev.intargovishte.user.repository.UserRepository;
 import eu.trufchev.intargovishte.user.service.UserService;
@@ -18,12 +19,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import eu.trufchev.intargovishte.user.entity.Role;
 
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @CrossOrigin("*")
 @AllArgsConstructor
@@ -102,7 +103,14 @@ public class AuthController {
     @PostMapping("/escalate")
     public ResponseEntity<User> escalate(@RequestParam String username){
         User user = userRepository.findByUsername(username);
-        user.setRole("SUPERADMIN");
+        Roles superAdminRole = new Roles();
+        superAdminRole.setName(Roles.SUPERADMIN); // Assuming Roles.SUPERADMIN is defined as "ROLE_SUPERADMIN"
+
+        // Add the SUPERADMIN role to the user's existing roles
+        Set<Roles> roles = user.getRoles();
+        roles.add(superAdminRole);
+        user.setRoles(roles);
+
         userRepository.save(user);
         return ResponseEntity.ok(user);
     }
