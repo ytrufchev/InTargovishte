@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.Set;
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class Role {
     public static final String USER = "ROLE_USER";
