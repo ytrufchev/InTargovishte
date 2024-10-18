@@ -5,7 +5,7 @@ import eu.trufchev.intargovishte.security.JwtTokenProvider;
 import eu.trufchev.intargovishte.security.RefreshTokenService;
 import eu.trufchev.intargovishte.user.dto.LoginDto;
 import eu.trufchev.intargovishte.user.dto.RegisterDto;
-import eu.trufchev.intargovishte.user.entity.Role;
+import eu.trufchev.intargovishte.user.entity.Roles;
 import eu.trufchev.intargovishte.user.entity.User;
 import eu.trufchev.intargovishte.user.mapper.UserMapper;
 import eu.trufchev.intargovishte.user.repository.UserRepository;
@@ -20,6 +20,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -45,9 +47,12 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmail(registerDto.getEmail())) {
             throw new APIException(HttpStatus.BAD_REQUEST, "Email already exists!");
         }
-        User user = userMapper.toEntity(registerDto);
 
-        user.setRole(Role.USER);
+        User user = userMapper.toEntity(registerDto);
+        Roles userRole = new Roles();
+        userRole.setName(Roles.USER); // Set role as "ROLE_USER" for default registration
+        user.setRoles(Set.of(userRole)); // Assign the role to the user
+
         user.setPassword(passwordEncoder.encode(registerDto.getPassword())); // Encrypt password
         userRepository.save(user);
         return "User Registered Successfully!";

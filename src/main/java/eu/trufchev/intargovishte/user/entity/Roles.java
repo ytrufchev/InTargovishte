@@ -7,12 +7,24 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import jakarta.persistence.*;
 import java.util.Collections;
 import java.util.Set;
+
 @Getter
 @Setter
 @AllArgsConstructor
-public class Role {
+@NoArgsConstructor
+@Entity
+@Table(name="roles")
+public class Roles {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String name;
+
     public static final String USER = "ROLE_USER";
     public static final String ADMIN = "ROLE_ADMIN";
     public static final String SUPERADMIN = "ROLE_SUPERADMIN";
