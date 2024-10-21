@@ -91,9 +91,18 @@ public class AuthController {
 
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(@RequestParam String refreshToken) {
-        Optional<RefreshToken> optionalRefreshToken = refreshTokenService.findByToken(refreshToken);
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String authorizationHeader) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid authorization header");
+        }
+
+        // Extract the token from the Authorization header
+        String accessToken = authorizationHeader.substring(7);
+
+        // Look for the refresh token using the access token (assuming they are linked somehow)
+        Optional<RefreshToken> optionalRefreshToken = refreshTokenService.findByToken(accessToken);
         if (optionalRefreshToken.isPresent()) {
+            // Delete the refresh token for the user, effectively logging them out
             refreshTokenService.deleteByUser(optionalRefreshToken.get().getUser());
             return ResponseEntity.ok("User logged out successfully!");
         } else {
