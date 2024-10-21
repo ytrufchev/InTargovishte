@@ -21,10 +21,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @CrossOrigin("*")
 @AllArgsConstructor
@@ -54,10 +52,14 @@ public class AuthController {
             String accessToken = jwtTokenProvider.generateToken(authentication);
             String refreshToken = refreshTokenService.createRefreshToken(user);
             Map<String, String> tokens = new HashMap<>();
+            List<String> roleNames = user.getRoles().stream()
+                    .map(Roles::getName) // Assuming Role is an entity with a getName() method
+                    .collect(Collectors.toList());
+
             tokens.put("accessToken", accessToken);
             tokens.put("refreshToken", refreshToken);
             tokens.put("name", user.getName());
-            tokens.put("roles", user.getRoles().toString());
+            tokens.put("roles", roleNames.toString());
             // Return the map containing accessToken and refreshToken
             return ResponseEntity.ok(tokens);
         } else {
