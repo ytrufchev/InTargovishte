@@ -39,10 +39,9 @@ public class SecurityConfig {
                     authorize.requestMatchers("/webjars/**").permitAll();
                     authorize.requestMatchers("/auth/**").permitAll();
                     authorize.requestMatchers("/stats/**").permitAll();
-                    authorize.requestMatchers("/superadmin/**").hasAuthority("ROLE_SUPERADMIN");
-                    authorize.requestMatchers("/**").hasAuthority("ROLE_SUPERADMIN");
                     authorize.requestMatchers("/content/**/all").authenticated();
                     authorize.requestMatchers("/information/**/all").authenticated();
+                    authorize.requestMatchers("/**").hasAuthority("ROLE_SUPERADMIN");
                     authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
