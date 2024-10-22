@@ -54,7 +54,7 @@ public class NewsService {
                 newsList.add(newsEntry);
             }
         }
-
+        System.out.println("returning news to update method");
         // Return the list of news entries that are new and not already in the database
         return newsList;
     }
