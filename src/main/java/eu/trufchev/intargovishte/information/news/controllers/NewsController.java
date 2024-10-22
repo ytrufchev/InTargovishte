@@ -29,6 +29,7 @@ public class NewsController {
 
     @GetMapping("/update")
     public ResponseEntity<List<News>> manualUpdate() throws JsonProcessingException{
+        System.out.println("Received request for manual update");
         return updateNews();
     }
 
