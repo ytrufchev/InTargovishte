@@ -62,7 +62,7 @@ public class AdminController {
         }
     }
 
-    @GetMapping("fuel/update")
+    @GetMapping("/fuel/update")
     public ResponseEntity<List<GasStation>> manualUpdate() {
         return updateGasStations();
     }
