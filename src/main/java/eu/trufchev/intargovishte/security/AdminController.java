@@ -1,5 +1,6 @@
 package eu.trufchev.intargovishte.security;
 
+import eu.trufchev.intargovishte.information.news.entities.News;
 import eu.trufchev.intargovishte.information.news.repositories.NewsRepository;
 import eu.trufchev.intargovishte.user.dto.LoginDto;
 import eu.trufchev.intargovishte.user.entity.User;
@@ -37,6 +38,16 @@ public class AdminController {
             return "User with id " + userId + " deleted";
         } else {
             return "User with id " + userId + " not found";
+        }
+    }
+    @DeleteMapping("/deletenews/{newsId}")
+    public String deleteNewsEntry(@PathVariable Long newsId) {
+        Optional<News> newsForDeletion = newsRepository.findById(newsId);
+        if (newsForDeletion.isPresent()) {
+            newsRepository.deleteById(newsId);
+            return "News with id " + newsId + " deleted";
+        } else {
+            return "News with id " + newsId + " not found";
         }
     }
 
