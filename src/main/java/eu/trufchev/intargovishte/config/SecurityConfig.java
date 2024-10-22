@@ -41,7 +41,6 @@ public class SecurityConfig {
                     authorize.requestMatchers("/stats/**").permitAll();
                     authorize.requestMatchers("/content/**").authenticated();
                     authorize.requestMatchers("/information/**").authenticated();
-                    authorize.requestMatchers("/superadmin/**").hasAnyAuthority("ROLE_SUPERADMIN");
                     authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
