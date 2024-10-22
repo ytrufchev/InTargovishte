@@ -23,21 +23,6 @@ public class GasStationController {
     private final ParseGasStationToHtml parseGasStationToHtml;
     private final GasStationRepository gasStationRepository;
 
-    @GetMapping("/update")
-    public ResponseEntity<List<GasStation>> manualUpdate(){
-        return updateGasStations();
-    }
-    public ResponseEntity<List<GasStation>> updateGasStations() {
-        GasstationsList gasstationsLists = new GasstationsList();
-        List<GasStation> gasStations = new ArrayList<>();
-        for(int i = 0; i < gasstationsLists.getGasstations().size(); i++){
-            gasStations.add(parseGasStationToHtml.parseGasStationHtml(fueloClient.getGasstationDetails(gasstationsLists.getGasstations().get(i), "bg")));
-        }
-        gasStationRepository.deleteAll();
-        gasStationRepository.saveAll(gasStations);
-        return ResponseEntity.ok(gasStations);
-    }
-
     @GetMapping("/all")
     public ResponseEntity<List<GasStation>> getAllFuelStations() {
         List<GasStation> stations =  new ArrayList<>();

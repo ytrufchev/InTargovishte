@@ -1,5 +1,10 @@
 package eu.trufchev.intargovishte.security;
 
+import eu.trufchev.intargovishte.information.fuelo.entities.GasStation;
+import eu.trufchev.intargovishte.information.fuelo.entities.GasstationsList;
+import eu.trufchev.intargovishte.information.fuelo.feignclient.FueloClient;
+import eu.trufchev.intargovishte.information.fuelo.repository.GasStationRepository;
+import eu.trufchev.intargovishte.information.fuelo.services.ParseGasStationToHtml;
 import eu.trufchev.intargovishte.information.news.entities.News;
 import eu.trufchev.intargovishte.information.news.repositories.NewsRepository;
 import eu.trufchev.intargovishte.user.dto.LoginDto;
@@ -22,6 +27,12 @@ public class AdminController {
     private UserRepository userRepository;
     @Autowired
     private NewsRepository newsRepository;
+    @Autowired
+    private GasStationRepository gasStationRepository;
+    @Autowired
+    private ParseGasStationToHtml parseGasStationToHtml;
+    @Autowired
+    private FueloClient fueloClient;
 
     @GetMapping("/getusers")
     public ResponseEntity<List<User>> getAllUsers() {
@@ -49,6 +60,21 @@ public class AdminController {
         } else {
             return "News with id " + newsId + " not found";
         }
+    }
+
+    @GetMapping("/update")
+    public ResponseEntity<List<GasStation>> manualUpdate(){
+        return updateGasStations();
+    }
+    public ResponseEntity<List<GasStation>> updateGasStations() {
+        GasstationsList gasstationsLists = new GasstationsList();
+        List<GasStation> gasStations = new ArrayList<>();
+        for(int i = 0; i < gasstationsLists.getGasstations().size(); i++){
+            gasStations.add(parseGasStationToHtml.parseGasStationHtml(fueloClient.getGasstationDetails(gasstationsLists.getGasstations().get(i), "bg")));
+        }
+        gasStationRepository.deleteAll();
+        gasStationRepository.saveAll(gasStations);
+        return ResponseEntity.ok(gasStations);
     }
 
 
