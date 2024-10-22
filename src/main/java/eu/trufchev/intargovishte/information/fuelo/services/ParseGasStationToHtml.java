@@ -38,7 +38,13 @@ public class ParseGasStationToHtml {
                     String price = priceParts[1].trim(); // Extract the price part
                     String formattedPrice = price.replace(",", ".");
                     formattedPrice = formattedPrice.replaceAll("(\\d+\\.\\d{2})[^\\d]*", "$1");
-                    fuelPrices.add(new FuelPrice(fuelType, formattedPrice));
+                    try {
+                        double priceValue = Double.parseDouble(formattedPrice);
+                        fuelPrices.add(new FuelPrice(fuelType, priceValue)); // Assuming FuelPrice takes a double as the second parameter
+                    } catch (NumberFormatException e) {
+                        // Handle the exception if the price cannot be parsed to a double
+                        System.err.println("Invalid price format: " + formattedPrice);
+                    }
                 }
             }
         }
