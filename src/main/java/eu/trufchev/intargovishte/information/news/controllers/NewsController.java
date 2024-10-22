@@ -35,12 +35,11 @@ public class NewsController {
     public ResponseEntity<List<News>> updateNews() throws JsonProcessingException {
         List<News> news = new ArrayList<>();
         newsService.getNewsUpdates().forEach(news::add);
-        newsRepository.deleteAll();
         newsRepository.saveAll(news);
         return ResponseEntity.ok(news);
     }
     @GetMapping("/all")
-    public ResponseEntity<List<News>> getAllEnergyOutages(){
+    public ResponseEntity<List<News>> getAllNews(){
         List<News> news = new ArrayList<>();
         newsRepository.findAll().forEach(news::add);
         return ResponseEntity.ok(news);
