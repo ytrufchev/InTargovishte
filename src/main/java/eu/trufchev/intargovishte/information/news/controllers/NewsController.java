@@ -7,6 +7,7 @@ import eu.trufchev.intargovishte.information.news.services.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,6 +29,7 @@ public class NewsController {
     }
 
     @GetMapping("/update")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<List<News>> manualUpdate() throws JsonProcessingException{
         List<News> news = new ArrayList<>();
         newsService.getNewsUpdates().forEach(news::add);
