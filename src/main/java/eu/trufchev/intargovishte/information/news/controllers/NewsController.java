@@ -29,7 +29,10 @@ public class NewsController {
 
     @GetMapping("/update")
     public ResponseEntity<List<News>> manualUpdate() throws JsonProcessingException{
-        return updateNews();
+        List<News> news = new ArrayList<>();
+        newsService.getNewsUpdates().forEach(news::add);
+        newsRepository.saveAll(news);
+        return ResponseEntity.ok(news);
     }
 
     public ResponseEntity<List<News>> updateNews() throws JsonProcessingException {
@@ -43,12 +46,5 @@ public class NewsController {
         List<News> news = new ArrayList<>();
         newsRepository.findAll().forEach(news::add);
         return ResponseEntity.ok(news);
-    }
-    @Scheduled(cron = "0 0 6 * * ?", zone = "GMT+3")
-    public void updateNewsVoid() throws JsonProcessingException {
-        List<News> news = new ArrayList<>();
-        newsService.getNewsUpdates().forEach(news::add);
-        newsRepository.deleteAll();
-        newsRepository.saveAll(news);
     }
 }

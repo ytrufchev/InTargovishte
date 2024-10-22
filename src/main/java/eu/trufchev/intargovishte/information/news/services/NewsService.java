@@ -52,7 +52,6 @@ public class NewsService {
 
                 // Add the news entry to the list that will be returned
                 newsList.add(newsEntry);
-                System.out.println(newsEntry);
             }
         }
         // Return the list of news entries that are new and not already in the database
