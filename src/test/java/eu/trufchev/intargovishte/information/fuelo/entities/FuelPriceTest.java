@@ -15,9 +15,9 @@ class FuelPriceTest {
     @Test
      void testSettersAndGettersForPrice(){
         FuelPrice fuelPrice = new FuelPrice();
-        fuelPrice.setFuelType("2.40");
+        fuelPrice.setFuelType("diesel");
 
-        assertEquals("2.40", fuelPrice.getFuelType());
+        assertEquals("diesel", fuelPrice.getFuelType());
     }
 
 }

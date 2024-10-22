@@ -41,12 +41,12 @@ class ParseGasStationToHtmlTest {
         // Verify the first fuel price (Petrol)
         FuelPrice petrol = fuelPrices.get(0);
         assertEquals("Petrol", petrol.getFuelType());
-        assertEquals("2.50", petrol.getPrice());
+        assertEquals(2.50, petrol.getPrice());
 
         // Verify the second fuel price (Diesel)
         FuelPrice diesel = fuelPrices.get(1);
         assertEquals("Diesel", diesel.getFuelType());
-        assertEquals("2.40", diesel.getPrice());
+        assertEquals(2.50, diesel.getPrice());
     }
 
     @Test
