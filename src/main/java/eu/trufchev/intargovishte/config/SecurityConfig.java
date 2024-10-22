@@ -42,7 +42,7 @@ public class SecurityConfig {
                     authorize.requestMatchers("/content/**").authenticated();
                     authorize.requestMatchers("/information/**").authenticated();
                     authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
-                    authorize.requestMatchers("/superadmin/**").hasAuthority("ROLE_SUPERADMIN");
+                    authorize.requestMatchers("/**").hasAuthority("ROLE_SUPERADMIN");
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

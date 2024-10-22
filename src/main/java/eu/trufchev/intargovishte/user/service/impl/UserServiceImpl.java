@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
         User user = userMapper.toEntity(registerDto);
         Roles userRole = new Roles();
-        userRole.setName(Roles.SUPERADMIN); // Set role as "ROLE_USER" for default registration
+        userRole.setName(Roles.USER); // Set role as "ROLE_USER" for default registration
         user.setRoles(Set.of(userRole)); // Assign the role to the user
 
         user.setPassword(passwordEncoder.encode(registerDto.getPassword())); // Encrypt password
