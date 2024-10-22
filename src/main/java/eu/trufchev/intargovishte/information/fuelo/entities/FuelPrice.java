@@ -10,10 +10,14 @@ import lombok.*;
 @Embeddable
 public class FuelPrice {
     private String fuelType;
-    private Double price;
+    private String price;
 
-    public FuelPrice(String fuelType, Double price) {
+    // Constructor, getters, and setters
+
+    public FuelPrice(String fuelType, String price) {
         this.fuelType = fuelType;
         this.price = price;
     }
+
+    // toString method
 }

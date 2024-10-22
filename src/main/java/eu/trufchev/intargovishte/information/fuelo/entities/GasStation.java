@@ -9,7 +9,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class FuelStation {
+public class GasStation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,7 +20,7 @@ public class FuelStation {
     @CollectionTable(name = "fuel_prices", joinColumns = @JoinColumn(name = "station_id"))
     private List<FuelPrice> fuelPrices;
 
-    public FuelStation(String name, String address, List<FuelPrice> fuelPrices) {
+    public GasStation(String name, String address, List<FuelPrice> fuelPrices) {
         this.name = name;
         this.address = address;
         this.fuelPrices = fuelPrices;
