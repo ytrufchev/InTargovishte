@@ -23,7 +23,7 @@ class ParseGasStationToHtmlTest {
         String html = "<h4>Station Name</h4>"
                 + "<h5>123 Main St</h5>"
                 + "<img alt=\"Petrol\" title=\"Price: 2,50\" />"
-                + "<img alt=\"Diesel\" title=\"Price: 2,40\" />";
+                + "<img alt=\"Diesel\" title=\"Price: 2,50\" />";
 
         // Call the method to be tested
         GasStation gasStation = parseGasStationToHtml.parseGasStationHtml(html);
