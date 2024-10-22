@@ -29,7 +29,6 @@ public class NewsController {
     }
 
     @GetMapping("/update")
-    @PreAuthorize("permitAll()")
     public ResponseEntity<List<News>> manualUpdate() throws JsonProcessingException{
         List<News> news = new ArrayList<>();
         newsService.getNewsUpdates().forEach(news::add);
