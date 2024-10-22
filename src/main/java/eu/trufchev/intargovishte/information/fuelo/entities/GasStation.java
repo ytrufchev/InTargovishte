@@ -22,13 +22,18 @@ public class GasStation {
     @CollectionTable(name = "fuel_prices", joinColumns = @JoinColumn(name = "gas_station_id"))
     @Column(name = "fuel_price")
     private List<FuelPrice> fuelPrices;
-
+    @Column(name = "last_updated")
+    private long lastUpdated;
     // Constructor, getters, and setters
 
     public GasStation(String name, String address, List<FuelPrice> fuelPrices) {
         this.name = name;
         this.address = address;
         this.fuelPrices = fuelPrices;
+    }
+
+    public void setFuelPrices(String fuelType, Double price) {
+        setFuelPrices(fuelType, price);
     }
 
     // toString method to display the data

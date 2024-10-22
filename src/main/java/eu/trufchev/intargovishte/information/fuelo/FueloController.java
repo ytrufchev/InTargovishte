@@ -1,5 +1,6 @@
 package eu.trufchev.intargovishte.information.fuelo;
 
+import eu.trufchev.intargovishte.information.fuelo.entities.FuelPrice;
 import eu.trufchev.intargovishte.information.fuelo.entities.GasStation;
 import eu.trufchev.intargovishte.information.fuelo.entities.GasstationsList;
 import eu.trufchev.intargovishte.information.fuelo.feignclient.FueloClient;
@@ -7,9 +8,7 @@ import eu.trufchev.intargovishte.information.fuelo.repository.GasStationReposito
 import eu.trufchev.intargovishte.information.fuelo.services.ParseGasStationToHtml;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +53,20 @@ public class FueloController {
 
         // Return the list of gas stations
         return ResponseEntity.ok(gasStations);
+    }
+    @PutMapping("/{id}/prices")
+    public ResponseEntity<GasStation> updateGasStationPrices(@PathVariable Long id, @RequestBody List<FuelPrice> updatedPrices) {
+        GasStation gasStation = gasStationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Gas Station not found"));
+
+        for (FuelPrice priceUpdate : updatedPrices) {
+            gasStation.setFuelPrices(priceUpdate.getFuelType(), priceUpdate.getPrice());
+        }
+
+        gasStation.setLastUpdated(System.currentTimeMillis());
+        gasStationRepository.save(gasStation);
+
+        return ResponseEntity.ok(gasStation);
     }
 
 }
