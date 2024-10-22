@@ -28,7 +28,7 @@ public class NewsService {
 
         List<News> newsList = new ArrayList<>();
         JsonNode rootNode = objectMapper.readTree(newsString);
-
+        System.out.println(newsString);
         // Iterate through the fetched news entries
         for (JsonNode news : rootNode) {
             Long id = news.get("id").longValue();
