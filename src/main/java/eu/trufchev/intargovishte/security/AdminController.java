@@ -63,19 +63,35 @@ public class AdminController {
     }
 
     @GetMapping("/update")
-    public ResponseEntity<List<GasStation>> manualUpdate(){
+    public ResponseEntity<List<GasStation>> manualUpdate() {
         return updateGasStations();
     }
+
     public ResponseEntity<List<GasStation>> updateGasStations() {
         GasstationsList gasstationsLists = new GasstationsList();
         List<GasStation> gasStations = new ArrayList<>();
-        for(int i = 0; i < gasstationsLists.getGasstations().size(); i++){
-            gasStations.add(parseGasStationToHtml.parseGasStationHtml(fueloClient.getGasstationDetails(gasstationsLists.getGasstations().get(i), "bg")));
+
+        // Iterate through all gas station IDs
+        for (String gasStationId : gasstationsLists.getGasstations()) {
+            try {
+                // Fetch gas station details from the external source
+                String htmlResponse = fueloClient.getGasstationDetails(gasStationId, "bg");
+                // Parse the HTML response to create a GasStation object
+                GasStation gasStation = parseGasStationToHtml.parseGasStationHtml(htmlResponse);
+                gasStations.add(gasStation);
+            } catch (Exception e) {
+                // Log the error (you can use a logging framework)
+                System.err.println("Error processing gas station ID " + gasStationId + ": " + e.getMessage());
+            }
         }
-        gasStationRepository.deleteAll();
-        gasStationRepository.saveAll(gasStations);
+
+        // Update the database
+        gasStationRepository.deleteAll(); // Clear existing entries
+        gasStationRepository.saveAll(gasStations); // Save the new list
+
         return ResponseEntity.ok(gasStations);
     }
+
 
 
 
