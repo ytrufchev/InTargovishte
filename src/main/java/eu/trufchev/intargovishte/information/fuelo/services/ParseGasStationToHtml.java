@@ -1,6 +1,6 @@
 package eu.trufchev.intargovishte.information.fuelo.services;
 import eu.trufchev.intargovishte.information.fuelo.entities.FuelPrice;
-import eu.trufchev.intargovishte.information.fuelo.entities.GasStation;
+import eu.trufchev.intargovishte.information.fuelo.entities.FuelStation;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public class ParseGasStationToHtml {
 
-    public GasStation parseGasStationHtml(String html) {
+    public FuelStation parseGasStationHtml(String html) {
         // Decode any Unicode characters (like \u003C) and parse the HTML with Jsoup
         String decodedHtml = html.replace("\\u003C", "<").replace("\\u003E", ">").replace("\\/", "/").replace("\\", "");
         Document doc = Jsoup.parse(decodedHtml);
@@ -49,6 +49,6 @@ public class ParseGasStationToHtml {
             }
         }
 
-        return new GasStation(name, address, fuelPrices);
+        return new FuelStation(name, address, fuelPrices);
     }
 }

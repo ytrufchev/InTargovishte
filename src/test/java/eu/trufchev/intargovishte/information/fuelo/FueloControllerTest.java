@@ -1,9 +1,8 @@
 package eu.trufchev.intargovishte.information.fuelo;
 
 import eu.trufchev.intargovishte.information.fuelo.entities.GasStation;
-import eu.trufchev.intargovishte.information.fuelo.entities.GasstationsList;
 import eu.trufchev.intargovishte.information.fuelo.feignclient.FueloClient;
-import eu.trufchev.intargovishte.information.fuelo.repository.GasStationRepository;
+import eu.trufchev.intargovishte.information.fuelo.repository.FuelStationRepository;
 import eu.trufchev.intargovishte.information.fuelo.services.ParseGasStationToHtml;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,7 +27,7 @@ import static org.mockito.Mockito.*;
     private ParseGasStationToHtml parseGasStationToHtml;
 
     @Mock
-    private GasStationRepository gasStationRepository;
+    private FuelStationRepository gasStationRepository;
 
     @InjectMocks
     private FueloController fueloController;
