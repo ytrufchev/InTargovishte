@@ -39,12 +39,12 @@ class GasStationTest {
     void testSetAndGetFuelPrices() {
         GasStation gasStation = new GasStation();
         List<FuelPrice> fuelPrices = new ArrayList<>();
-        FuelPrice fuelPrice = new FuelPrice("Diesel", "2.40");
+        FuelPrice fuelPrice = new FuelPrice("Diesel", 2.40);
         fuelPrices.add(fuelPrice);
         gasStation.setFuelPrices(fuelPrices);
 
         assertNotNull(gasStation.getFuelPrices());
         assertEquals(1, gasStation.getFuelPrices().size());
-        assertEquals("2.40", gasStation.getFuelPrices().get(0).getPrice());
+        assertEquals(2.40, gasStation.getFuelPrices().get(0).getPrice());
     }
 }
