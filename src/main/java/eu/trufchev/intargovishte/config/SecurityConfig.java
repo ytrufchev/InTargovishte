@@ -39,7 +39,6 @@ public class SecurityConfig {
                     authorize.requestMatchers("/webjars/**").permitAll();
                     authorize.requestMatchers("/auth/**").permitAll();
                     authorize.requestMatchers("/stats/**").permitAll();
-                    authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
 
                     // Specific routes for superadmin
                     authorize.requestMatchers("/content/**/update").hasAuthority("ROLE_SUPERADMIN");
@@ -49,7 +48,7 @@ public class SecurityConfig {
                     // Authenticated access
                     authorize.requestMatchers("/content/**").authenticated();
                     authorize.requestMatchers("/information/**").authenticated();
-
+                    authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
