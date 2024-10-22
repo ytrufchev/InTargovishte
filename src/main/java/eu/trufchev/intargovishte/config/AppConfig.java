@@ -12,10 +12,10 @@ public class AppConfig {
         return new ModelMapper();
     }
     @Value("${app.jwt-refresh-expiration-in-ms}")
-    private int refreshTokenDurationMs;
+    private long refreshTokenDurationMs;
 
     @Bean
-    public int refreshTokenDurationMs() {
+    public long refreshTokenDurationMs() {
         return refreshTokenDurationMs;
     }
 }
