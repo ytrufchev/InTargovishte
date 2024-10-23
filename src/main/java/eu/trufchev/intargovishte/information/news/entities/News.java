@@ -18,7 +18,7 @@ public class News {
     private String date;
     @Column(name = "title")
     private String title;
-    @Column(name = "content", length = 5000)
+    @Column(name = "content", length = 20000)
     private String content;
     @Column(name = "link")
     private String link;
