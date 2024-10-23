@@ -38,6 +38,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
+        if (request.getRequestURI().equals("/information/news/update")) {
+            filterChain.doFilter(request, response);  // Skip token validation for this endpoint
+            return;
+        }
 
         filterChain.doFilter(request, response);
     }
