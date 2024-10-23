@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -35,13 +36,17 @@ public class GasStationController {
         GasStation station = gasStationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Fuel station not found"));
 
+        if (station.getLastUpdate() == null) {
+            station.setLastUpdate(new Date());
+        }
+
         List<FuelPrice> updatedFuelPrices = station.getFuelPrices();
         for (FuelPrice fuelPrice : updatedFuelPrices) {
             if (updatedPrices.containsKey(fuelPrice.getFuelType())) {
                 fuelPrice.setPrice(updatedPrices.get(fuelPrice.getFuelType()).toString());
             }
         }
-
+        station.setLastUpdate(new Date());
         gasStationRepository.save(station);
 
         return ResponseEntity.ok().build();

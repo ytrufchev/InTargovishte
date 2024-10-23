@@ -2,6 +2,8 @@ package eu.trufchev.intargovishte.information.fuelo.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -19,6 +21,15 @@ public class GasStation {
     @ElementCollection
     @CollectionTable(name = "fuel_prices", joinColumns = @JoinColumn(name = "station_id"))
     private List<FuelPrice> fuelPrices;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastUpdate;
+
+    // Automatically update lastUpdate before entity is updated
+    @PreUpdate
+    public void updateLastUpdate() {
+        this.lastUpdate = new Date();
+    }
 
     public GasStation(String name, String address, List<FuelPrice> fuelPrices) {
         this.name = name;
