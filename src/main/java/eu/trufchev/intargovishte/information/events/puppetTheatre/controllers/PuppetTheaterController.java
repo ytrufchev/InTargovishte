@@ -47,24 +47,36 @@ public class PuppetTheaterController {
     }
     @GetMapping("all")
     public List<PuppetTheater> allPuppetTheaterEvents(){
-        List<PuppetTheater> puppetTheaters = new ArrayList<>();
-        puppetTheaterRepository.findAll().forEach(puppetTheaters::add);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d", new Locale("bg", "BG"));
+        LocalDate currentDate = LocalDate.now();
+        int currentYear = currentDate.getYear();
+        List<PuppetTheater> allEvents = new ArrayList<>();
+        puppetTheaterRepository.findAll().forEach(allEvents::add);
+        // Create formatter for Bulgarian locale
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d yyyy", new Locale("bg"));
 
-        // Filter to include only events today or in the future
-        List<PuppetTheater> upcomingEvents = puppetTheaters.stream()
+        return allEvents.stream()
                 .filter(event -> {
-                    // Build a string combining the event month and day
-                    String eventDateString = event.getEventMonth() + " " + event.getEventDay();
+                    try {
+                        // Parse the event date using Bulgarian locale
+                        String dateStr = String.format("%s %s %d",
+                                event.getEventMonth(),
+                                event.getEventDay(),
+                                currentYear);
+                        LocalDate eventDate = LocalDate.parse(dateStr, formatter);
 
-                    // Parse the date string into a LocalDate, using the current year
-                    LocalDate eventDate = LocalDate.parse(eventDateString, formatter).withYear(LocalDate.now().getYear());
+                        // If the event date is in the past for this year, assume it's for next year
+                        if (eventDate.isBefore(currentDate)) {
+                            eventDate = eventDate.plusYears(1);
+                        }
 
-                    // Return true if the event is today or in the future
-                    return !eventDate.isBefore(LocalDate.now());
+                        // Return true if the event is today or in the future
+                        return !eventDate.isBefore(currentDate);
+                    } catch (Exception e) {
+                        // Log the error if needed
+                        // logger.error("Error parsing date for event: " + event.getId(), e);
+                        return false;
+                    }
                 })
                 .collect(Collectors.toList());
-            Collections.reverse(upcomingEvents);
-        return upcomingEvents;
     }
 }
