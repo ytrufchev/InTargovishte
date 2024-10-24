@@ -46,6 +46,7 @@ public class MunicipalityEventController {
                     return !eventDate.isBefore(LocalDate.now());
                 })
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(futureEvents.reversed());
+        futureEvents.reversed();
+        return ResponseEntity.ok(futureEvents);
     }
 }

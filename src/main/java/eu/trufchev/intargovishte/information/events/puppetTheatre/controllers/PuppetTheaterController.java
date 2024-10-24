@@ -63,7 +63,7 @@ public class PuppetTheaterController {
                     return !eventDate.isBefore(LocalDate.now());
                 })
                 .collect(Collectors.toList());
-
-        return upcomingEvents.reversed();
+                upcomingEvents.reversed();
+        return upcomingEvents;
     }
 }
