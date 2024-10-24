@@ -48,9 +48,15 @@ public class NewsController {
     public ResponseEntity<List<News>> getTheLatestNews(){
         List<News> news = new ArrayList<>();
         newsRepository.findAll().forEach(news::add);
-        news.stream().limit(10).collect(Collectors.toList());
-        Collections.reverse(news);
-        return ResponseEntity.ok(news);
+        List<News> latestNews = news.stream()
+                .limit(10)
+                .collect(Collectors.toList());
+
+        // Reverse the list in place
+        Collections.reverse(latestNews);
+
+        // Return the latest and reversed news
+        return ResponseEntity.ok(latestNews);
     }
 
     @GetMapping("/all")
