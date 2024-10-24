@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequestMapping("/information/news")
 @RestController
@@ -42,6 +43,14 @@ public class NewsController {
         newsRepository.saveAll(news);
         return ResponseEntity.ok(news);
     }
+    @GetMapping("/latest")
+    public ResponseEntity<List<News>> getTheLatestNews(){
+        List<News> news = new ArrayList<>();
+        news.reversed().stream().limit(10).collect(Collectors.toList());
+        newsRepository.findAll().forEach(news::add);
+        return ResponseEntity.ok(news);
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<News>> getAllNews(){
         List<News> news = new ArrayList<>();
