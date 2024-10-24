@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,7 +49,7 @@ public class NewsController {
         List<News> news = new ArrayList<>();
         newsRepository.findAll().forEach(news::add);
         news.stream().limit(10).collect(Collectors.toList());
-        news.reversed();
+        Collections.reverse(news);
         return ResponseEntity.ok(news);
     }
 
