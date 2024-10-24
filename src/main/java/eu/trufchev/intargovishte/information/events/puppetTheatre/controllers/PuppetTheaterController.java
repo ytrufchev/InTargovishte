@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -63,7 +64,7 @@ public class PuppetTheaterController {
                     return !eventDate.isBefore(LocalDate.now());
                 })
                 .collect(Collectors.toList());
-                upcomingEvents.reversed();
+            Collections.reverse(upcomingEvents);
         return upcomingEvents;
     }
 }

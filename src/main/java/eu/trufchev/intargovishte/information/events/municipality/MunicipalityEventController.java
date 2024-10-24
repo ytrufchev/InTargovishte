@@ -12,6 +12,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,7 +47,7 @@ public class MunicipalityEventController {
                     return !eventDate.isBefore(LocalDate.now());
                 })
                 .collect(Collectors.toList());
-        futureEvents.reversed();
+        Collections.reverse(futureEvents);
         return ResponseEntity.ok(futureEvents);
     }
 }
