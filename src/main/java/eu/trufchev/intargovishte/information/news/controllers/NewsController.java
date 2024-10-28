@@ -52,9 +52,6 @@ public class NewsController {
                 .limit(10)
                 .collect(Collectors.toList());
 
-        // Reverse the list in place
-        Collections.reverse(latestNews);
-
         // Return the latest and reversed news
         return ResponseEntity.ok(latestNews);
     }
