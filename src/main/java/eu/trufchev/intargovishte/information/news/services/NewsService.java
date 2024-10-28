@@ -36,7 +36,7 @@ public class NewsService {
                 content = content.substring(0, 5000); // Limit to 15000 characters
             }
             String image = news.get("yoast_head_json").get("og_image").get(0).get("url").asText();
-            String link = news.get("_links").get("self").get(0).get("href").asText();
+            String link = news.get("link").asText();
             if (!newsRepository.existsById(id)) {
                 newsEntry.setId(id);
                 newsEntry.setDate(date);
