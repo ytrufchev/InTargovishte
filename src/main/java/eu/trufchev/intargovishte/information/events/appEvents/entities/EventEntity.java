@@ -28,6 +28,8 @@ public class EventEntity {
     @Column(name = "date")
     @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Instant date;
+    @Column(name = "location")
+    private String location;
 //    @Column(name = "likes")
 //    @ManyToOne
 //    private List<Likes> likes;
