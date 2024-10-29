@@ -26,7 +26,7 @@ public class EventAppService {
         return events;
     }
 
-    public EventEntity addEvent(String title, String content, String date, String location, String image, User user) {
+    public EventEntity addEvent(String title, String content, String date, String location, String image, Long user) {
         EventEntity event = new EventEntity();
         event.setTitle(title);
         event.setContent(content);

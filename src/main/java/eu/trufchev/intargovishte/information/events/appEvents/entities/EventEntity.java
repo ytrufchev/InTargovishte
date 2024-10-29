@@ -22,7 +22,7 @@ public class EventEntity {
     @Column(name = "content")
     private String content;
     @Column(name = "publisher")
-    private User user;
+    private Long user;
     @Column(name = "image")
     private String image;
     @Column(name = "date")

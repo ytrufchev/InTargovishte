@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/content/inapp/events")
@@ -27,7 +28,6 @@ public class EventEntityController {
         if (eventDTO.getUserId() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User ID is required.");
         }
-
         // Retrieve the user by ID
         User user = userRepository.findById(eventDTO.getUserId()).orElse(null);
         if (user == null) {
@@ -41,7 +41,7 @@ public class EventEntityController {
                 eventDTO.getDate(), // Now just get the date from DTO
                 eventDTO.getLocation(),
                 eventDTO.getImage(),
-                user
+                eventDTO.getUserId()
         );
 
         return ResponseEntity.ok(createdEvent);
