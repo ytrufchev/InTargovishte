@@ -21,7 +21,6 @@ public class EventEntity {
     private String title;
     @Column(name = "content")
     private String content;
-    @OneToOne
     @Column(name = "publisher")
     private User user;
     @Column(name = "image")
