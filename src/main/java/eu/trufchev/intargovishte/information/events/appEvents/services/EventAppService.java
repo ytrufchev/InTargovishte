@@ -26,7 +26,7 @@ public class EventAppService {
         return events;
     }
 
-    public EventEntity addEvent(String title, String content, Date date, String time, String location, String image, User user) {
+    public EventEntity addEvent(String title, String content, Date date, String location, String image, User user) {
         EventEntity event = new EventEntity();
         event.setTitle(title);
         event.setContent(content);
@@ -34,20 +34,8 @@ public class EventAppService {
         event.setImage(image);
         event.setUser(user);
 
-        // Convert `Date` to `LocalDate`
-        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-        // Parse `time` string to `LocalTime` (assuming `time` is in HH:mm format)
-        LocalTime localTime = LocalTime.parse(time);
-
-        // Combine `LocalDate` and `LocalTime` to `LocalDateTime`
-        LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
-
-        // Convert `LocalDateTime` to `Timestamp`
-        Timestamp timestamp = Timestamp.valueOf(localDateTime);
-
-        // Set the combined timestamp as the event date
-        event.setDate(timestamp.toInstant());
+        // Set the event date directly from the incoming date
+        event.setDate(date.toInstant());
 
         // Save and return the event
         return eventEntityRepository.save(event);

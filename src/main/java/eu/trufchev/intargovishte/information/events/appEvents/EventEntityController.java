@@ -35,11 +35,18 @@ public class EventEntityController {
         }
 
         // Create the event using the DTO
-        EventEntity createdEvent = eventAppService.addEvent(eventDTO.getTitle(), eventDTO.getContent(),
-                eventDTO.getDate(), eventDTO.getTime(), eventDTO.getLocation(), eventDTO.getImage(), user);
+        EventEntity createdEvent = eventAppService.addEvent(
+                eventDTO.getTitle(),
+                eventDTO.getContent(),
+                eventDTO.getDate(), // Now just get the date from DTO
+                eventDTO.getLocation(),
+                eventDTO.getImage(),
+                user
+        );
 
         return ResponseEntity.ok(createdEvent);
     }
+
 
     // GetMapping to retrieve all events
     @GetMapping("/all")
