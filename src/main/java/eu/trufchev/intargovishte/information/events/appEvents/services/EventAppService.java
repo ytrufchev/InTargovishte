@@ -26,7 +26,7 @@ public class EventAppService {
         return events;
     }
 
-    public EventEntity addEvent(String title, String content, Date date, String location, String image, User user) {
+    public EventEntity addEvent(String title, String content, String date, String location, String image, User user) {
         EventEntity event = new EventEntity();
         event.setTitle(title);
         event.setContent(content);
@@ -35,7 +35,7 @@ public class EventAppService {
         event.setUser(user);
 
         // Set the event date directly from the incoming date
-        event.setDate(date.toInstant());
+        event.setDate(date);
 
         // Save and return the event
         return eventEntityRepository.save(event);

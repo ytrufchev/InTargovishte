@@ -5,7 +5,7 @@ import java.util.Date;
 public class EventDTO {
     private String title;
     private String content;
-    private Date date; // Combined date and time
+    private String date; // Combined date and time
     private String location;
     private String image; // Base64 image string
     private Long userId;
@@ -17,8 +17,8 @@ public class EventDTO {
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
 
-    public Date getDate() { return date; }
-    public void setDate(Date date) { this.date = date; }
+    public String getDate() { return date; }
+    public void setDate(String date) { this.date = date; }
 
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
