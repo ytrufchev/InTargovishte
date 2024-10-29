@@ -46,7 +46,7 @@ public class SecurityConfig {
                     authorize.requestMatchers("/webjars/**").permitAll();
                     authorize.requestMatchers("/auth/**").permitAll();
                     authorize.requestMatchers("/stats/**").permitAll();
-                    authorize.requestMatchers("/content/inapp/events/**").authenticated();
+                    authorize.requestMatchers("/content/inapp/**").authenticated();
                     authorize.requestMatchers("/information/news/update").permitAll();
                     authorize.requestMatchers("/content/**").authenticated();
                     authorize.requestMatchers("/information/**").authenticated();
