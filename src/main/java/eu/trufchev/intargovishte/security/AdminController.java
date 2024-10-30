@@ -70,7 +70,7 @@ public class AdminController {
     public String deleteInAppEventEntry(@PathVariable Long eventId) {
         Optional<EventEntity> eventForDeletion = eventEntityRepository.findById(eventId);
         if (eventForDeletion.isPresent()) {
-            newsRepository.deleteById(eventId);
+            eventEntityRepository.deleteById(eventId);
             return "Event with id " + eventId + " deleted";
         } else {
             return "Event with id " + eventId + " not found";
