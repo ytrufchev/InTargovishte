@@ -23,7 +23,7 @@ public class EventEntity {
     private String content;
     @Column(name = "publisher")
     private Long user;
-    @Column(name = "image")
+    @Column(name = "image", length = 500000)
     private String image;
     @Column(name = "date")
     @JsonFormat(shape = JsonFormat.Shape.NUMBER)
