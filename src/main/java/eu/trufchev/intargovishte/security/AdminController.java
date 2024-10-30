@@ -1,5 +1,7 @@
 package eu.trufchev.intargovishte.security;
 
+import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
+import eu.trufchev.intargovishte.information.events.appEvents.repositories.EventEntityRepository;
 import eu.trufchev.intargovishte.information.fuelo.entities.GasStation;
 import eu.trufchev.intargovishte.information.fuelo.entities.GasstationsList;
 import eu.trufchev.intargovishte.information.fuelo.feignclient.FueloClient;
@@ -33,6 +35,8 @@ public class AdminController {
     private ParseGasStationToHtml parseGasStationToHtml;
     @Autowired
     private FueloClient fueloClient;
+    @Autowired
+    private EventEntityRepository eventEntityRepository;
 
     @GetMapping("/getusers")
     public ResponseEntity<List<User>> getAllUsers() {
@@ -59,6 +63,17 @@ public class AdminController {
             return "News with id " + newsId + " deleted";
         } else {
             return "News with id " + newsId + " not found";
+        }
+    }
+
+    @DeleteMapping("/deleteinappevent/{eventId}")
+    public String deleteInAppEventEntry(@PathVariable Long eventId) {
+        Optional<EventEntity> eventForDeletion = eventEntityRepository.findById(eventId);
+        if (eventForDeletion.isPresent()) {
+            newsRepository.deleteById(eventId);
+            return "Event with id " + eventId + " deleted";
+        } else {
+            return "Event with id " + eventId + " not found";
         }
     }
 

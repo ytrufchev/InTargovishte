@@ -47,7 +47,6 @@ public class EventEntityController {
         return ResponseEntity.ok(createdEvent);
     }
 
-
     // GetMapping to retrieve all events
     @GetMapping("/all")
     public ResponseEntity<List<EventEntity>> getAllEvents() {
