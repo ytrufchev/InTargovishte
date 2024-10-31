@@ -4,6 +4,7 @@ import eu.trufchev.intargovishte.information.events.appEvents.dto.EventDTO;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
 import eu.trufchev.intargovishte.information.events.appEvents.repositories.EventEntityRepository;
 import eu.trufchev.intargovishte.information.events.appEvents.services.EventAppService;
+import eu.trufchev.intargovishte.security.CustomUserDetailsService;
 import eu.trufchev.intargovishte.user.entity.User;
 import eu.trufchev.intargovishte.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -11,12 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -93,4 +94,29 @@ public class EventEntityController {
         }
         return ResponseEntity.ok(events); // 200 OK with the list of events
     }
+
+    @DeleteMapping("/{eventId}")
+    public ResponseEntity<String> deleteEvent(@PathVariable long eventId, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        long userId = user.getId(); // Use primitive type
+
+        Optional<EventEntity> eventOptional = eventEntityRepository.findById(eventId);
+        if (eventOptional.isPresent()) {
+            EventEntity event = eventOptional.get();
+
+            // Check if the user is the creator of the event
+            if (event.getUser() != userId) { // Compare using != for primitive long
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to delete this event.");
+            }
+
+            // Proceed to delete the event
+            eventEntityRepository.delete(event);
+            return ResponseEntity.ok("Event deleted successfully.");
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Event not found");
+    }
+
+
+
 }
