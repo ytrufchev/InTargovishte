@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class NewsService {
@@ -51,5 +52,12 @@ public class NewsService {
             }
         }
         return newsList;
+    }
+
+    public List<News> getLatestNews() {
+        // Fetch all news sorted by date in descending order
+        List<News> allNews = newsRepository.findLatestNews();
+        // Limit to 10 items
+        return allNews.stream().limit(10).collect(Collectors.toList());
     }
 }
