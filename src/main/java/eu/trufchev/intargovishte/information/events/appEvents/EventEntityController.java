@@ -111,11 +111,13 @@ public class EventEntityController {
             // Optional: Fetch custom User entity if needed
             User user = userRepository.findByUsername(username);
 
-
             Optional<EventEntity> eventForDeletion = eventEntityRepository.findById(eventId);
             if(eventForDeletion.isPresent()){
                 EventEntity ev = eventForDeletion.get();
-                eventEntityRepository.delete(ev);
+                if(ev.getUser().equals(user.getId())){
+                    eventEntityRepository.delete(ev);
+                }
+
             }
         } else {
             throw new AccessDeniedException("User not authenticated");
