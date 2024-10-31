@@ -9,6 +9,10 @@ import java.util.List;
 
 public interface NewsRepository extends CrudRepository<News, Long> {
     boolean existsById(@NotNull Long id);
+
+    @Query(value = "SELECT n FROM News n ORDER BY n.date DESC")
+    List<News> findLatestNewsLimited();
+
     @Query(value = "SELECT n FROM News n ORDER BY n.date DESC")
     List<News> findLatestNews();
 }

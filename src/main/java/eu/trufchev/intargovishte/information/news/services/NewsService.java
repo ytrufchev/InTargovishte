@@ -60,4 +60,11 @@ public class NewsService {
         // Limit to 10 items
         return allNews.stream().limit(10).collect(Collectors.toList());
     }
+
+    public List<News> getAllNews() {
+        // Fetch all news sorted by date in descending order
+        List<News> allNews = newsRepository.findLatestNewsLimited();
+        // Limit to 100 items
+        return allNews.stream().limit(100).collect(Collectors.toList());
+    }
 }

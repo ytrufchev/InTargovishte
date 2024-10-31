@@ -51,9 +51,8 @@ public class NewsController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<News>> getAllNews(){
-        List<News> news = new ArrayList<>();
-        newsRepository.findAll().forEach(news::add);
+    public ResponseEntity<List<News>> getAllNews() {
+        List<News> news = newsService.getAllNews();
         return ResponseEntity.ok(news);
     }
 }
