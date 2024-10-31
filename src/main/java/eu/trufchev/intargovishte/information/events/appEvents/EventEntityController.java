@@ -97,18 +97,18 @@ public class EventEntityController {
 
     @DeleteMapping("/delete/{eventId}")
     public ResponseEntity<String> deleteEvent(@PathVariable long eventId, Authentication authentication) {
+        // Retrieve the authenticated user
         User user = (User) authentication.getPrincipal();
-        long userId = user.getId();
+        String userId = user.getId().toString();
 
+        // Find the event by its ID
         Optional<EventEntity> eventOptional = eventEntityRepository.findById(eventId);
+
         if (eventOptional.isPresent()) {
             EventEntity event = eventOptional.get();
 
-            System.out.println("Authenticated User ID: " + userId);
-            System.out.println("Event User ID: " + event.getUser());
-
             // Check if the user is the creator of the event
-            if (event.getUser() == null || !event.getUser().equals(userId)) { // Compare Long values with equals()
+            if (event.getUser() == null || !event.getUser().toString().equals(userId)) { // Ensure IDs match
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to delete this event.");
             }
 
