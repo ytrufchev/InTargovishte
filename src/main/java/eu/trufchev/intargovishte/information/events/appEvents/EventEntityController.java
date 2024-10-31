@@ -95,7 +95,7 @@ public class EventEntityController {
         return ResponseEntity.ok(events); // 200 OK with the list of events
     }
 
-    @DeleteMapping("/{eventId}")
+    @DeleteMapping("/delete/{eventId}")
     public ResponseEntity<String> deleteEvent(@PathVariable long eventId, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         long userId = user.getId();
