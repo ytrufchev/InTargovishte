@@ -104,6 +104,9 @@ public class EventEntityController {
         if (eventOptional.isPresent()) {
             EventEntity event = eventOptional.get();
 
+            System.out.println("Authenticated User ID: " + userId);
+            System.out.println("Event User ID: " + event.getUser());
+
             // Check if the user is the creator of the event
             if (event.getUser() == null || !event.getUser().equals(userId)) { // Compare Long values with equals()
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to delete this event.");
