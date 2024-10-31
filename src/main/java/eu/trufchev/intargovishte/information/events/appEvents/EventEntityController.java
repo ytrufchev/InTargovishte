@@ -2,14 +2,20 @@ package eu.trufchev.intargovishte.information.events.appEvents;
 
 import eu.trufchev.intargovishte.information.events.appEvents.dto.EventDTO;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
+import eu.trufchev.intargovishte.information.events.appEvents.repositories.EventEntityRepository;
 import eu.trufchev.intargovishte.information.events.appEvents.services.EventAppService;
 import eu.trufchev.intargovishte.user.entity.User;
 import eu.trufchev.intargovishte.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +28,10 @@ public class EventEntityController {
     private UserRepository userRepository;
     @Autowired
     private EventAppService eventAppService;
+    @Autowired
+    private EventEntityRepository eventEntityRepository;
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @PostMapping("/add")
     public ResponseEntity<?> addEvent(@RequestBody EventDTO eventDTO) {
@@ -55,7 +65,23 @@ public class EventEntityController {
     }
     @GetMapping("/topten")
     public ResponseEntity<List<EventEntity>> getTopEvents() {
-        List<EventEntity> events = eventAppService.getTopEvents().subList(0, 9);
-        return ResponseEntity.ok(events);
+        List<EventEntity> events = eventAppService.getTopEvents();
+        // Safely get up to 10 elements
+        List<EventEntity> topTenEvents = events.size() > 10 ? events.subList(0, 10) : events;
+        return ResponseEntity.ok(topTenEvents);
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    @Transactional
+    public void cleanUpOldEvents() {
+        LocalDateTime yesterday = LocalDate.now().minusDays(1).atStartOfDay();
+        String yesterdayTimestamp = yesterday.format(formatter);
+
+        List<EventEntity> oldEvents = eventEntityRepository.findEventsBefore(yesterdayTimestamp);
+
+        if (!oldEvents.isEmpty()) {
+            eventEntityRepository.deleteAll(oldEvents);
+            System.out.println("Deleted " + oldEvents.size() + " outdated events");
+        }
     }
 }

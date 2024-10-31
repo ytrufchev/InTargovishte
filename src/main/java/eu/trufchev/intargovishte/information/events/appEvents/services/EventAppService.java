@@ -41,7 +41,7 @@ public class EventAppService {
         return eventEntityRepository.save(event);
     }
     public List<EventEntity> getTopEvents() {
-        LocalDateTime today = LocalDateTime.now();
+        Long today = System.currentTimeMillis();
         List<EventEntity> events = new ArrayList<>();
         eventEntityRepository.findNextTenEvents(today).forEach(events::add);
         return events;
