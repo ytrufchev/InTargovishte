@@ -40,4 +40,10 @@ public class EventAppService {
         // Save and return the event
         return eventEntityRepository.save(event);
     }
+    public List<EventEntity> getTopEvents() {
+        LocalDateTime today = LocalDateTime.now();
+        List<EventEntity> events = new ArrayList<>();
+        eventEntityRepository.findNextTenEvents(today).forEach(events::add);
+        return events;
+    }
 }

@@ -53,4 +53,9 @@ public class EventEntityController {
         List<EventEntity> events = eventAppService.getEvents();
         return ResponseEntity.ok(events);
     }
+    @GetMapping("/topten")
+    public ResponseEntity<List<EventEntity>> getTopEvents() {
+        List<EventEntity> events = eventAppService.getTopEvents().subList(0, 9);
+        return ResponseEntity.ok(events);
+    }
 }
