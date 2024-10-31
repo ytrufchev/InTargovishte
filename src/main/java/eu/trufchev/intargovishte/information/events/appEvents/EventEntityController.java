@@ -99,7 +99,7 @@ public class EventEntityController {
     }
 
     @DeleteMapping("/delete/{eventId}")
-    public void deleteEvent(Long eventId) {
+    public void deleteEvent(@PathVariable("eventId")Long eventId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
