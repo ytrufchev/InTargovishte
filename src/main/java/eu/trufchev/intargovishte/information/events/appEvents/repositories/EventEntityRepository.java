@@ -15,4 +15,6 @@ public interface EventEntityRepository extends CrudRepository<EventEntity, Long>
 
     @Query("SELECT e FROM EventEntity e WHERE e.date < :yesterday")
     List<EventEntity> findEventsBefore(@Param("yesterday") String yesterday);
+
+    List<EventEntity> findByUserId(Long user);
 }

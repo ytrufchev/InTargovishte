@@ -84,4 +84,13 @@ public class EventEntityController {
             System.out.println("Deleted " + oldEvents.size() + " outdated events");
         }
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<EventEntity>> getEventsByUser(@PathVariable Long userId) {
+        List<EventEntity> events = eventEntityRepository.findByUserId(userId); // Ensure this method exists in your repository
+        if (events.isEmpty()) {
+            return ResponseEntity.noContent().build(); // 204 No Content if no events found
+        }
+        return ResponseEntity.ok(events); // 200 OK with the list of events
+    }
 }
