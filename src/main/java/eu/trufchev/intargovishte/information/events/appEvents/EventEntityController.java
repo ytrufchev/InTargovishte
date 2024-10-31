@@ -12,7 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -96,28 +99,27 @@ public class EventEntityController {
     }
 
     @DeleteMapping("/delete/{eventId}")
-    public ResponseEntity<String> deleteEvent(@PathVariable long eventId, Authentication authentication) {
-        // Retrieve the authenticated user
-        User user = (User) authentication.getPrincipal();
-        String userId = user.getId().toString();
+    public void deleteEvent(Long eventId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        // Find the event by its ID
-        Optional<EventEntity> eventOptional = eventEntityRepository.findById(eventId);
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        if (eventOptional.isPresent()) {
-            EventEntity event = eventOptional.get();
+            // Use userDetails.getUsername() to identify the user without casting
+            String username = userDetails.getUsername();
 
-            // Check if the user is the creator of the event
-            if (event.getUser() == null || !event.getUser().toString().equals(userId)) { // Ensure IDs match
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to delete this event.");
+            // Optional: Fetch custom User entity if needed
+            User user = userRepository.findByUsername(username);
+
+
+            Optional<EventEntity> eventForDeletion = eventEntityRepository.findById(eventId);
+            if(eventForDeletion.isPresent()){
+                EventEntity ev = eventForDeletion.get();
+                eventEntityRepository.delete(ev);
             }
-
-            // Proceed to delete the event
-            eventEntityRepository.delete(event);
-            return ResponseEntity.ok("Event deleted successfully.");
+        } else {
+            throw new AccessDeniedException("User not authenticated");
         }
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Event not found");
     }
 
 
