@@ -19,7 +19,7 @@ public class EventEntity {
     private long id;
     @Column(name = "title")
     private String title;
-    @Column(name = "content")
+    @Column(name = "content", length=1000)
     private String content;
     @Column(name = "publisher")
     private Long user;
