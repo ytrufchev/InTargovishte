@@ -35,7 +35,7 @@ public class EnergyOutageController {
         List<EnergyOutage> energyOutages = (List<EnergyOutage>) energyOutageService.updateEnergyOutages(outagesString);
         return ResponseEntity.status(HttpStatus.CREATED).body(energyOutages);
     }
-    @GetMapping("/manualUpdate")
+    @GetMapping("/manualupdate")
     public ResponseEntity<List<EnergyOutage>> manualUpdateEnergyOutages(){
         String outagesString = energyOutageService.fetchInterruptions();
         List<EnergyOutage> energyOutages = (List<EnergyOutage>) energyOutageService.updateEnergyOutages(outagesString);

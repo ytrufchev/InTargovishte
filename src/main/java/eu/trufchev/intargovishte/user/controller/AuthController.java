@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -113,18 +114,30 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid refresh token");
         }
     }
+        //TODO: Remove when appropriate
+//    @PostMapping("/escalate")
+//    public ResponseEntity<User> escalate(@RequestParam String username){
+//        User user = userRepository.findByUsername(username);
+//        Roles superAdminRole = new Roles();
+//        superAdminRole.setName(Roles.SUPERADMIN); // Assuming Roles.SUPERADMIN is defined as "ROLE_SUPERADMIN"
+//        // Add the SUPERADMIN role to the user's existing roles
+//        Set<Roles> roles = user.getRoles();
+//        roles.add(superAdminRole);
+//        user.setRoles(roles);
+//        userRepository.save(user);
+//        return ResponseEntity.ok(user);
+//    }
 
-    @PostMapping("/escalate")
-    public ResponseEntity<User> escalate(@RequestParam String username){
-        User user = userRepository.findByUsername(username);
-        Roles superAdminRole = new Roles();
-        superAdminRole.setName(Roles.SUPERADMIN); // Assuming Roles.SUPERADMIN is defined as "ROLE_SUPERADMIN"
-        // Add the SUPERADMIN role to the user's existing roles
-        Set<Roles> roles = user.getRoles();
-        roles.add(superAdminRole);
-        user.setRoles(roles);
-        userRepository.save(user);
-        return ResponseEntity.ok(user);
+    @GetMapping("/me")
+    public ResponseEntity<Map<String, Object>> getUserInformation(@AuthenticationPrincipal User authenticatedUser) {
+        if (authenticatedUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        Map<String, Object> userDetails = new HashMap<>();
+        userDetails.put("username", authenticatedUser.getUsername());
+        userDetails.put("name", authenticatedUser.getName());
+        userDetails.put("avatar", authenticatedUser.getAvatar());
+        return ResponseEntity.ok(userDetails);
     }
-
 }
