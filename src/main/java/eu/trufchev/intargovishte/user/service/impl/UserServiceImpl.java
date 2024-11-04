@@ -65,6 +65,7 @@ public class UserServiceImpl implements UserService {
 
         user.setRoles(Set.of(userRole)); // Assign the role to the user
         user.setPassword(passwordEncoder.encode(registerDto.getPassword())); // Encrypt password
+        user.setAvatar(registerDto.getAvatarBase64());
         userRepository.save(user);
         return "User Registered Successfully!";
     }

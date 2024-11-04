@@ -15,4 +15,5 @@ public class RegisterDto {
     private String password;
     private String username;
     private String repeatPassword;
+    private String avatarBase64;
 }
