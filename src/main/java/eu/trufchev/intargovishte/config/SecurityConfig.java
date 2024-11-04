@@ -50,6 +50,7 @@ public class SecurityConfig {
                     authorize.requestMatchers("/information/news/update").permitAll();
                     authorize.requestMatchers("/content/**").authenticated();
                     authorize.requestMatchers("/information/**").authenticated();
+                    authorize.requestMatchers("/user/**").authenticated();
                     authorize.requestMatchers("/superadmin/**").hasAnyAuthority("ROLE_SUPERADMIN");
                     authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
                 })
