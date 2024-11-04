@@ -133,6 +133,9 @@ public class AuthController {
         if (authenticatedUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
+        if(authenticatedUser.getAvatar() == null){
+            authenticatedUser.setAvatar("");
+        }
 
         Map<String, Object> userDetails = new HashMap<>();
         userDetails.put("username", authenticatedUser.getUsername());
