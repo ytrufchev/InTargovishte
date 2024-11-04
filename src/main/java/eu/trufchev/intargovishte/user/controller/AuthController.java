@@ -66,6 +66,7 @@ public class AuthController {
                 user.setAvatar("");
             }
             tokens.put("avatar", user.getAvatar());
+            tokens.put("email", user.getEmail());
             // Return the map containing accessToken and refreshToken
             return ResponseEntity.ok(tokens);
         } else {
@@ -132,19 +133,4 @@ public class AuthController {
 //        return ResponseEntity.ok(user);
 //    }
 
-    @GetMapping("/me")
-    public ResponseEntity<Map<String, Object>> getUserInformation(@AuthenticationPrincipal User authenticatedUser) {
-        if (authenticatedUser == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
-        if(authenticatedUser.getAvatar() == null){
-            authenticatedUser.setAvatar("");
-        }
-
-        Map<String, Object> userDetails = new HashMap<>();
-        userDetails.put("username", authenticatedUser.getUsername());
-        userDetails.put("name", authenticatedUser.getName());
-        userDetails.put("avatar", authenticatedUser.getAvatar());
-        return ResponseEntity.ok(userDetails);
-    }
 }
