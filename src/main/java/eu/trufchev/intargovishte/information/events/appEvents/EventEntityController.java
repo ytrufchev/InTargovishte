@@ -18,11 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,8 +77,10 @@ public class EventEntityController {
     @Scheduled(cron = "0 0 0 * * ?")
     @Transactional
     public void cleanUpOldEvents() {
-        LocalDate yesterday = LocalDate.now().minusDays(1);
-        List<EventEntity> oldEvents = eventEntityRepository.findEventsBefore(yesterday);
+        Instant endOfYesterday = LocalDate.now().minusDays(1).atTime(LocalTime.MAX).toInstant(ZoneOffset.UTC);
+        String yesterdayTimestamp = String.valueOf(endOfYesterday.getEpochSecond());
+
+        List<EventEntity> oldEvents = eventEntityRepository.findEventsBefore(yesterdayTimestamp);
 
         if (!oldEvents.isEmpty()) {
             eventEntityRepository.deleteAll(oldEvents);

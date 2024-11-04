@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,7 +26,7 @@ public class EventAppService {
         return events;
     }
 
-    public EventEntity addEvent(String title, String content, Instant date, String location, String image, Long user) {
+    public EventEntity addEvent(String title, String content, String date, String location, String image, Long user) {
         EventEntity event = new EventEntity();
         event.setTitle(title);
         event.setContent(content);
