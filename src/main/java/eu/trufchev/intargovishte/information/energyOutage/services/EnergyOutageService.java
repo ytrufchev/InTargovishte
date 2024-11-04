@@ -3,13 +3,17 @@ package eu.trufchev.intargovishte.information.energyOutage.services;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.trufchev.intargovishte.information.energyOutage.entities.EnergyOutage;
+import eu.trufchev.intargovishte.information.energyOutage.feignClient.EnergoProClient;
 import eu.trufchev.intargovishte.information.energyOutage.repositories.EnergyOutageRepository;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class EnergyOutageService {
@@ -17,6 +21,8 @@ public class EnergyOutageService {
     private final EnergyOutageRepository energyOutageRepository;
     @Autowired
     private final ObjectMapper objectMapper;
+    @Autowired
+    private EnergoProClient energoProClient;
 
     public EnergyOutageService(EnergyOutageRepository energyOutageRepository, ObjectMapper objectMapper) {
         this.energyOutageRepository = energyOutageRepository;
@@ -54,5 +60,30 @@ public class EnergyOutageService {
         } catch (Exception e) {
             throw new RuntimeException("Error parsing or saving the municipality event", e);
         }
+    }
+
+    public String fetchInterruptions() {
+        // Set up the date formatter
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        // Get today’s date
+        String toDate = LocalDate.now().format(formatter);
+
+        // Get the date one month ago
+        String fromDate = LocalDate.now().minusMonths(1).format(formatter);
+
+        // Fetch interruptions using Feign client with dynamic dates
+        return energoProClient.getInterruptions(
+                "get_interruptions",
+                8,
+                "for_next_48_hours",
+                0,
+                fromDate,
+                toDate,
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
+                "application/json, text/javascript, */*; q=0.01",
+                "XMLHttpRequest",
+                "https://www.energo-pro.bg/bg/planirani-prekysvanija"
+        );
     }
 }

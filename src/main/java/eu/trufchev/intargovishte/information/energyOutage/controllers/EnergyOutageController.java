@@ -6,6 +6,7 @@ import eu.trufchev.intargovishte.information.energyOutage.services.EnergyOutageS
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -20,15 +21,24 @@ public class EnergyOutageController {
     @Autowired
     EnergyOutageRepository energyOutageRepository;
 
-    @PostMapping("/update")
-    public ResponseEntity<List<EnergyOutage>> createEnergyOutage(@RequestBody String jsonEvents) {
-        List<EnergyOutage> energyOutages = (List<EnergyOutage>) energyOutageService.updateEnergyOutages(jsonEvents);
-        return ResponseEntity.status(HttpStatus.CREATED).body(energyOutages);
-    }
+
     @GetMapping("/all")
     public ResponseEntity<List<EnergyOutage>> getAllEnergyOutages(){
         List<EnergyOutage> energyOutages = new ArrayList<>();
         energyOutageRepository.findAll().forEach(energyOutages::add);
         return ResponseEntity.ok(energyOutages);
+    }
+
+    @Scheduled(cron = "0 0 6 * * ?")
+    public ResponseEntity<List<EnergyOutage>> updateEnergyOutages(){
+        String outagesString = energyOutageService.fetchInterruptions();
+        List<EnergyOutage> energyOutages = (List<EnergyOutage>) energyOutageService.updateEnergyOutages(outagesString);
+        return ResponseEntity.status(HttpStatus.CREATED).body(energyOutages);
+    }
+    @GetMapping("/manualUpdate")
+    public ResponseEntity<List<EnergyOutage>> manualUpdateEnergyOutages(){
+        String outagesString = energyOutageService.fetchInterruptions();
+        List<EnergyOutage> energyOutages = (List<EnergyOutage>) energyOutageService.updateEnergyOutages(outagesString);
+        return ResponseEntity.status(HttpStatus.CREATED).body(energyOutages);
     }
 }
