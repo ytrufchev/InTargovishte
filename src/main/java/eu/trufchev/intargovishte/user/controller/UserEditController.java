@@ -1,5 +1,6 @@
 package eu.trufchev.intargovishte.user.controller;
 
+import eu.trufchev.intargovishte.user.dto.AvatarUpdateDto;
 import eu.trufchev.intargovishte.user.dto.PasswordUpdateDto;
 import eu.trufchev.intargovishte.user.entity.User;
 import eu.trufchev.intargovishte.user.repository.UserRepository;
@@ -39,5 +40,19 @@ public class UserEditController {
         userRepository.save(user);
 
         return ResponseEntity.ok("Password updated successfully");
+    }
+    @PutMapping("/update-avatar")
+    public ResponseEntity<String> updateUserAvatar(@RequestBody AvatarUpdateDto avatarUpdateDto, Principal principal) {
+        User user = userRepository.findByUsername(principal.getName());
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        // Update the avatar with the new Base64 string
+        user.setAvatar(avatarUpdateDto.getAvatarBase64());
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Avatar updated successfully");
     }
 }
