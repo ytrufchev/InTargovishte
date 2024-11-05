@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 @SpringBootApplication
 @OpenAPIDefinition
 @EnableScheduling
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class InTargovishteApplication {
 
 	public static void main(String[] args) {
