@@ -96,7 +96,6 @@ public class UserServiceImpl implements UserService {
         Optional<User> userForDeletion = userRepository.findById(userId);
         if (userForDeletion.isPresent()) {
             // Step 1: Delete user roles associations in user_roles table
-            userRepository.deleteUserRolesByUserId(userId);
 
             // Step 2: Delete the user
             userRepository.deleteById(userId);

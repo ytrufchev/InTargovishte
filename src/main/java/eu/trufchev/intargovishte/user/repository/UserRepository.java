@@ -14,8 +14,4 @@ public interface UserRepository extends CrudRepository<User, Long> {
     Optional<User> findByUsernameOrEmail(String username, String email);
     User findByUsername(String username);
     Boolean existsByUsername(String username);
-
-    @Modifying
-    @Query("DELETE FROM UserRole ur WHERE ur.user.id = :userId")
-    void deleteUserRolesByUserId(@Param("userId") Long userId);
 }
