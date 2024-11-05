@@ -37,14 +37,19 @@ public class User implements UserDetails {
     @Column(name = "avatar", length = 150000)
     private String avatar;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private Set<UserRole> userRoles; // Changed from Set<Roles> to Set<UserRole>
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Roles> roles; // Store roles as a set
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Convert roles from UserRole to GrantedAuthority objects
-        return userRoles.stream()
-                .map(userRole -> new SimpleGrantedAuthority(userRole.getRole().getName())) // Access role through UserRole
+        // Convert roles to GrantedAuthority objects
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toSet());
     }
 
@@ -80,8 +85,6 @@ public class User implements UserDetails {
 
     // Add a method to get roles
     public Set<Roles> getRoles() {
-        return userRoles.stream()
-                .map(UserRole::getRole)
-                .collect(Collectors.toSet());
+        return roles;
     }
 }
