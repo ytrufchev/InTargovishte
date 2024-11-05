@@ -11,6 +11,8 @@ import eu.trufchev.intargovishte.user.mapper.UserMapper;
 import eu.trufchev.intargovishte.user.repository.RolesRepository;
 import eu.trufchev.intargovishte.user.repository.UserRepository;
 import eu.trufchev.intargovishte.user.service.UserService;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -39,6 +42,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;  // Inject JwtTokenProvider
+    private final EntityManager entityManager;
 
     @Override
     public String register(RegisterDto registerDto) {
@@ -91,11 +95,18 @@ public class UserServiceImpl implements UserService {
     public User findByUsername(String username) {
         return userRepository.findByUsername(username); // Make sure this method exists in the repository
     }
+    @Transactional
     @PreAuthorize("hasRole('ROLE_SUPERADMIN')")
     public String deleteUserById(Long userId) {
         Optional<User> userForDeletion = userRepository.findById(userId);
         if (userForDeletion.isPresent()) {
+            User user = entityManager.find(User.class, userId);
+            for (Roles role : new HashSet<>(user.getRoles())) {
+                // Remove the role from the user's roles
+                user.getRoles().clear();
+            }
             userRepository.deleteById(userId);
+
 
             return "User deleted successfully";
         } else {
