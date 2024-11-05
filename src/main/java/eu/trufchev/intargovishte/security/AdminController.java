@@ -49,7 +49,8 @@ public class AdminController {
     public String deleteUser(@PathVariable Long userId) {
         Optional<User> userForDeletion = userRepository.findById(userId);
         if (userForDeletion.isPresent()) {
-            userRepository.deleteById(userId);
+            User user = userForDeletion.get();
+            userRepository.deleteById(user.getId());
             return "User with id " + userId + " deleted";
         } else {
             return "User with id " + userId + " not found";
