@@ -14,6 +14,7 @@ import eu.trufchev.intargovishte.user.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class AdminController {
         return ResponseEntity.ok(users);
     }
 
+    @PreAuthorize("hasRole('ROLE_SUPERADMIN')")
     @DeleteMapping("/deleteuser/{userId}")
     public String deleteUser(@PathVariable Long userId) {
         Optional<User> userForDeletion = userRepository.findById(userId);
