@@ -14,6 +14,7 @@ import eu.trufchev.intargovishte.user.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -88,6 +90,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByUsername(String username) {
         return userRepository.findByUsername(username); // Make sure this method exists in the repository
+    }
+    @PreAuthorize("hasRole('ROLE_SUPERADMIN')")
+    public String deleteUserById(Long userId) {
+        Optional<User> userForDeletion = userRepository.findById(userId);
+        if(userForDeletion.isPresent()){
+            User user = userForDeletion.get();
+            userRepository.deleteById(user.getId());
+            return "User deleted successfully";
+        }
+        else{
+            return "User not found";
+        }
     }
 
 }

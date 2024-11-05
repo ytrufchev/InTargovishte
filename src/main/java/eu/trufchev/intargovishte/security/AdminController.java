@@ -13,6 +13,7 @@ import eu.trufchev.intargovishte.user.entity.Roles;
 import eu.trufchev.intargovishte.user.entity.User;
 import eu.trufchev.intargovishte.user.repository.RolesRepository;
 import eu.trufchev.intargovishte.user.repository.UserRepository;
+import eu.trufchev.intargovishte.user.service.impl.UserServiceImpl;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,8 @@ public class AdminController {
     private EventEntityRepository eventEntityRepository;
     @Autowired
     private RolesRepository rolesRepository;
+    @Autowired
+    private UserServiceImpl userService;
 
     @GetMapping("/getusers")
     public ResponseEntity<List<User>> getAllUsers() {
@@ -50,14 +53,7 @@ public class AdminController {
 
     @DeleteMapping("/deleteuser/{userId}")
     public String deleteUser(@PathVariable Long userId) {
-        Optional<User> userForDeletion = userRepository.findById(userId);
-        if (userForDeletion.isPresent()) {
-           User user = userForDeletion.get();
-            userRepository.deleteById(user.getId());
-            return "User with id " + userId + " deleted";
-        } else {
-            return "User with id " + userId + " not found";
-        }
+        return userService.deleteUserById(userId);
     }
     @DeleteMapping("/deletenews/{newsId}")
     public String deleteNewsEntry(@PathVariable Long newsId) {
