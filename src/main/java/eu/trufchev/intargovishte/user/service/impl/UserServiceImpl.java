@@ -7,6 +7,7 @@ import eu.trufchev.intargovishte.user.dto.LoginDto;
 import eu.trufchev.intargovishte.user.dto.RegisterDto;
 import eu.trufchev.intargovishte.user.entity.Roles;
 import eu.trufchev.intargovishte.user.entity.User;
+import eu.trufchev.intargovishte.user.entity.UserRole; // Import UserRole
 import eu.trufchev.intargovishte.user.mapper.UserMapper;
 import eu.trufchev.intargovishte.user.repository.RolesRepository;
 import eu.trufchev.intargovishte.user.repository.UserRepository;
@@ -38,7 +39,7 @@ public class UserServiceImpl implements UserService {
     private final RolesRepository rolesRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final JwtTokenProvider jwtTokenProvider;  // Inject JwtTokenProvider
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     public String register(RegisterDto registerDto) {
@@ -65,7 +66,12 @@ public class UserServiceImpl implements UserService {
             rolesRepository.save(userRole); // Save the new role
         }
 
-        user.setRoles(Set.of(userRole)); // Assign the role to the user
+        // Create a UserRole instance and set the user and role
+        UserRole userRoleEntity = new UserRole();
+        userRoleEntity.setUser(user);
+        userRoleEntity.setRole(userRole);
+
+        user.setUserRoles(Set.of(userRoleEntity)); // Assign the UserRole to the user
         user.setPassword(passwordEncoder.encode(registerDto.getPassword())); // Encrypt password
         user.setAvatar(registerDto.getAvatarBase64());
         userRepository.save(user);
@@ -87,23 +93,20 @@ public class UserServiceImpl implements UserService {
             throw new APIException(HttpStatus.UNAUTHORIZED, "Invalid password");
         }
     }
+
     @Override
     public User findByUsername(String username) {
         return userRepository.findByUsername(username); // Make sure this method exists in the repository
     }
+
     @PreAuthorize("hasRole('ROLE_SUPERADMIN')")
     public String deleteUserById(Long userId) {
         Optional<User> userForDeletion = userRepository.findById(userId);
         if (userForDeletion.isPresent()) {
-            // Step 1: Delete user roles associations in user_roles table
-
-            // Step 2: Delete the user
             userRepository.deleteById(userId);
-
             return "User deleted successfully";
         } else {
             return "User not found";
         }
     }
-
 }
