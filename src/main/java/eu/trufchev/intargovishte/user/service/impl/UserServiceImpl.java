@@ -2,6 +2,7 @@ package eu.trufchev.intargovishte.user.service.impl;
 
 import eu.trufchev.intargovishte.exception.APIException;
 import eu.trufchev.intargovishte.security.JwtTokenProvider;
+import eu.trufchev.intargovishte.security.RefreshTokenRepository;
 import eu.trufchev.intargovishte.security.RefreshTokenService;
 import eu.trufchev.intargovishte.user.dto.LoginDto;
 import eu.trufchev.intargovishte.user.dto.RegisterDto;
@@ -42,7 +43,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;  // Inject JwtTokenProvider
-    private final EntityManager entityManager;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     public String register(RegisterDto registerDto) {
@@ -99,6 +100,7 @@ public class UserServiceImpl implements UserService {
     @PreAuthorize("hasRole('ROLE_SUPERADMIN')")
     public String deleteUserById(Long userId) {
         // Retrieve the user by ID
+        refreshTokenRepository.deleteByUserId(userId);
         Optional<User> userForDeletion = userRepository.findById(userId);
 
         if (userForDeletion.isPresent()) {
