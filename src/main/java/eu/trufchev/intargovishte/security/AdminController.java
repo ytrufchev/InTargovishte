@@ -9,11 +9,9 @@ import eu.trufchev.intargovishte.information.fuelo.repository.GasStationReposito
 import eu.trufchev.intargovishte.information.fuelo.services.ParseGasStationToHtml;
 import eu.trufchev.intargovishte.information.news.entities.News;
 import eu.trufchev.intargovishte.information.news.repositories.NewsRepository;
-import eu.trufchev.intargovishte.user.dto.LoginDto;
 import eu.trufchev.intargovishte.user.entity.User;
 import eu.trufchev.intargovishte.user.repository.UserRepository;
-import eu.trufchev.intargovishte.user.service.UserService;
-import eu.trufchev.intargovishte.user.service.impl.UserServiceImpl;
+import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +35,8 @@ public class AdminController {
     private FueloClient fueloClient;
     @Autowired
     private EventEntityRepository eventEntityRepository;
+    @Autowired
+    private EntityManager entityManager;
 
     @GetMapping("/getusers")
     public ResponseEntity<List<User>> getAllUsers() {
@@ -49,7 +49,8 @@ public class AdminController {
     public String deleteUser(@PathVariable Long userId) {
         Optional<User> userForDeletion = userRepository.findById(userId);
         if (userForDeletion.isPresent()) {
-            User user = userForDeletion.get();
+           User user = userForDeletion.get();
+            entityManager.detach(user);
             userRepository.deleteById(user.getId());
             return "User with id " + userId + " deleted";
         } else {
