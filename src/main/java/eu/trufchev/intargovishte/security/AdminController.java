@@ -9,7 +9,9 @@ import eu.trufchev.intargovishte.information.fuelo.repository.GasStationReposito
 import eu.trufchev.intargovishte.information.fuelo.services.ParseGasStationToHtml;
 import eu.trufchev.intargovishte.information.news.entities.News;
 import eu.trufchev.intargovishte.information.news.repositories.NewsRepository;
+import eu.trufchev.intargovishte.user.entity.Roles;
 import eu.trufchev.intargovishte.user.entity.User;
+import eu.trufchev.intargovishte.user.repository.RolesRepository;
 import eu.trufchev.intargovishte.user.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +39,7 @@ public class AdminController {
     @Autowired
     private EventEntityRepository eventEntityRepository;
     @Autowired
-    private EntityManager entityManager;
+    private RolesRepository rolesRepository;
 
     @GetMapping("/getusers")
     public ResponseEntity<List<User>> getAllUsers() {
@@ -46,13 +48,11 @@ public class AdminController {
         return ResponseEntity.ok(users);
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPERADMIN')")
     @DeleteMapping("/deleteuser/{userId}")
     public String deleteUser(@PathVariable Long userId) {
         Optional<User> userForDeletion = userRepository.findById(userId);
         if (userForDeletion.isPresent()) {
            User user = userForDeletion.get();
-            entityManager.detach(user);
             userRepository.deleteById(user.getId());
             return "User with id " + userId + " deleted";
         } else {
@@ -110,7 +110,12 @@ public class AdminController {
 
         return ResponseEntity.ok(gasStations);
     }
-
+    @GetMapping("/roles")
+    public ResponseEntity<List<Roles>> getAllRoles(){
+        List<Roles> roles = new ArrayList<>();
+        rolesRepository.findAll().forEach(roles::add);
+        return ResponseEntity.ok(roles);
+    }
 
 
 
