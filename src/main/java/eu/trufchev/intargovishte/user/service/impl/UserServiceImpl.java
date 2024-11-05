@@ -98,20 +98,24 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @PreAuthorize("hasRole('ROLE_SUPERADMIN')")
     public String deleteUserById(Long userId) {
+        // Retrieve the user by ID
         Optional<User> userForDeletion = userRepository.findById(userId);
-        if (userForDeletion.isPresent()) {
-            User user = entityManager.find(User.class, userId);
-            for (Roles role : new HashSet<>(user.getRoles())) {
-                // Remove the role from the user's roles
-                user.getRoles().clear();
-            }
-            userRepository.deleteById(userId);
 
+        if (userForDeletion.isPresent()) {
+            User user = userForDeletion.get(); // Get the user entity
+
+            // Clear the user's roles to manage the association
+            user.getRoles().clear(); // This will manage the join table automatically if CascadeType is set properly
+
+            // Now delete the user
+            userRepository.delete(user); // Delete the user entity
 
             return "User deleted successfully";
         } else {
             return "User not found";
         }
     }
+
+
 
 }
