@@ -94,12 +94,15 @@ public class UserServiceImpl implements UserService {
     @PreAuthorize("hasRole('ROLE_SUPERADMIN')")
     public String deleteUserById(Long userId) {
         Optional<User> userForDeletion = userRepository.findById(userId);
-        if(userForDeletion.isPresent()){
-            User user = userForDeletion.get();
-            userRepository.deleteById(user.getId());
+        if (userForDeletion.isPresent()) {
+            // Step 1: Delete user roles associations in user_roles table
+            userRepository.deleteUserRolesByUserId(userId);
+
+            // Step 2: Delete the user
+            userRepository.deleteById(userId);
+
             return "User deleted successfully";
-        }
-        else{
+        } else {
             return "User not found";
         }
     }
