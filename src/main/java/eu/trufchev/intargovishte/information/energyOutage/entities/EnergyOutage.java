@@ -15,6 +15,6 @@ public class EnergyOutage {
     private Long id;
     @Column(name = "location_period")
     private String location_period;
-    @Column(name = "location_text", length = 1000)
+    @Column(name = "location_text", length = 5000)
     private String location_text;
 }

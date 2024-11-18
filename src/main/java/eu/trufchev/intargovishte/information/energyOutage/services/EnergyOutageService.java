@@ -58,7 +58,7 @@ public class EnergyOutageService {
 
             return energyOutages;
         } catch (Exception e) {
-            throw new RuntimeException("Error parsing or saving the municipality event", e);
+            throw new RuntimeException("Error parsing or saving the energy outage information", e);
         }
     }
 
