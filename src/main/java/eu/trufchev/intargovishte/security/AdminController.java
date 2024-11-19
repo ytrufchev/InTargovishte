@@ -128,7 +128,10 @@ public class AdminController {
         if (event.isEmpty()) {
             return ResponseEntity.noContent().build(); // Return 204 if no pending events found
         }
-        return ResponseEntity.ok(event.get());
+        EventEntity approvedEvent = event.get();
+        approvedEvent.setStatus(StatusENUMS.APPROVED);
+        eventEntityRepository.save(approvedEvent);
+        return ResponseEntity.ok(approvedEvent);
     }
 
 
