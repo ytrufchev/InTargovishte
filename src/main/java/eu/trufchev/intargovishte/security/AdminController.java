@@ -122,7 +122,7 @@ public class AdminController {
         return ResponseEntity.ok(events);
     }
 
-    @GetMapping("/events/approve/{id}")
+    @PostMapping("/events/approve/{id}")
     public ResponseEntity<EventEntity> approveAnEvents(@PathVariable Long eventId) {
         Optional<EventEntity> event = eventEntityRepository.findById(eventId); // Use a repository method to filter by status
         if (event.isEmpty()) {
