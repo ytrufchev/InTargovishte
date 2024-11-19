@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventEntityRepository extends CrudRepository<EventEntity, Long> {
-    @Query("SELECT e FROM EventEntity e WHERE e.date >= :today ORDER BY e.date ASC")
+    @Query("SELECT e FROM EventEntity e WHERE e.date >= :today AND e.status = 'APPROVED' ORDER BY e.date ASC")
     List<EventEntity> findNextTenEvents(@Param("today") Long today);
 
     @Query("SELECT e FROM EventEntity e WHERE e.date <= :yesterday")
