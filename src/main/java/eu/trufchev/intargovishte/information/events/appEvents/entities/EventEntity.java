@@ -28,7 +28,7 @@ public class EventEntity {
     private String image;
     @Column(name = "date")
     @JsonFormat(shape = JsonFormat.Shape.NUMBER)
-    private String date;
+    private Long date;
     @Column(name = "location")
     private String location;
     @Column(name = "status")
