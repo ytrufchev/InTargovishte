@@ -2,6 +2,7 @@ package eu.trufchev.intargovishte.information.events.appEvents;
 
 import eu.trufchev.intargovishte.information.events.appEvents.dto.EventDTO;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
+import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
 import eu.trufchev.intargovishte.information.events.appEvents.repositories.EventEntityRepository;
 import eu.trufchev.intargovishte.information.events.appEvents.services.EventAppService;
 import eu.trufchev.intargovishte.security.CustomUserDetailsService;
@@ -17,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -54,16 +56,17 @@ public class EventEntityController {
                 eventDTO.getDate(), // Now just get the date from DTO
                 eventDTO.getLocation(),
                 eventDTO.getImage(),
-                eventDTO.getUserId()
+                eventDTO.getUserId(),
+                StatusENUMS.PENDING
         );
 
         return ResponseEntity.ok(createdEvent);
     }
 
     // GetMapping to retrieve all events
-    @GetMapping("/all")
+    @GetMapping("/approved")
     public ResponseEntity<List<EventEntity>> getAllEvents() {
-        List<EventEntity> events = eventAppService.getEvents();
+        List<EventEntity> events = eventAppService.findByStatus(StatusENUMS.APPROVED);;
         return ResponseEntity.ok(events);
     }
     @GetMapping("/topten")

@@ -1,6 +1,7 @@
 package eu.trufchev.intargovishte.security;
 
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
+import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
 import eu.trufchev.intargovishte.information.events.appEvents.repositories.EventEntityRepository;
 import eu.trufchev.intargovishte.information.fuelo.entities.GasStation;
 import eu.trufchev.intargovishte.information.fuelo.entities.GasstationsList;
@@ -111,6 +112,23 @@ public class AdminController {
         List<Roles> roles = new ArrayList<>();
         rolesRepository.findAll().forEach(roles::add);
         return ResponseEntity.ok(roles);
+    }
+    @GetMapping("/events/pending")
+    public ResponseEntity<List<EventEntity>> getPendingEvents() {
+        List<EventEntity> events = eventEntityRepository.findByStatus(StatusENUMS.PENDING); // Use a repository method to filter by status
+        if (events.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Return 204 if no pending events found
+        }
+        return ResponseEntity.ok(events);
+    }
+
+    @PostMapping("/events/approve")
+    public ResponseEntity<EventEntity> approveAnEvents(@RequestParam Long eventId) {
+        Optional<EventEntity> event = eventEntityRepository.findById(eventId); // Use a repository method to filter by status
+        if (event.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Return 204 if no pending events found
+        }
+        return ResponseEntity.ok(event.get());
     }
 
 

@@ -1,6 +1,7 @@
 package eu.trufchev.intargovishte.information.events.appEvents.repositories;
 
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
+import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -17,4 +18,6 @@ public interface EventEntityRepository extends CrudRepository<EventEntity, Long>
     List<EventEntity> findEventsBefore(@Param("yesterday") String yesterday);
 
     List<EventEntity> findByUser(Long user);
+
+    List<EventEntity> findByStatus(StatusENUMS status);
 }

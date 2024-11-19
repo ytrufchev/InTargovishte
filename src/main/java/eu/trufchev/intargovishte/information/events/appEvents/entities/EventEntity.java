@@ -1,6 +1,7 @@
 package eu.trufchev.intargovishte.information.events.appEvents.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
 import eu.trufchev.intargovishte.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,6 +31,8 @@ public class EventEntity {
     private String date;
     @Column(name = "location")
     private String location;
+    @Column(name = "status")
+    private StatusENUMS status;
 //    @Column(name = "likes")
 //    @ManyToOne
 //    private List<Likes> likes;
