@@ -42,10 +42,10 @@ public class EventAppService {
         // Save and return the event
         return eventEntityRepository.save(event);
     }
-    public List<EventEntity> getTopEvents() {
+    public List<EventEntity> findNextTenApprovedEvents() {
         Long today = System.currentTimeMillis();
         List<EventEntity> events = new ArrayList<>();
-        eventEntityRepository.findNextTenEvents(today).forEach(events::add);
+        eventEntityRepository.findNextTenApprovedEvents(today, StatusENUMS.APPROVED).forEach(events::add);
         return events;
     }
     public List<EventEntity> findByStatus(StatusENUMS status) {
