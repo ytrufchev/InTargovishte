@@ -122,8 +122,8 @@ public class AdminController {
         return ResponseEntity.ok(events);
     }
 
-    @PostMapping("/events/approve")
-    public ResponseEntity<EventEntity> approveAnEvents(@RequestParam Long eventId) {
+    @PostMapping("/events/approve/{id]")
+    public ResponseEntity<EventEntity> approveAnEvents(@PathVariable Long eventId) {
         Optional<EventEntity> event = eventEntityRepository.findById(eventId); // Use a repository method to filter by status
         if (event.isEmpty()) {
             return ResponseEntity.noContent().build(); // Return 204 if no pending events found
