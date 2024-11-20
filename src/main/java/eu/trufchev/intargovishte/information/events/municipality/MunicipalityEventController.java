@@ -24,7 +24,7 @@ public class MunicipalityEventController {
     @Autowired
     MunicipalityEventRepository municipalityEventRepository;
 
-    @PostMapping("/update")
+    @GetMapping("/update")
     public ResponseEntity<List<MunicipalityEvent>> createMunicipalityEvents() {
         List<MunicipalityEvent> municipalityEvents = (List<MunicipalityEvent>) municipalityEventService.parseAndSave();
         return ResponseEntity.status(HttpStatus.CREATED).body(municipalityEvents);

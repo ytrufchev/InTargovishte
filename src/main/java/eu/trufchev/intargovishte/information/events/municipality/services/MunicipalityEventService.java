@@ -47,8 +47,8 @@ public class MunicipalityEventService {
 
     public List<MunicipalityEvent> parseAndSave() {
         try {
-            // Parse the JSON string into a JsonNode (tree model)
-            JsonNode rootNode = objectMapper.readTree(fetchEvents());
+            String data = fetchEvents();
+            JsonNode rootNode = objectMapper.readTree(data);
             List<MunicipalityEvent> municipalityEvents = new ArrayList<>();
             // Iterate over the JSON array (assuming the root is an array)
             for (int i = 1; i < rootNode.size(); i++) {
