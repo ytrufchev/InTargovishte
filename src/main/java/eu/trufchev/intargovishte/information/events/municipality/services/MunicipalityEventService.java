@@ -12,6 +12,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -41,7 +42,29 @@ public class MunicipalityEventService {
                 "empty",
                 "cors",
                 "same-origin",
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+                "targovishte.bg1005",
+                "content",
+                "98cf5967-2cf7-4bda-9bf5-f41a08cc073a",
+                "cf1370df-43a1-4012-ba01-85607cf3fe92",
+                Arrays.asList("body", "summary", "startEventDate", "endEventDate", "eventType"),
+                "municipality-targovishte",
+                Arrays.asList("title", "publishDate", "generalDateOne"),
+                50,
+                1,
+                "https://targovishte.bg/wps/portal/municipality-targovishte/actual/events/",
+                "dd.MM.yyyy",
+                false,
+                true,
+                "generalDateOne",
+                "publishDate",
+                "title",
+                false,
+                "",
+                "",
+                "",
+                "generalDateOne",
+                ""
         );
     }
 
