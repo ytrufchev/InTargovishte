@@ -19,6 +19,6 @@ public class VikOutage {
     private String startTime;
     @Column(name  = "endTime")
     private String endTime;
-    @Column(name = "description", length = 500)
+    @Column(name = "description", length = 10000)
     private String description;
 }
