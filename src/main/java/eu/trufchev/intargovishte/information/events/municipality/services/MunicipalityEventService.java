@@ -3,6 +3,7 @@ package eu.trufchev.intargovishte.information.events.municipality.services;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.trufchev.intargovishte.information.events.municipality.entities.MunicipalityEvent;
+import eu.trufchev.intargovishte.information.events.municipality.feignClient.TargovishteClient;
 import eu.trufchev.intargovishte.information.events.municipality.repository.MunicipalityEventRepository;
 import org.jsoup.Jsoup;
 import org.springframework.stereotype.Service;
@@ -18,16 +19,36 @@ public class MunicipalityEventService {
 
     private final MunicipalityEventRepository municipalityEventRepository;
     private final ObjectMapper objectMapper;
+    private final TargovishteClient targovishteClient;
 
-    public MunicipalityEventService(MunicipalityEventRepository municipalityEventRepository) {
+    public MunicipalityEventService(MunicipalityEventRepository municipalityEventRepository, TargovishteClient targovishteClient) {
         this.municipalityEventRepository = municipalityEventRepository;
+        this.targovishteClient = targovishteClient;
         this.objectMapper = new ObjectMapper();
     }
 
-    public List<MunicipalityEvent> parseAndSave(String jsonEvent) {
+    public String fetchEvents() {
+        return targovishteClient.getMunicipalityEvents(
+                "*/*",
+                "gzip, deflate, br, zstd",
+                "en-US,en;q=0.9",
+                "keep-alive",
+                "targovishte.bg",
+                "https://targovishte.bg/wps/portal/municipality-targovishte/actual/events",
+                "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\"",
+                "?0",
+                "\"macOS\"",
+                "empty",
+                "cors",
+                "same-origin",
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+        );
+    }
+
+    public List<MunicipalityEvent> parseAndSave() {
         try {
             // Parse the JSON string into a JsonNode (tree model)
-            JsonNode rootNode = objectMapper.readTree(jsonEvent);
+            JsonNode rootNode = objectMapper.readTree(fetchEvents());
             List<MunicipalityEvent> municipalityEvents = new ArrayList<>();
             // Iterate over the JSON array (assuming the root is an array)
             for (int i = 1; i < rootNode.size(); i++) {

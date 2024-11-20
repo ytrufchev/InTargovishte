@@ -25,8 +25,8 @@ public class MunicipalityEventController {
     MunicipalityEventRepository municipalityEventRepository;
 
     @PostMapping("/update")
-    public ResponseEntity<List<MunicipalityEvent>> createMunicipalityEvents(@RequestBody String jsonEvents) {
-        List<MunicipalityEvent> municipalityEvents = (List<MunicipalityEvent>) municipalityEventService.parseAndSave(jsonEvents);
+    public ResponseEntity<List<MunicipalityEvent>> createMunicipalityEvents() {
+        List<MunicipalityEvent> municipalityEvents = (List<MunicipalityEvent>) municipalityEventService.parseAndSave();
         return ResponseEntity.status(HttpStatus.CREATED).body(municipalityEvents);
     }
     @GetMapping("/all")
