@@ -118,7 +118,6 @@ public class UserServiceImpl implements UserService {
         }
     }
     @Transactional
-    @PreAuthorize("hasRole('ROLE_SUPERADMIN')")
     public String deletePersonalUser(Long userId) {
         // Retrieve the user by ID
         refreshTokenRepository.deleteByUserId(userId);

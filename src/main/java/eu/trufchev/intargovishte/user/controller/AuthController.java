@@ -138,7 +138,7 @@ public class AuthController {
             User user = userRepository.findByUsername(username);
 
             if (user != null && user.getId().equals(userId)) {
-                userRepository.deleteById(userId);
+                userServiceImpl.deletePersonalUser(userId);
             } else {
                 throw new AccessDeniedException("You can only delete your own account.");
             }
