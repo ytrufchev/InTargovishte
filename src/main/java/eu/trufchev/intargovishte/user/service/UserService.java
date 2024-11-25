@@ -11,4 +11,5 @@ public interface UserService {
     public String register(RegisterDto registerDto) throws APIException;
     public String login(LoginDto loginDto);
     public User findByUsername(String username);
+
 }

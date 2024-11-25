@@ -56,6 +56,8 @@ public class AdminController {
     public String deleteUser(@PathVariable Long userId) {
         return userService.deleteUserById(userId);
     }
+
+
     @DeleteMapping("/deletenews/{newsId}")
     public String deleteNewsEntry(@PathVariable Long newsId) {
         Optional<News> newsForDeletion = newsRepository.findById(newsId);

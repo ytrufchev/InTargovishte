@@ -15,10 +15,13 @@ import lombok.AllArgsConstructor;
 import org.jsoup.Jsoup;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -120,6 +123,31 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid refresh token");
         }
     }
+
+    @DeleteMapping("/deleteuser/{userId}")
+    public void deleteUser(@PathVariable("userId") Long userId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+            // Use userDetails.getUsername() to identify the user without casting
+            String username = userDetails.getUsername();
+
+            // Fetch the authenticated user from the database
+            User user = userRepository.findByUsername(username);
+
+            if (user != null && user.getId().equals(userId)) {
+                userRepository.deleteById(userId);
+            } else {
+                throw new AccessDeniedException("You can only delete your own account.");
+            }
+        } else {
+            throw new AccessDeniedException("User not authenticated.");
+        }
+    }
+
+
 //        TODO: Remove when appropriate
 //    @PostMapping("/escalate")
 //    public ResponseEntity<User> escalate(@RequestParam String username){
