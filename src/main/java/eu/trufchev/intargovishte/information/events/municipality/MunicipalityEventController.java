@@ -3,6 +3,7 @@ package eu.trufchev.intargovishte.information.events.municipality;
 import eu.trufchev.intargovishte.information.events.municipality.entities.MunicipalityEvent;
 import eu.trufchev.intargovishte.information.events.municipality.repository.MunicipalityEventRepository;
 import eu.trufchev.intargovishte.information.events.municipality.services.MunicipalityEventService;
+import eu.trufchev.intargovishte.information.news.feignClients.CurlEvents;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,4 +51,9 @@ public class MunicipalityEventController {
         Collections.reverse(futureEvents);
         return ResponseEntity.ok(futureEvents);
     }
+    @GetMapping("/test")
+    public void testCurl(){
+       CurlEvents.CurlEvent();
+    }
+
 }
