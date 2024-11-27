@@ -93,7 +93,6 @@ public class MunicipalityEventService {
                     .header("Accept", "*/*")
                     .header("Accept-Encoding", "gzip, deflate, br, zstd")
                     .header("Accept-Language", "en-US,en;q=0.9")
-                    .header("Connection", "keep-alive")
                     .header("Host", "targovishte.bg")
                     .header("Referer", "https://targovishte.bg/wps/portal/municipality-targovishte/actual/events")
                     .header("Sec-Ch-Ua", "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\"")
