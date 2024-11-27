@@ -18,6 +18,8 @@ import eu.trufchev.intargovishte.information.events.puppetTheatre.entities.Puppe
 import eu.trufchev.intargovishte.information.events.puppetTheatre.repositories.PuppetTheaterRepository;
 import eu.trufchev.intargovishte.information.fuelo.entities.GasStation;
 import eu.trufchev.intargovishte.information.fuelo.repository.GasStationRepository;
+import eu.trufchev.intargovishte.information.news.entities.News;
+import eu.trufchev.intargovishte.information.news.services.NewsService;
 import eu.trufchev.intargovishte.information.roadConditions.entities.RoadConditions;
 import eu.trufchev.intargovishte.information.roadConditions.repositories.RoadConditionsRepository;
 import eu.trufchev.intargovishte.information.vikOutage.entities.VikOutage;
@@ -61,6 +63,8 @@ public class GuestController {
     PuppetTheaterRepository puppetTheaterRepository;
     @Autowired
     ProjectionRepository projectionRepository;
+    @Autowired
+    NewsService newsService;
 
     @GetMapping("/energy")
     public ResponseEntity<List<EnergyOutage>> getAllEnergyOutages(){
@@ -167,5 +171,11 @@ public class GuestController {
                     }
                 })
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/allnews")
+    public ResponseEntity<List<News>> getAllNews() {
+        List<News> news = newsService.getAllNews();
+        return ResponseEntity.ok(news);
     }
 }
