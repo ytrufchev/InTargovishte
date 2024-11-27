@@ -1,15 +1,12 @@
 package eu.trufchev.intargovishte.information.events.municipality.feignClient;
 
-import eu.trufchev.intargovishte.FeignConfig;
-import eu.trufchev.intargovishte.FeignConfigMunicipalityOnly;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(
         name = "targovishteClient",
-        url = "https://targovishte.bg",
-        configuration = FeignConfigMunicipalityOnly.class
+        url = "https://targovishte.bg"
 )
 public interface TargovishteClient {
 
@@ -50,7 +47,7 @@ public interface TargovishteClient {
             @RequestParam(name = "filterByProperties") String filterByProperties
     );
 
-    // Overloaded method with no parameters, delegating to the parameterized method with default values
+    // Overloaded method with default parameters for simplicity
     default String getEvents() {
         return getEvents(
                 "targovishte.bg1005",
