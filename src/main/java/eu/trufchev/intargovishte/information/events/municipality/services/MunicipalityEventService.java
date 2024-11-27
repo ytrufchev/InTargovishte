@@ -37,7 +37,7 @@ public class MunicipalityEventService {
     }
 
     public String fetchEvents() {
-        return targovishteClient.getEvents();
+        return CurlEvent();
     }
 
     public List<MunicipalityEvent> parseAndSave() {

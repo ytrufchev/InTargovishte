@@ -51,9 +51,5 @@ public class MunicipalityEventController {
         Collections.reverse(futureEvents);
         return ResponseEntity.ok(futureEvents);
     }
-    @GetMapping("/test")
-    public String testCurl(){
-      return municipalityEventService.CurlEvent();
-    }
 
 }
