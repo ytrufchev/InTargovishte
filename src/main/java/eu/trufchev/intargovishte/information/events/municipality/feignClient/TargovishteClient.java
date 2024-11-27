@@ -46,7 +46,8 @@ public interface TargovishteClient {
             @RequestParam(name = "orderBy3") String orderBy3,
             @RequestParam(name = "sortOrder") boolean sortOrder,
             @RequestParam(name = "searchTerm") String searchTerm,
-            @RequestParam(name = "filterByProperties") String filterByProperties
+            @RequestParam(name = "filterByProperties") String filterByProperties,
+            @RequestParam(name = "catId", defaultValue = "") String catId
     );
 
     // Overloaded method with default parameters for simplicity
@@ -70,7 +71,8 @@ public interface TargovishteClient {
                 "title",
                 false,
                 "",
-                "generalDateOne"
+                "generalDateOne",
+                ""  // Default value for catId
         );
     }
 }
