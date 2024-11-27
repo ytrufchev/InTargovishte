@@ -24,11 +24,6 @@ public class MunicipalityEventController {
     MunicipalityEventService municipalityEventService;
     @Autowired
     MunicipalityEventRepository municipalityEventRepository;
-    CurlEvents curlEvents;
-
-    public void MunicipalityEventService(CurlEvents curlEvents){
-        this.curlEvents = curlEvents;
-    }
 
     @GetMapping("/update")
     public ResponseEntity<List<MunicipalityEvent>> createMunicipalityEvents() {
@@ -57,8 +52,8 @@ public class MunicipalityEventController {
         return ResponseEntity.ok(futureEvents);
     }
     @GetMapping("/test")
-    public void testCurl(){
-       CurlEvents.CurlEvent();
+    public String testCurl(){
+      return municipalityEventService.CurlEvent();
     }
 
 }
