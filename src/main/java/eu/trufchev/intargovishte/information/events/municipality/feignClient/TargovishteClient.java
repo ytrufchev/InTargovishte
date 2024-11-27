@@ -1,12 +1,14 @@
 package eu.trufchev.intargovishte.information.events.municipality.feignClient;
 
+import eu.trufchev.intargovishte.FeignConfigMunicipalityOnly;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(
         name = "targovishteClient",
-        url = "https://targovishte.bg"
+        url = "https://targovishte.bg",
+        configuration =  FeignConfigMunicipalityOnly.class
 )
 public interface TargovishteClient {
 
