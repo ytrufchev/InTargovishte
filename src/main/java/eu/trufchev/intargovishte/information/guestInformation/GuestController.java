@@ -4,8 +4,12 @@ import eu.trufchev.intargovishte.information.energyOutage.entities.EnergyOutage;
 import eu.trufchev.intargovishte.information.energyOutage.repositories.EnergyOutageRepository;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
 import eu.trufchev.intargovishte.information.events.appEvents.services.EventAppService;
+import eu.trufchev.intargovishte.information.events.cinemagic.dto.MovieWithProjectionsDTO;
 import eu.trufchev.intargovishte.information.events.cinemagic.entities.Movie;
+import eu.trufchev.intargovishte.information.events.cinemagic.entities.MovieWithProjections;
+import eu.trufchev.intargovishte.information.events.cinemagic.entities.Projections;
 import eu.trufchev.intargovishte.information.events.cinemagic.repositories.MovieRepository;
+import eu.trufchev.intargovishte.information.events.cinemagic.repositories.ProjectionRepository;
 import eu.trufchev.intargovishte.information.events.dramaTheatre.entities.Play;
 import eu.trufchev.intargovishte.information.events.dramaTheatre.repository.PlaysRepository;
 import eu.trufchev.intargovishte.information.events.municipality.entities.MunicipalityEvent;
@@ -55,6 +59,8 @@ public class GuestController {
     MunicipalityEventRepository municipalityEventRepository;
     @Autowired
     PuppetTheaterRepository puppetTheaterRepository;
+    @Autowired
+    ProjectionRepository projectionRepository;
 
     @GetMapping("/energy")
     public ResponseEntity<List<EnergyOutage>> getAllEnergyOutages(){
@@ -93,8 +99,12 @@ public class GuestController {
         return ResponseEntity.ok(topTenEvents);
     }
     @GetMapping("/listmovies")
-    public List<Movie> moviesList(){
-        return (List<Movie>) movieRepository.findAll();
+    public ResponseEntity<List<MovieWithProjections>> screenings(){
+        List<Movie> movies = (List<Movie>) movieRepository.findAll();
+        List<Projections> projections = (List<Projections>) projectionRepository.findAll();
+        MovieWithProjectionsDTO movieWithProjectionsDTO = new MovieWithProjectionsDTO();
+        List<MovieWithProjections> movieWithProjectionsList = movieWithProjectionsDTO.combineMovieWithProjections(movies, projections);
+        return ResponseEntity.ok(movieWithProjectionsList);
     }
 
     @GetMapping("/allplays")
