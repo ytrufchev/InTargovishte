@@ -92,7 +92,7 @@ public class MunicipalityEventService {
                     .header("Sec-Fetch-Site", "same-origin")
                     .header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36")
                     .header("Content-Type", "application/x-www-form-urlencoded")
-                    .POST(HttpRequest.BodyPublishers.ofString("context=targovishte.bg1005&libName=content&saId=98cf5967-2cf7-4bda-9bf5-f41a08cc073a"))
+                    .GET()
                     .build();
 
             // Send the request
