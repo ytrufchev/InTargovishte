@@ -77,7 +77,19 @@ public class MunicipalityEventService {
 
             // Build the request using curl headers and URL
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new URI("https://targovishte.bg/customSearchWCM/query?context=targovishte.bg1005&libName=content&saId=98cf5967-2cf7-4bda-9bf5-f41a08cc073a&atId=cf1370df-43a1-4012-ba01-85607cf3fe92&returnElements=body,summary,startEventDate,endEventDate,eventType&filterByElements=&rootPage=municipality-targovishte&returnProperties=title,publishDate,generalDateOne&rPP=50&currentPage=1&currentUrl=https%3A%2F%2Ftargovishte.bg%2Fwps%2Fportal%2Fmunicipality-targovishte%2Factual%2Fevents%2F&dateFormat=dd.MM.yyyy&ancestors=false&descendants=true&orderBy=generalDateOne&orderBy2=publishDate&orderBy3=title&sortOrder=false&searchTerm=&from=&before=&filterByProperties=generalDateOne&catId="))
+                    .uri(new URI("https://targovishte.bg/customSearchWCM/query" +
+                            "?context=targovishte.bg1005" +
+                            "&libName=content" +
+                            "&saId=98cf5967-2cf7-4bda-9bf5-f41a08cc073a" +
+                            "&atId=cf1370df-43a1-4012-ba01-85607cf3fe92" +
+                            "&returnElements=body,summary,startEventDate,endEventDate,eventType" +
+                            "&filterByElements=&rootPage=municipality-targovishte" +
+                            "&returnProperties=title,publishDate,generalDateOne" +
+                            "&rPP=50&currentPage=1" +
+                            "&currentUrl=https%3A%2F%2Ftargovishte.bg%2Fwps%2Fportal%2Fmunicipality-targovishte%2Factual%2Fevents%2F" +
+                            "&dateFormat=dd.MM.yyyy&ancestors=false&descendants=true" +
+                            "&orderBy=generalDateOne&orderBy2=publishDate&orderBy3=title" +
+                            "&sortOrder=false&searchTerm=&from=&before=&filterByProperties=generalDateOne&catId="))
                     .header("Accept", "*/*")
                     .header("Accept-Encoding", "gzip, deflate, br, zstd")
                     .header("Accept-Language", "en-US,en;q=0.9")
@@ -91,7 +103,7 @@ public class MunicipalityEventService {
                     .header("Sec-Fetch-Mode", "cors")
                     .header("Sec-Fetch-Site", "same-origin")
                     .header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36")
-                    .header("Content-Type", "application/x-www-form-urlencoded")
+                    .header("Postman-Token", "3e68808c-cdb6-4a9b-89c2-d361c7064189")
                     .GET()
                     .build();
 
