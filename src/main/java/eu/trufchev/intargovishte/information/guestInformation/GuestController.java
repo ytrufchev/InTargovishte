@@ -134,7 +134,7 @@ public class GuestController {
         return ResponseEntity.ok(futureEvents);
     }
 
-    @GetMapping("allpuppet")
+    @GetMapping("/allpuppet")
     public List<PuppetTheater> allPuppetTheaterEvents(){
         LocalDate currentDate = LocalDate.now();
         int currentYear = currentDate.getYear();
