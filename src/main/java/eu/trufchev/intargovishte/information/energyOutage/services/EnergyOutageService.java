@@ -24,9 +24,10 @@ public class EnergyOutageService {
     @Autowired
     private EnergoProClient energoProClient;
 
-    public EnergyOutageService(EnergyOutageRepository energyOutageRepository, ObjectMapper objectMapper) {
+    public EnergyOutageService(EnergyOutageRepository energyOutageRepository, ObjectMapper objectMapper, EnergoProClient energoProClient) {
         this.energyOutageRepository = energyOutageRepository;
         this.objectMapper = new ObjectMapper();
+        this.energoProClient = energoProClient;
     }
 
     public List<EnergyOutage> updateEnergyOutages(String jsonEvent){
