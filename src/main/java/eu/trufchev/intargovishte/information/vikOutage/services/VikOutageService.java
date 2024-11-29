@@ -21,6 +21,9 @@ public class VikOutageService {
 
     public List<VikOutage> fetchAndParseVikOutage() {
         String htmlResponse = vikOutageClient.getOutage("15", "53", "50");
+        if (htmlResponse == null || htmlResponse.isBlank()) {
+            return new ArrayList<>();
+        }
         Document doc = Jsoup.parse(htmlResponse);
 
         List<VikOutage> vikOutages = new ArrayList<>();

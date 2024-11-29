@@ -91,4 +91,26 @@ class VikOutageControllerTest {
         assertEquals("Saved Outage 2", response.getBody().get(1).getDescription());
         verify(vikOutageRepository, times(1)).findAll();
     }
+
+    @Test
+    void testCronUpdate() {
+        // Arrange
+        VikOutage vikOutage1 = new VikOutage();
+        vikOutage1.setDescription("Cron Outage 1");
+        VikOutage vikOutage2 = new VikOutage();
+        vikOutage2.setDescription("Cron Outage 2");
+
+        List<VikOutage> mockOutages = Arrays.asList(vikOutage1, vikOutage2);
+        when(vikOutageService.fetchAndParseVikOutage()).thenReturn(mockOutages);
+
+        // Act
+        ResponseEntity<List<VikOutage>> response = vikOutageController.cronUpdate();
+
+        // Assert
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(2, response.getBody().size());
+        verify(vikOutageRepository, times(1)).deleteAll();
+        verify(vikOutageRepository, times(1)).saveAll(mockOutages);
+    }
 }
+
