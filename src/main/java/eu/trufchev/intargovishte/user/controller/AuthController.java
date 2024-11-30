@@ -149,17 +149,25 @@ public class AuthController {
 
 
 //        TODO: Remove when appropriate
-    @PostMapping("/escalate")
-    public ResponseEntity<User> escalate(@RequestParam String username){
-        User user = userRepository.findByUsername(username);
-        Roles superAdminRole = new Roles();
-        superAdminRole.setName(Roles.SUPERADMIN); // Assuming Roles.SUPERADMIN is defined as "ROLE_SUPERADMIN"
-        // Add the SUPERADMIN role to the user's existing roles
-        Set<Roles> roles = user.getRoles();
-        roles.add(superAdminRole);
-        user.setRoles(roles);
-        userRepository.save(user);
-        return ResponseEntity.ok(user);
+@PostMapping("/escalate")
+public ResponseEntity<User> escalate(@RequestBody Map<String, String> payload) {
+    String username = payload.get("username");
+    User user = userRepository.findByUsername(username);
+
+    if (user == null) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Handle case where user is not found
     }
+
+    Roles superAdminRole = new Roles();
+    superAdminRole.setName(Roles.SUPERADMIN); // Assuming Roles.SUPERADMIN is defined as "ROLE_SUPERADMIN"
+
+    // Add the SUPERADMIN role to the user's existing roles
+    Set<Roles> roles = user.getRoles();
+    roles.add(superAdminRole);
+    user.setRoles(roles);
+    userRepository.save(user);
+
+    return ResponseEntity.ok(user);
+}
 
 }
