@@ -8,6 +8,7 @@ import eu.trufchev.intargovishte.user.dto.LoginDto;
 import eu.trufchev.intargovishte.user.dto.RegisterDto;
 import eu.trufchev.intargovishte.user.entity.Roles;
 import eu.trufchev.intargovishte.user.entity.User;
+import eu.trufchev.intargovishte.user.repository.RolesRepository;
 import eu.trufchev.intargovishte.user.repository.UserRepository;
 import eu.trufchev.intargovishte.user.service.UserService;
 import eu.trufchev.intargovishte.user.service.impl.UserServiceImpl;
@@ -39,6 +40,7 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
     private final UserServiceImpl userServiceImpl;
     private final JwtTokenProvider jwtTokenProvider;
+    private RolesRepository rolesRepository;
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterDto registerDto){
@@ -150,24 +152,26 @@ public class AuthController {
 
 //        TODO: Remove when appropriate
 @PostMapping("/escalate")
-public ResponseEntity<User> escalate(@RequestBody Map<String, String> payload) {
-    String username = payload.get("username");
+public ResponseEntity<User> escalate(@RequestParam String username) {
     User user = userRepository.findByUsername(username);
-
     if (user == null) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Handle case where user is not found
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
-    Roles superAdminRole = new Roles();
-    superAdminRole.setName(Roles.SUPERADMIN); // Assuming Roles.SUPERADMIN is defined as "ROLE_SUPERADMIN"
+    Roles superAdminRole = rolesRepository.findByName(Roles.SUPERADMIN);
+    if (superAdminRole == null) {
+        superAdminRole = new Roles();
+        superAdminRole.setName(Roles.SUPERADMIN);
+        rolesRepository.save(superAdminRole);
+    }
 
-    // Add the SUPERADMIN role to the user's existing roles
     Set<Roles> roles = user.getRoles();
     roles.add(superAdminRole);
     user.setRoles(roles);
-    userRepository.save(user);
 
-    return ResponseEntity.ok(user);
+    User updatedUser = userRepository.save(user);
+    return ResponseEntity.ok(updatedUser);
 }
+
 
 }
