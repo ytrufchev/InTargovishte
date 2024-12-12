@@ -43,8 +43,7 @@ public class NewsService {
             if (!guidNode.isMissingNode()) {
                 return guidNode.asText();  // Return the image URL
             } else {
-                System.err.println("Image URL not found in the JSON response");
-                return null;
+                return "https://i.sstatic.net/y9DpT.jpg";
             }
         } catch (Exception e) {
             e.printStackTrace();
