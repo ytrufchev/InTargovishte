@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import eu.trufchev.intargovishte.information.news.entities.News;
 import eu.trufchev.intargovishte.information.news.feignClients.NewsClient;
 import eu.trufchev.intargovishte.information.news.feignClients.TargovishteBgClient;
+import eu.trufchev.intargovishte.information.news.feignClients.WordPressFeignClient;
 import eu.trufchev.intargovishte.information.news.repositories.NewsRepository;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,30 @@ public class NewsService {
     TargovishteBgClient targovishteBgClient;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    private WordPressFeignClient wordPressFeignClient;
+
+    public String fetchImageUrl(Long postId) {
+        try {
+            // Fetch media details from the WordPress API using Feign
+            String jsonResponse = wordPressFeignClient.getMediaDetails(postId);
+
+            // Parse the response to extract the image URL
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode rootNode = mapper.readTree(jsonResponse);
+            JsonNode guidNode = rootNode.path("guid").path("rendered");
+
+            if (!guidNode.isMissingNode()) {
+                return guidNode.asText();  // Return the image URL
+            } else {
+                System.err.println("Image URL not found in the JSON response");
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public List<News> getNewsUpdates() throws JsonProcessingException {
         String newsString = newsClient.getNews();
@@ -81,7 +106,7 @@ public class NewsService {
                 String image = news.has("yoast_head_json") && news.get("yoast_head_json").has("og_image")
                         && news.get("yoast_head_json").get("og_image").isArray()
                         ? news.get("yoast_head_json").get("og_image").get(0).get("url").asText()
-                        : null;
+                        : fetchImageUrl(id);
 
                 // Normalize link field
                 String link = news.has("link") ? news.get("link").asText() : null;
