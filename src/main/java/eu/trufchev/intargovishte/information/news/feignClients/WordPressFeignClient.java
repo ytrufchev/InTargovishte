@@ -8,5 +8,5 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface WordPressFeignClient {
 
     @GetMapping("/media/{postId}")
-    String getMediaDetails(@PathVariable("postId") int postId);
+    String getMediaDetails(@PathVariable("postId") Long postId);
 }
