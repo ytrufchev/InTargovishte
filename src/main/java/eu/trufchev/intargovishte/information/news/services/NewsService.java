@@ -30,10 +30,10 @@ public class NewsService {
     @Autowired
     private WordPressFeignClient wordPressFeignClient;
 
-    public String fetchImageUrl(Long postId) {
+    public String fetchImageUrl(String imageUrl) {
         try {
             // Fetch media details from the WordPress API using Feign
-            String jsonResponse = wordPressFeignClient.getMediaDetails(postId);
+            String jsonResponse = wordPressFeignClient.getFromUrl(imageUrl);
 
             // Parse the response to extract the image URL
             ObjectMapper mapper = new ObjectMapper();
@@ -105,7 +105,7 @@ public class NewsService {
                 String image = news.has("yoast_head_json") && news.get("yoast_head_json").has("og_image")
                         && news.get("yoast_head_json").get("og_image").isArray()
                         ? news.get("yoast_head_json").get("og_image").get(0).get("url").asText()
-                        : fetchImageUrl(id);
+                        : fetchImageUrl(news.get("_links").get("wp:featuredmedia").get(0).get("href"));
 
                 // Normalize link field
                 String link = news.has("link") ? news.get("link").asText() : null;
