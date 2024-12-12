@@ -33,6 +33,7 @@ public class NewsService {
         List<News> newsList = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
         String combinedJsonString = "";
+
         try {
             // Parse JSON strings into ArrayNode
             ArrayNode newsArray = (ArrayNode) mapper.readTree(newsString);
@@ -47,20 +48,50 @@ public class NewsService {
             combinedJsonString = mapper.writeValueAsString(combinedArray);
         } catch (Exception e) {
             e.printStackTrace();
+            return newsList; // Return empty list on failure
         }
+
         JsonNode rootNode = mapper.readTree(combinedJsonString);
-        for(JsonNode news : rootNode) {
-            News newsEntry = new News();
-            Long id = news.get("id").longValue();
-            String date = news.get("date").asText();
-            String title = news.get("title").get("rendered").asText();
-            String content = Jsoup.parse(news.get("content").get("rendered").asText()).text().replaceAll(";", "");
-            if (content.length() > 5000) {
-                content = content.substring(0, 5000); // Limit to 15000 characters
-            }
-            String image = news.get("yoast_head_json").get("og_image").get(0).get("url").asText();
-            String link = news.get("link").asText();
-            if (!newsRepository.existsById(id)) {
+        for (JsonNode news : rootNode) {
+            try {
+                News newsEntry = new News();
+
+                // Normalize ID field
+                Long id = news.has("id") ? news.get("id").asLong() : null;
+
+                // Normalize date field
+                String date = news.has("date") ? news.get("date").asText() : null;
+
+                // Normalize title field
+                String title = news.has("title") && news.get("title").has("rendered")
+                        ? news.get("title").get("rendered").asText()
+                        : "Untitled";
+
+                // Normalize content field
+                String content = news.has("content") && news.get("content").has("rendered")
+                        ? Jsoup.parse(news.get("content").get("rendered").asText()).text().replaceAll(";", "")
+                        : "No content available";
+
+                // Trim content if too long
+                if (content.length() > 5000) {
+                    content = content.substring(0, 5000);
+                }
+
+                // Normalize image field
+                String image = news.has("yoast_head_json") && news.get("yoast_head_json").has("og_image")
+                        && news.get("yoast_head_json").get("og_image").isArray()
+                        ? news.get("yoast_head_json").get("og_image").get(0).get("url").asText()
+                        : null;
+
+                // Normalize link field
+                String link = news.has("link") ? news.get("link").asText() : null;
+
+                // Skip if ID is null or already exists in the repository
+                if (id == null || newsRepository.existsById(id)) {
+                    continue;
+                }
+
+                // Populate news entry
                 newsEntry.setId(id);
                 newsEntry.setDate(date);
                 newsEntry.setTitle(title);
@@ -71,10 +102,13 @@ public class NewsService {
 
                 // Save the new news entry to the repository
                 newsRepository.save(newsEntry);
+            } catch (Exception e) {
+                e.printStackTrace(); // Log and skip problematic news items
             }
         }
         return newsList;
     }
+
 
     public List<News> getLatestNews() {
         // Fetch all news sorted by date in descending order
