@@ -1,34 +1,36 @@
 package eu.trufchev.intargovishte.information.news.feignClients;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 public class CurlImage {
 
     public String fetchJsonWithCurl(String url) {
         try {
-            // Prepare the cURL command
-            String[] command = {"curl", "-X", "GET", url};
+            // Create HttpClient instance
+            HttpClient client = HttpClient.newHttpClient();
 
-            // Execute the command
-            ProcessBuilder processBuilder = new ProcessBuilder(command);
-            Process process = processBuilder.start();
+            // Build the request
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(new URI(url))
+                    .GET()
+                    .build();
 
-            // Read the response
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            StringBuilder jsonResponse = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                jsonResponse.append(line);
+            // Send the request
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // Check if response is successful
+            if (response.statusCode() == 200) {
+                return response.body(); // Return the JSON response body
+            } else {
+                System.out.println("Failed with HTTP code: " + response.statusCode());
+                return null; // Handle non-success status codes
             }
-
-            // Wait for the process to complete
-            process.waitFor();
-
-            return jsonResponse.toString();
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return null; // Return null in case of exception
         }
     }
 }
