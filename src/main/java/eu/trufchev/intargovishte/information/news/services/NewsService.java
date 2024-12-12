@@ -7,11 +7,11 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import eu.trufchev.intargovishte.information.news.entities.News;
 import eu.trufchev.intargovishte.information.news.feignClients.NewsClient;
 import eu.trufchev.intargovishte.information.news.feignClients.TargovishteBgClient;
-import eu.trufchev.intargovishte.information.news.feignClients.WordPressFeignClient;
 import eu.trufchev.intargovishte.information.news.repositories.NewsRepository;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import eu.trufchev.intargovishte.information.news.feignClients.CurlImage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +27,12 @@ public class NewsService {
     TargovishteBgClient targovishteBgClient;
     @Autowired
     ObjectMapper objectMapper;
-    @Autowired
-    private WordPressFeignClient wordPressFeignClient;
 
     public String fetchImageUrl(String imageUrl) {
         try {
             // Fetch media details from the WordPress API using Feign
-            String jsonResponse = wordPressFeignClient.getFromUrl(imageUrl);
+            CurlImage curlImage = new CurlImage();
+            String jsonResponse = curlImage.fetchJsonWithCurl(imageUrl);
 
             // Parse the response to extract the image URL
             ObjectMapper mapper = new ObjectMapper();
