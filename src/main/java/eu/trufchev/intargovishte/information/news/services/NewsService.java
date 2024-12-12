@@ -33,7 +33,7 @@ public class NewsService {
             // Fetch media details from the WordPress API using Feign
             CurlImage curlImage = new CurlImage();
             String jsonResponse = curlImage.fetchJsonWithCurl(imageUrl);
-
+            System.out.println("json:  " + jsonResponse);
             // Parse the response to extract the image URL
             ObjectMapper mapper = new ObjectMapper();
             JsonNode rootNode = mapper.readTree(jsonResponse);
