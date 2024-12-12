@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.trufchev.intargovishte.information.news.entities.News;
 import eu.trufchev.intargovishte.information.news.feignClients.NewsClient;
+import eu.trufchev.intargovishte.information.news.feignClients.TargovishteBgClient;
 import eu.trufchev.intargovishte.information.news.repositories.NewsRepository;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,16 @@ public class NewsService {
     @Autowired
     NewsClient newsClient;
     @Autowired
+    TargovishteBgClient targovishteBgClient;
+    @Autowired
     ObjectMapper objectMapper;
 
     public List<News> getNewsUpdates() throws JsonProcessingException {
         String newsString = newsClient.getNews();
+        String targovishtebgnews = targovishteBgClient.getNews();
         List<News> newsList = new ArrayList<>();
-        JsonNode rootNode = objectMapper.readTree(newsString);
+        String combinedJsonString = "[" + newsString + "," + targovishtebgnews + "]";
+        JsonNode rootNode = objectMapper.readTree(combinedJsonString);
         for(JsonNode news : rootNode) {
             News newsEntry = new News();
             Long id = news.get("id").longValue();
