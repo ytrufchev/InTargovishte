@@ -1,11 +1,13 @@
 package eu.trufchev.intargovishte.information.news.feignClients;
 
 import feign.RequestLine;
+import feign.Param;
 import org.springframework.cloud.openfeign.FeignClient;
 
-@FeignClient(name = "wordpress-client", url = "https://targovishtebg.com/wp-json/wp/v2")
+@FeignClient(name = "wordpress-client", url = "") // Base URL not needed here for dynamic URLs
 public interface WordPressFeignClient {
 
-    @RequestLine("GET")
-    String getFromUrl(String url);
+    // Allows passing a complete dynamic URL
+    @RequestLine("GET {url}")
+    String getFromUrl(@Param("url") String url);
 }
