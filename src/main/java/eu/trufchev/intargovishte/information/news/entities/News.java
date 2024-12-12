@@ -20,7 +20,7 @@ public class News {
     private String title;
     @Column(columnDefinition = "TEXT", name = "content", length = 20000)
     private String content;
-    @Column(name = "link")
+    @Column(name = "link", length = 1024)
     private String link;
     @Column(name = "image")
     private String image;
