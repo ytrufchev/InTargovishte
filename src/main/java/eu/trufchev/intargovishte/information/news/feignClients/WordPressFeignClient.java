@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "wordpress-client", url = "https://targovishtebg.com/wp-json/wp/v2")
 public interface WordPressFeignClient {
 
-    @GetMapping("/media/{postId}")
+    @GetMapping("/media")
     String getMediaDetails(@RequestParam("parent") Long postId);
 }
