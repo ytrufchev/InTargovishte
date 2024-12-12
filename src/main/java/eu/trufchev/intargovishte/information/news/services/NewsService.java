@@ -3,6 +3,7 @@ package eu.trufchev.intargovishte.information.news.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import eu.trufchev.intargovishte.information.news.entities.News;
 import eu.trufchev.intargovishte.information.news.feignClients.NewsClient;
 import eu.trufchev.intargovishte.information.news.feignClients.TargovishteBgClient;
@@ -30,8 +31,24 @@ public class NewsService {
         String newsString = newsClient.getNews();
         String targovishtebgnews = targovishteBgClient.getNews();
         List<News> newsList = new ArrayList<>();
-        String combinedJsonString = "[" + newsString + "," + targovishtebgnews + "]";
-        JsonNode rootNode = objectMapper.readTree(combinedJsonString);
+        ObjectMapper mapper = new ObjectMapper();
+        String combinedJsonString = "";
+        try {
+            // Parse JSON strings into ArrayNode
+            ArrayNode newsArray = (ArrayNode) mapper.readTree(newsString);
+            ArrayNode targovishteArray = (ArrayNode) mapper.readTree(targovishtebgnews);
+
+            // Combine arrays
+            ArrayNode combinedArray = mapper.createArrayNode();
+            combinedArray.addAll(newsArray);
+            combinedArray.addAll(targovishteArray);
+
+            // Convert combined array back to JSON string
+            combinedJsonString = mapper.writeValueAsString(combinedArray);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        JsonNode rootNode = mapper.readTree(combinedJsonString);
         for(JsonNode news : rootNode) {
             News newsEntry = new News();
             Long id = news.get("id").longValue();
