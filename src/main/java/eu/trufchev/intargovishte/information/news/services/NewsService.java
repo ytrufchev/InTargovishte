@@ -105,7 +105,7 @@ public class NewsService {
                 String image = news.has("yoast_head_json") && news.get("yoast_head_json").has("og_image")
                         && news.get("yoast_head_json").get("og_image").isArray()
                         ? news.get("yoast_head_json").get("og_image").get(0).get("url").asText()
-                        : fetchImageUrl(news.get("_links").get("wp:featuredmedia").get(0).get("href"));
+                        : fetchImageUrl(news.get("_links").get("wp:featuredmedia").get(0).get("href").asText());
 
                 // Normalize link field
                 String link = news.has("link") ? news.get("link").asText() : null;
