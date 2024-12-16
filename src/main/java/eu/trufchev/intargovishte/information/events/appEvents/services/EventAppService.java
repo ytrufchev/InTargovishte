@@ -1,5 +1,6 @@
 package eu.trufchev.intargovishte.information.events.appEvents.services;
 
+import eu.trufchev.intargovishte.information.events.appEvents.entities.AppEventLike;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
 import eu.trufchev.intargovishte.information.events.appEvents.repositories.EventEntityRepository;
 import eu.trufchev.intargovishte.user.entity.User;
@@ -27,7 +28,7 @@ public class EventAppService {
         return events;
     }
 
-    public EventEntity addEvent(String title, String content, Long date, String location, String image, Long user, StatusENUMS status) {
+    public EventEntity addEvent(String title, String content, Long date, String location, String image, Long user, StatusENUMS status, List<AppEventLike> likes) {
         EventEntity event = new EventEntity();
         event.setTitle(title);
         event.setContent(content);
@@ -35,6 +36,7 @@ public class EventAppService {
         event.setImage(image);
         event.setUser(user);
         event.setStatus(status);
+        event.setLikes(likes);
 
         // Set the event date directly from the incoming date
         event.setDate(date);

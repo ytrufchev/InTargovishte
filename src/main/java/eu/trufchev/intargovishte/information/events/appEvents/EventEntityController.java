@@ -27,6 +27,7 @@ import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,6 +59,7 @@ public class EventEntityController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
 
+        List<AppEventLike> likes = new ArrayList<>();
         // Create the event using the DTO
         EventEntity createdEvent = eventAppService.addEvent(
                 eventDTO.getTitle(),
@@ -66,7 +68,9 @@ public class EventEntityController {
                 eventDTO.getLocation(),
                 eventDTO.getImage(),
                 eventDTO.getUserId(),
-                StatusENUMS.PENDING
+                StatusENUMS.PENDING,
+                likes
+
         );
 
         return ResponseEntity.ok(createdEvent);
