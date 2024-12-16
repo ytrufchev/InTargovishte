@@ -1,13 +1,17 @@
 package eu.trufchev.intargovishte.information.events.appEvents;
 
 import eu.trufchev.intargovishte.information.events.appEvents.dto.EventDTO;
+import eu.trufchev.intargovishte.information.events.appEvents.entities.AppEventLike;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
 import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
+import eu.trufchev.intargovishte.information.events.appEvents.repositories.AppEventLikeRepository;
 import eu.trufchev.intargovishte.information.events.appEvents.repositories.EventEntityRepository;
+import eu.trufchev.intargovishte.information.events.appEvents.services.AppEventLikeService;
 import eu.trufchev.intargovishte.information.events.appEvents.services.EventAppService;
 import eu.trufchev.intargovishte.security.CustomUserDetailsService;
 import eu.trufchev.intargovishte.user.entity.User;
 import eu.trufchev.intargovishte.user.repository.UserRepository;
+import eu.trufchev.intargovishte.user.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +40,10 @@ public class EventEntityController {
     private EventAppService eventAppService;
     @Autowired
     private EventEntityRepository eventEntityRepository;
+    @Autowired
+    private AppEventLikeRepository appEventLikeRepository;
+    @Autowired
+    private AppEventLikeService appEventLikeService;
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -62,6 +71,24 @@ public class EventEntityController {
 
         return ResponseEntity.ok(createdEvent);
     }
+
+    @PostMapping("/{eventId}/toggle")
+    public ResponseEntity<String> toggleLike(@PathVariable long eventId, @AuthenticationPrincipal User authenticatedUser) {
+        EventEntity event = new EventEntity();
+        eventEntityRepository.findById(eventId);
+
+        // Use the authenticated user's ID from the security context
+        boolean isLiked = appEventLikeService.isLikedByUser(event, authenticatedUser);
+
+        if (isLiked) {
+            appEventLikeService.removeLikeByEventAndUser(event, authenticatedUser);
+            return ResponseEntity.ok("Disliked successfully.");
+        } else {
+            appEventLikeService.addLike(event, authenticatedUser);
+            return ResponseEntity.ok("Liked successfully.");
+        }
+    }
+
 
     // GetMapping to retrieve all events
     @GetMapping("/approved")

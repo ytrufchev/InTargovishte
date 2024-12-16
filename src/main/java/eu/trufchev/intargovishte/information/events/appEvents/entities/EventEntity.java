@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.List;
 
 @Getter
 @Setter
@@ -33,9 +34,9 @@ public class EventEntity {
     private String location;
     @Column(name = "status")
     private StatusENUMS status;
-//    @Column(name = "likes")
-//    @ManyToOne
-//    private List<Likes> likes;
+    @Column(name = "likes")
+    @ManyToOne
+    private List<AppEventLike> likes;
 //    @Column(name = "comments")
 //    @ManyToOne
 //    private List<Comment> comments;
