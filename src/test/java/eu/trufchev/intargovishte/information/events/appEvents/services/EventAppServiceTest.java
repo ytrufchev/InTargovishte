@@ -1,5 +1,6 @@
 package eu.trufchev.intargovishte.information.events.appEvents.services;
 
+import eu.trufchev.intargovishte.information.events.appEvents.entities.AppEventLike;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
 import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
 import eu.trufchev.intargovishte.information.events.appEvents.repositories.EventEntityRepository;
@@ -9,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +55,7 @@ class EventAppServiceTest {
     @Test
     void addEvent_ShouldSaveAndReturnEvent() {
         // Arrange
+        List<AppEventLike> likes = new ArrayList<>();
         EventEntity event = new EventEntity();
         event.setId(1L);
         event.setTitle("New Event");
@@ -62,6 +65,7 @@ class EventAppServiceTest {
         event.setImage("image.jpg");
         event.setUser(1L);
         event.setStatus(StatusENUMS.APPROVED);
+        event.setLikes(likes);
 
         when(eventEntityRepository.save(any(EventEntity.class))).thenReturn(event);
 
@@ -73,7 +77,8 @@ class EventAppServiceTest {
                 "Targovishte",
                 "image.jpg",
                 1L,
-                StatusENUMS.APPROVED
+                StatusENUMS.APPROVED,
+                likes
         );
 
         // Assert

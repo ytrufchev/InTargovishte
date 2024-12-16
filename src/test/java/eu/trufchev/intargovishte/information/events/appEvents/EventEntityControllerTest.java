@@ -72,7 +72,7 @@ public class EventEntityControllerTest {
         // Mock the user repository
         when(userRepository.findById(eventDTO.getUserId())).thenReturn(Optional.of(user));
         // Mock the service to return a created event
-        when(eventAppService.addEvent(anyString(), anyString(), anyLong(), anyString(), anyString(), anyLong(), any())).thenReturn(eventEntity);
+        when(eventAppService.addEvent(anyString(), anyString(), anyLong(), anyString(), anyString(), anyLong(), any(), anyList())).thenReturn(eventEntity);
 
         mockMvc.perform(post("/content/inapp/events/add")
                         .contentType("application/json")
