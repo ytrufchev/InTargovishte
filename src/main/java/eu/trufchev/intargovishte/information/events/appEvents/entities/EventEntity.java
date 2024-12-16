@@ -34,8 +34,7 @@ public class EventEntity {
     private String location;
     @Column(name = "status")
     private StatusENUMS status;
-    @Column(name = "likes")
-    @ManyToOne
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
     private List<AppEventLike> likes;
 //    @Column(name = "comments")
 //    @ManyToOne
