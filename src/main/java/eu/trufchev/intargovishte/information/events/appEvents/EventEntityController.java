@@ -78,30 +78,41 @@ public class EventEntityController {
     }
 
     @PostMapping("/toggle/{eventId}")
-    public ResponseEntity<String> toggleLike(@PathVariable long eventId) {
-        // Retrieve the authenticated user
+    public ResponseEntity<String> toggleLike(@PathVariable("eventId") Long eventId) {
+        // Get the authentication context
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !(authentication.getPrincipal() instanceof User)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
-        }
 
-        User authenticatedUser = (User) authentication.getPrincipal();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        // Fetch the event from the repository
-        EventEntity event = eventEntityRepository.findById(eventId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+            // Use userDetails.getUsername() to identify the user
+            String username = userDetails.getUsername();
 
-        // Check if the user already liked the event
-        boolean isLiked = appEventLikeService.isLikedByUser(event, authenticatedUser);
+            // Fetch the custom User entity based on the username
+            User user = userRepository.findByUsername(username);
+            if (user == null) {
+                throw new AccessDeniedException("Authenticated user not found.");
+            }
 
-        if (isLiked) {
-            appEventLikeService.removeLikeByEventAndUser(event, authenticatedUser);
-            return ResponseEntity.ok("Disliked successfully.");
+            // Fetch the event
+            EventEntity event = eventEntityRepository.findById(eventId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+
+            // Check if the user already liked the event
+            boolean isLiked = appEventLikeService.isLikedByUser(event, user);
+
+            if (isLiked) {
+                appEventLikeService.removeLikeByEventAndUser(event, user);
+                return ResponseEntity.ok("Disliked successfully.");
+            } else {
+                appEventLikeService.addLike(event, user);
+                return ResponseEntity.ok("Liked successfully.");
+            }
         } else {
-            appEventLikeService.addLike(event, authenticatedUser);
-            return ResponseEntity.ok("Liked successfully.");
+            throw new AccessDeniedException("User not authenticated");
         }
     }
+
 
     // GetMapping to retrieve all events
     @GetMapping("/approved")
