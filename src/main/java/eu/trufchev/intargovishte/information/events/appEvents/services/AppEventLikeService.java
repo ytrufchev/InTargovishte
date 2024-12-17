@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,9 +26,11 @@ public class AppEventLikeService {
     }
 
     public void removeLikeByEventAndUser(EventEntity event, User user) {
-        AppEventLike like = likeRepository.findByEventIdAndUserId(event.getId(), user.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Like not found"));
-        likeRepository.delete(like);
+        Optional<AppEventLike> eventLike = likeRepository.findByEventIdAndUserId(event.getId(), user.getId());
+        if(eventLike.isPresent()){
+            likeRepository.delete(eventLike.get());
+        }
+
     }
 
     public boolean isLikedByUser(EventEntity event, User user) {
