@@ -59,7 +59,7 @@ public class EventAppService {
             responseEventDTO.setDate(event.getDate());
             responseEventDTO.setLocation(event.getLocation());
             responseEventDTO.setUserId(event.getUser());
-            responseEventDTO.setLikesCount(event.getLikes().stream().count());
+            responseEventDTO.setLikesCount(event.getLikes() != null ? event.getLikes().stream().count() : 0);
             eventDTO.add(responseEventDTO);
         }
         return eventDTO;
