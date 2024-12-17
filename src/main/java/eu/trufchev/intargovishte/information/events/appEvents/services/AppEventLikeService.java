@@ -16,14 +16,14 @@ public class AppEventLikeService {
 
     public AppEventLike addLike(EventEntity event, User user) {
         AppEventLike like = new AppEventLike();
-        like.setEvent(event);
-        like.setUser(user);
+        like.setEvent(event.getId());
+        like.setUser(user.getId());
         like.setLikedAt(Instant.now());
         return likeRepository.save(like);
     }
 
     public void removeLikeByEventAndUser(EventEntity event, User user) {
-        AppEventLike like = likeRepository.findByEventAndUser(event, user)
+        AppEventLike like = likeRepository.findByEventIdAndUserId(event.getId(), user.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Like not found"));
         likeRepository.delete(like);
     }

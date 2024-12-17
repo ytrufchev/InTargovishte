@@ -11,6 +11,6 @@ import java.util.Optional;
 public interface AppEventLikeRepository extends JpaRepository<AppEventLike, Long> {
         List<AppEventLike> findByEventId(long eventId);
         List<AppEventLike> findByUserId(long userId);
-        Optional<AppEventLike> findByEventAndUser(EventEntity event, User user);
+    Optional<AppEventLike> findByEventIdAndUserId(Long eventId, Long userId);
     boolean existsByEventAndUser(EventEntity event, User user);
     }

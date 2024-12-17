@@ -21,12 +21,11 @@ public class AppEventLike {
     @ManyToOne
     @JoinColumn(name = "event_id")
     @JsonBackReference // Prevent recursion during serialization
-    private EventEntity event;
-
+    private Long event;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private Long user;
 
     @Column(name = "liked_at", nullable = false)
     private Instant likedAt;
