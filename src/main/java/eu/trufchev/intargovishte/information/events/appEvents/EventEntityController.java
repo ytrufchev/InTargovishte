@@ -24,6 +24,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -78,10 +79,16 @@ public class EventEntityController {
 
     @PostMapping("/{eventId}/toggle")
     public ResponseEntity<String> toggleLike(@PathVariable long eventId, @AuthenticationPrincipal User authenticatedUser) {
-        EventEntity event = new EventEntity();
-        eventEntityRepository.findById(eventId);
+        // Validate authenticated user
+        if (authenticatedUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
+        }
 
-        // Use the authenticated user's ID from the security context
+        // Fetch the event from the repository
+        EventEntity event = eventEntityRepository.findById(eventId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+
+        // Check if the user already liked the event
         boolean isLiked = appEventLikeService.isLikedByUser(event, authenticatedUser);
 
         if (isLiked) {
@@ -92,6 +99,7 @@ public class EventEntityController {
             return ResponseEntity.ok("Liked successfully.");
         }
     }
+
 
 
     // GetMapping to retrieve all events
