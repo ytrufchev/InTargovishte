@@ -67,6 +67,15 @@ public class EventEntityControllerTest {
         eventEntity.setLocation("Targovishte");
         eventEntity.setImage("image_url");
         eventEntity.setStatus(StatusENUMS.PENDING);
+
+        responseEventDTO = new ResponseEventDTO();
+        responseEventDTO.setUserId(1L);
+        responseEventDTO.setTitle("Event 1");
+        responseEventDTO.setContent("Event content");
+        responseEventDTO.setDate(Instant.now().toEpochMilli());
+        responseEventDTO.setLocation("Targovishte");
+        responseEventDTO.setImage("image_url");
+        responseEventDTO.setLikesCount(1L);
     }
 
     @Test
