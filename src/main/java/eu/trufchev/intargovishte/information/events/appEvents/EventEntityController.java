@@ -77,7 +77,7 @@ public class EventEntityController {
         return ResponseEntity.ok(createdEvent);
     }
 
-    @PostMapping("/{eventId}/toggle")
+    @PostMapping("/toggle/{eventId}")
     public ResponseEntity<String> toggleLike(@PathVariable long eventId, @AuthenticationPrincipal User authenticatedUser) {
         // Validate authenticated user
         if (authenticatedUser == null) {
