@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Principal;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -78,40 +79,27 @@ public class EventEntityController {
     }
 
     @PostMapping("/toggle/{eventId}")
-    public ResponseEntity<String> toggleLike(@PathVariable("eventId") Long eventId) {
-        // Get the authentication context
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-            // Use userDetails.getUsername() to identify the user
-            String username = userDetails.getUsername();
-
-            // Fetch the custom User entity based on the username
-            User user = userRepository.findByUsername(username);
-            if (user == null) {
-                throw new AccessDeniedException("Authenticated user not found.");
-            }
-
-            // Fetch the event
-            EventEntity event = eventEntityRepository.findById(eventId)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
-
-            // Check if the user already liked the event
-            boolean isLiked = appEventLikeService.isLikedByUser(event, user);
-
-            if (isLiked) {
-                appEventLikeService.removeLikeByEventAndUser(event, user);
-                return ResponseEntity.ok("Disliked successfully.");
-            } else {
-                appEventLikeService.addLike(event, user);
-                return ResponseEntity.ok("Liked successfully.");
-            }
-        } else {
-            throw new AccessDeniedException("User not authenticated");
+    public ResponseEntity<String> toggleLike(@PathVariable Long eventId, Principal principal) {
+        // Retrieve the user from the database
+        User user = new User();
+        Optional<User> optionalUser = userRepository.findByUsernameOrEmail(principal.getName(), principal.getName());
+        if(optionalUser.isPresent()){
+            user = optionalUser.get();
         }
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
+
+        // Retrieve the event
+        EventEntity event = eventEntityRepository.findById(eventId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+
+        // Toggle the like
+        boolean isLiked = appEventLikeService.toggleLike(event, user);
+
+        return ResponseEntity.ok(isLiked ? "Liked" : "Unliked");
     }
+
 
 
     // GetMapping to retrieve all events

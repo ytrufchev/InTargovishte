@@ -15,17 +15,17 @@ import java.time.Instant;
 @Entity
 public class AppEventLike {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @ElementCollection
-    @Column(name = "event_id")
-    private Long event;
+    @ManyToOne
+    @JoinColumn(name = "event_id", nullable = false)
+    private EventEntity event;
 
-    @ElementCollection
-    @Column(name = "user_id", nullable = false)
-    private Long user;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @Column(name = "liked_at", nullable = false)
-    private Instant likedAt;
+    // Getters, Setters, equals, hashCode
 }
+

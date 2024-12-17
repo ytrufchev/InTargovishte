@@ -4,7 +4,9 @@ import eu.trufchev.intargovishte.information.events.appEvents.entities.AppEventL
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
 import eu.trufchev.intargovishte.information.events.appEvents.repositories.AppEventLikeRepository;
 import eu.trufchev.intargovishte.user.entity.User;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -12,31 +14,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class AppEventLikeService {
-    private final AppEventLikeRepository likeRepository;
+    @Autowired
+    private AppEventLikeRepository appEventLikeRepository;
 
-    public AppEventLike addLike(EventEntity event, User user) {
-        AppEventLike like = new AppEventLike();
-        like.setEvent(event.getId());
-        like.setUser(user.getId());
-        like.setLikedAt(Instant.now());
-        return likeRepository.save(like);
-    }
+    @Transactional
+    public boolean toggleLike(EventEntity event, User user) {
+        // Check if the user has already liked the event
+        Optional<AppEventLike> existingLike = appEventLikeRepository.findByEventAndUser(event, user);
 
-    public void removeLikeByEventAndUser(EventEntity event, User user) {
-        Optional<AppEventLike> eventLike = likeRepository.findByEventIdAndUserId(event.getId(), user.getId());
-        if(eventLike.isPresent()){
-            likeRepository.delete(eventLike.get());
+        if (existingLike.isPresent()) {
+            // If liked, remove the like
+            appEventLikeRepository.delete(existingLike.get());
+            return false; // Like removed
+        } else {
+            // If not liked, add a new like
+            AppEventLike newLike = new AppEventLike();
+            newLike.setEvent(event);
+            newLike.setUser(user);
+            appEventLikeRepository.save(newLike);
+            return true; // Like added
         }
-
-    }
-
-    public boolean isLikedByUser(EventEntity event, User user) {
-        if (event == null || user == null) {
-            throw new IllegalArgumentException("Event or User cannot be null");
-        }
-        return likeRepository.existsByEventAndUser(event, user);
     }
 }
