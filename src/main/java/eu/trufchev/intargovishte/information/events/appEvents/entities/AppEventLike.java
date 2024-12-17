@@ -1,5 +1,6 @@
 package eu.trufchev.intargovishte.information.events.appEvents.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import eu.trufchev.intargovishte.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,8 +19,10 @@ public class AppEventLike {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "event_id", nullable = false)
+    @JoinColumn(name = "event_id")
+    @JsonBackReference // Prevent recursion during serialization
     private EventEntity event;
+
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

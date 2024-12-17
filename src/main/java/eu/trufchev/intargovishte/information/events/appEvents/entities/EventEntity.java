@@ -1,6 +1,7 @@
 package eu.trufchev.intargovishte.information.events.appEvents.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
 import eu.trufchev.intargovishte.user.entity.User;
 import jakarta.persistence.*;
@@ -34,7 +35,8 @@ public class EventEntity {
     private String location;
     @Column(name = "status")
     private StatusENUMS status;
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "event")
+    @JsonIgnore // Prevent recursion during serialization
     private List<AppEventLike> likes;
 //    @Column(name = "comments")
 //    @ManyToOne
