@@ -1,5 +1,6 @@
 package eu.trufchev.intargovishte.information.events.appEvents.services;
 
+import eu.trufchev.intargovishte.information.events.appEvents.dto.ResponseEventDTO;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.AppEventLike;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
 import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
@@ -103,7 +104,7 @@ class EventAppServiceTest {
                 .thenReturn(Arrays.asList(event1, event2));
 
         // Act
-        List<EventEntity> events = eventAppService.findNextTenApprovedEvents();
+        List<ResponseEventDTO> events = eventAppService.findNextTenApprovedEvents();
 
         // Assert
         assertEquals(2, events.size());
@@ -115,17 +116,32 @@ class EventAppServiceTest {
         // Arrange
         EventEntity event1 = new EventEntity();
         event1.setId(1L);
-        event1.setTitle("Pending Event");
-        event1.setStatus(StatusENUMS.PENDING);
+        event1.setTitle("Approved Event");
+        event1.setImage("image.jpg");
+        event1.setDate(System.currentTimeMillis());
+        event1.setLocation("Targovishte");
+        event1.setUser(1L);
+        event1.setStatus(StatusENUMS.APPROVED);
+        event1.setLikes(Arrays.asList(new AppEventLike(), new AppEventLike())); // 2 likes
 
-        when(eventEntityRepository.findByStatus(StatusENUMS.PENDING)).thenReturn(Arrays.asList(event1));
+        when(eventEntityRepository.findByStatus(StatusENUMS.APPROVED)).thenReturn(Arrays.asList(event1));
 
         // Act
-        List<EventEntity> events = eventAppService.findByStatus(StatusENUMS.PENDING);
+        List<ResponseEventDTO> responseEvents = eventAppService.findByStatus(StatusENUMS.APPROVED);
 
         // Assert
-        assertEquals(1, events.size());
-        assertEquals(StatusENUMS.PENDING, events.get(0).getStatus());
-        verify(eventEntityRepository, times(1)).findByStatus(StatusENUMS.PENDING);
+        assertEquals(1, responseEvents.size());
+
+        ResponseEventDTO responseEvent = responseEvents.get(0);
+        assertEquals(1L, responseEvent.getId());
+        assertEquals("Approved Event", responseEvent.getTitle());
+        assertEquals("image.jpg", responseEvent.getImage());
+        assertEquals(event1.getDate(), responseEvent.getDate());
+        assertEquals("Targovishte", responseEvent.getLocation());
+        assertEquals(1L, responseEvent.getUserId());
+        assertEquals(2, responseEvent.getLikesCount()); // Check likes count
+
+        verify(eventEntityRepository, times(1)).findByStatus(StatusENUMS.APPROVED);
     }
+
 }

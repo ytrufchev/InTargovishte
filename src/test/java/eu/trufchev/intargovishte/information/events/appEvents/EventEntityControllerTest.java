@@ -1,6 +1,7 @@
 package eu.trufchev.intargovishte.information.events.appEvents;
 
 import eu.trufchev.intargovishte.information.events.appEvents.dto.EventDTO;
+import eu.trufchev.intargovishte.information.events.appEvents.dto.ResponseEventDTO;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
 import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
 import eu.trufchev.intargovishte.information.events.appEvents.services.EventAppService;
@@ -40,6 +41,7 @@ public class EventEntityControllerTest {
     private User user;
     private EventDTO eventDTO;
     private EventEntity eventEntity;
+    private ResponseEventDTO responseEventDTO;
 
     @BeforeEach
     void setUp() {
@@ -97,7 +99,7 @@ public class EventEntityControllerTest {
     @Test
     void getAllEvents_ReturnsApprovedEvents() throws Exception {
         // Mock the service to return a list of events
-        when(eventAppService.findByStatus(StatusENUMS.APPROVED)).thenReturn(List.of(eventEntity));
+        when(eventAppService.findByStatus(StatusENUMS.APPROVED)).thenReturn(List.of(responseEventDTO));
 
         mockMvc.perform(get("/content/inapp/events/approved"))
                 .andExpect(status().isOk())

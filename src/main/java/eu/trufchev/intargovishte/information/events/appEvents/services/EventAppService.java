@@ -46,11 +46,23 @@ public class EventAppService {
         // Save and return the event
         return eventEntityRepository.save(event);
     }
-    public List<EventEntity> findNextTenApprovedEvents() {
+    public List<ResponseEventDTO> findNextTenApprovedEvents() {
         Long today = System.currentTimeMillis();
         List<EventEntity> events = new ArrayList<>();
         eventEntityRepository.findNextTenApprovedEvents(today, StatusENUMS.APPROVED).forEach(events::add);
-        return events;
+        List<ResponseEventDTO> eventDTO = new ArrayList<>();
+        for(EventEntity event : events) {
+            ResponseEventDTO responseEventDTO = new ResponseEventDTO();
+            responseEventDTO.setId(event.getId());
+            responseEventDTO.setTitle(event.getTitle());
+            responseEventDTO.setImage(event.getImage());
+            responseEventDTO.setDate(event.getDate());
+            responseEventDTO.setLocation(event.getLocation());
+            responseEventDTO.setUserId(event.getUser());
+            responseEventDTO.setLikesCount(event.getLikes().stream().count());
+            eventDTO.add(responseEventDTO);
+        }
+        return eventDTO;
     }
     public List<ResponseEventDTO> findByStatus(StatusENUMS status) {
         List<EventEntity> events = eventEntityRepository.findByStatus(status); // Use a repository method to filter by status

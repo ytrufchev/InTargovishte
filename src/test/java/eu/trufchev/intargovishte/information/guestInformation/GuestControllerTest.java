@@ -2,6 +2,7 @@ package eu.trufchev.intargovishte.information.guestInformation;
 
 import eu.trufchev.intargovishte.information.energyOutage.entities.EnergyOutage;
 import eu.trufchev.intargovishte.information.energyOutage.repositories.EnergyOutageRepository;
+import eu.trufchev.intargovishte.information.events.appEvents.dto.ResponseEventDTO;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
 import eu.trufchev.intargovishte.information.events.appEvents.services.EventAppService;
 import eu.trufchev.intargovishte.information.events.cinemagic.dto.MovieWithProjectionsDTO;
@@ -131,10 +132,10 @@ class GuestControllerTest {
 
     @Test
     void testGetTopEvents() {
-        List<EventEntity> mockEvents = Arrays.asList(new EventEntity(), new EventEntity());
+        List<ResponseEventDTO> mockEvents = Arrays.asList(new ResponseEventDTO(), new ResponseEventDTO());
         when(eventAppService.findNextTenApprovedEvents()).thenReturn(mockEvents);
 
-        ResponseEntity<List<EventEntity>> response = guestController.getTopEvents();
+        ResponseEntity<List<ResponseEventDTO>> response = guestController.getTopEvents();
 
         assertEquals(200, response.getStatusCodeValue());
         assertEquals(2, response.getBody().size());

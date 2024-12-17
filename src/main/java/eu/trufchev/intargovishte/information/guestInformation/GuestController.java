@@ -2,6 +2,7 @@ package eu.trufchev.intargovishte.information.guestInformation;
 
 import eu.trufchev.intargovishte.information.energyOutage.entities.EnergyOutage;
 import eu.trufchev.intargovishte.information.energyOutage.repositories.EnergyOutageRepository;
+import eu.trufchev.intargovishte.information.events.appEvents.dto.ResponseEventDTO;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
 import eu.trufchev.intargovishte.information.events.appEvents.services.EventAppService;
 import eu.trufchev.intargovishte.information.events.cinemagic.dto.MovieWithProjectionsDTO;
@@ -96,10 +97,10 @@ public class GuestController {
         return ResponseEntity.ok(stations);
     }
     @GetMapping("/toptenevents")
-    public ResponseEntity<List<EventEntity>> getTopEvents() {
-        List<EventEntity> events = eventAppService.findNextTenApprovedEvents();
+    public ResponseEntity<List<ResponseEventDTO>> getTopEvents() {
+        List<ResponseEventDTO> events = eventAppService.findNextTenApprovedEvents();
         // Safely get up to 10 elements
-        List<EventEntity> topTenEvents = events.size() > 10 ? events.subList(0, 10) : events;
+        List<ResponseEventDTO> topTenEvents = events.size() > 10 ? events.subList(0, 10) : events;
         return ResponseEntity.ok(topTenEvents);
     }
     @GetMapping("/listmovies")
