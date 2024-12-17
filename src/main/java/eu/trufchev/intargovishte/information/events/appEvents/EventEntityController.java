@@ -1,6 +1,7 @@
 package eu.trufchev.intargovishte.information.events.appEvents;
 
 import eu.trufchev.intargovishte.information.events.appEvents.dto.EventDTO;
+import eu.trufchev.intargovishte.information.events.appEvents.dto.ResponseEventDTO;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.AppEventLike;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
 import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
@@ -104,8 +105,8 @@ public class EventEntityController {
 
     // GetMapping to retrieve all events
     @GetMapping("/approved")
-    public ResponseEntity<List<EventEntity>> getAllEvents() {
-        List<EventEntity> events = eventAppService.findByStatus(StatusENUMS.APPROVED);;
+    public ResponseEntity<List<ResponseEventDTO>> getApprovedEvents() {
+        List<ResponseEventDTO> events = eventAppService.findByStatus(StatusENUMS.APPROVED);
         return ResponseEntity.ok(events);
     }
     @GetMapping("/topten")

@@ -1,8 +1,10 @@
 package eu.trufchev.intargovishte.information.events.appEvents.services;
 
+import eu.trufchev.intargovishte.information.events.appEvents.dto.ResponseEventDTO;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.AppEventLike;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
 import eu.trufchev.intargovishte.information.events.appEvents.repositories.EventEntityRepository;
+import eu.trufchev.intargovishte.information.events.dramaTheatre.entities.Response;
 import eu.trufchev.intargovishte.user.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,8 +52,20 @@ public class EventAppService {
         eventEntityRepository.findNextTenApprovedEvents(today, StatusENUMS.APPROVED).forEach(events::add);
         return events;
     }
-    public List<EventEntity> findByStatus(StatusENUMS status) {
+    public List<ResponseEventDTO> findByStatus(StatusENUMS status) {
         List<EventEntity> events = eventEntityRepository.findByStatus(status); // Use a repository method to filter by status
-        return events;
+        List<ResponseEventDTO> eventDTO = new ArrayList<>();
+        for(EventEntity event : events){
+            ResponseEventDTO responseEventDTO = new ResponseEventDTO();
+            responseEventDTO.setId(event.getId());
+            responseEventDTO.setTitle(event.getTitle());
+            responseEventDTO.setImage(event.getImage());
+            responseEventDTO.setDate(event.getDate());
+            responseEventDTO.setLocation(event.getLocation());
+            responseEventDTO.setUserId(event.getUser());
+            responseEventDTO.setLikesCount(event.getLikes().stream().count());
+            eventDTO.add(responseEventDTO);
+        }
+        return eventDTO;
     }
 }
