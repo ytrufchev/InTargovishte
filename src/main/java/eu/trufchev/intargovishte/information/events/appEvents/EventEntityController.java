@@ -99,13 +99,13 @@ public class EventEntityController {
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
 
             // Check if the user already liked the event
-            boolean isLiked = appEventLikeService.isLikedByUser(event, user, user.getId());
+            boolean isLiked = appEventLikeService.isLikedByUser(event, user);
 
             if (isLiked) {
-                appEventLikeService.removeLikeByEventAndUser(event, user, user.getId());
+                appEventLikeService.removeLikeByEventAndUser(event, user);
                 return ResponseEntity.ok("Disliked successfully.");
             } else {
-                appEventLikeService.addLike(event, user, user.getId());
+                appEventLikeService.addLike(event, user);
                 return ResponseEntity.ok("Liked successfully.");
             }
         } else {

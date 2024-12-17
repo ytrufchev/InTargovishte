@@ -26,7 +26,7 @@ public class AppEventLike {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private Long user;
+    private User user;
 
     @Column(name = "liked_at", nullable = false)
     private Instant likedAt;
