@@ -14,21 +14,21 @@ import java.time.Instant;
 public class AppEventLikeService {
     private final AppEventLikeRepository likeRepository;
 
-    public AppEventLike addLike(EventEntity event, User user) {
+    public AppEventLike addLike(EventEntity event, User user, Long userId) {
         AppEventLike like = new AppEventLike();
         like.setEvent(event);
-        like.setUser(user);
+        like.setUser(userId);
         like.setLikedAt(Instant.now());
         return likeRepository.save(like);
     }
 
-    public void removeLikeByEventAndUser(EventEntity event, User user) {
+    public void removeLikeByEventAndUser(EventEntity event, User user, Long userId) {
         AppEventLike like = likeRepository.findByEventAndUser(event, user)
                 .orElseThrow(() -> new IllegalArgumentException("Like not found"));
         likeRepository.delete(like);
     }
 
-    public boolean isLikedByUser(EventEntity event, User user) {
+    public boolean isLikedByUser(EventEntity event, User user, Long userId) {
         if (event == null || user == null) {
             throw new IllegalArgumentException("Event or User cannot be null");
         }
