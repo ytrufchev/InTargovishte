@@ -29,6 +29,9 @@ public class AppEventLikeService {
     }
 
     public boolean isLikedByUser(EventEntity event, User user) {
+        if (event == null || user == null) {
+            throw new IllegalArgumentException("Event or User cannot be null");
+        }
         return likeRepository.existsByEventAndUser(event, user);
     }
 }
