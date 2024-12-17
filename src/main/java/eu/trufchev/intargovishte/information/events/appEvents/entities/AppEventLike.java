@@ -18,11 +18,12 @@ public class AppEventLike {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
-    @JoinColumn(name = "event_id")
-    @JsonBackReference // Prevent recursion during serialization
+    @ElementCollection
+    @Column(name = "event_id")
     private Long event;
 
-    @JoinColumn(name = "user_id", nullable = false)
+    @ElementCollection
+    @Column(name = "user_id", nullable = false)
     private Long user;
 
     @Column(name = "liked_at", nullable = false)
