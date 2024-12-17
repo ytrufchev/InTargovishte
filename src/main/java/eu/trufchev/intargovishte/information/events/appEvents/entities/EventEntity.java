@@ -35,7 +35,6 @@ public class EventEntity {
     private String location;
     @Column(name = "status")
     private StatusENUMS status;
-    @OneToMany(mappedBy = "event")
     @JsonIgnore // Prevent recursion during serialization
     private List<AppEventLike> likes;
 //    @Column(name = "comments")
