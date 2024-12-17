@@ -78,11 +78,14 @@ public class EventEntityController {
     }
 
     @PostMapping("/toggle/{eventId}")
-    public ResponseEntity<String> toggleLike(@PathVariable long eventId, @AuthenticationPrincipal User authenticatedUser) {
-        // Validate authenticated user
-        if (authenticatedUser == null) {
+    public ResponseEntity<String> toggleLike(@PathVariable long eventId) {
+        // Retrieve the authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof User)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
         }
+
+        User authenticatedUser = (User) authentication.getPrincipal();
 
         // Fetch the event from the repository
         EventEntity event = eventEntityRepository.findById(eventId)
@@ -99,8 +102,6 @@ public class EventEntityController {
             return ResponseEntity.ok("Liked successfully.");
         }
     }
-
-
 
     // GetMapping to retrieve all events
     @GetMapping("/approved")
