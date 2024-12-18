@@ -14,4 +14,5 @@ public class ResponseEventDTO {
     private String image; // Base64 image string
     private Long userId;
     private Long likesCount;
+    private boolean likedByCurrentUser;
 }
