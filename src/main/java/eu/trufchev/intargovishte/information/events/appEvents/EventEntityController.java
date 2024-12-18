@@ -85,6 +85,7 @@ public class EventEntityController {
             @PathVariable Long eventId,
             Authentication authentication
     ) {
+        System.out.println("Called toggle like");
         try {
             // Validate authentication
             if (authentication == null) {
@@ -94,7 +95,7 @@ public class EventEntityController {
 
             // Get username from authentication
             String username = authentication.getName();
-
+            System.out.println("User lookup");
             // Find user by username
             User user = userRepository.findByUsername(username);
             if (user == null) {
@@ -103,6 +104,7 @@ public class EventEntityController {
             }
 
             // Retrieve the event
+            System.out.println("Eventt lookup");
             EventEntity event = eventEntityRepository.findById(eventId)
                     .orElseThrow(() -> new ResponseStatusException(
                             HttpStatus.NOT_FOUND,
@@ -110,6 +112,7 @@ public class EventEntityController {
                     ));
 
             // Toggle the like
+            System.out.println("Check if event is liked");
             boolean isLiked = appEventLikeService.toggleLike(event, user);
 
             return ResponseEntity.ok(Map.of("liked", isLiked));
