@@ -26,19 +26,25 @@ public class AppEventLikeService {
     @Transactional
     public boolean toggleLike(EventEntity event, User user) {
         // Validate input
-        if (event == null || user == null) {
-            throw new IllegalArgumentException("Event and User must not be null");
+        if (event == null) {
+            throw new IllegalArgumentException("Event must not be null");
+        }
+        if (user == null) {
+            throw new IllegalArgumentException("User must not be null");
         }
 
         try {
+            System.out.println("Checking if the event is liked by user: " + user.getUsername());
             // Check if the user has already liked the event
             Optional<AppEventLike> existingLike = appEventLikeRepository.findByEventAndUser(event, user);
 
             if (existingLike.isPresent()) {
+                System.out.println("Like found. Removing like for event: " + event.getId());
                 // If liked, remove the like
                 appEventLikeRepository.delete(existingLike.get());
                 return false; // Like removed
             } else {
+                System.out.println("No like found. Adding like for event: " + event.getId());
                 // If not liked, add a new like
                 AppEventLike newLike = new AppEventLike();
                 newLike.setEvent(event);
@@ -49,10 +55,11 @@ public class AppEventLikeService {
                 return true; // Like added
             }
         } catch (Exception e) {
-            // Log the exception
-            System.err.println("Error in toggleLike: " + e.getMessage());
+            // Log the error for detailed debugging
+            System.err.println("Error in toggleLike:");
             e.printStackTrace();
             throw new RuntimeException("Failed to toggle like", e);
         }
     }
+
 }
