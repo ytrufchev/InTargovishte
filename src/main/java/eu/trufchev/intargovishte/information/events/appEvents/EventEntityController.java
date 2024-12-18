@@ -32,6 +32,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -84,23 +85,23 @@ public class EventEntityController {
             @PathVariable Long eventId,
             Authentication authentication
     ) {
-        // Log authentication details
-        if (authentication == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("No authentication information found");
-        }
-
-        // Get username from authentication
-        String username = authentication.getName();
-
-        // Find user by username
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("User not found: " + username);
-        }
-
         try {
+            // Validate authentication
+            if (authentication == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("No authentication information found");
+            }
+
+            // Get username from authentication
+            String username = authentication.getName();
+
+            // Find user by username
+            User user = userRepository.findByUsername(username);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("User not found: " + username);
+            }
+
             // Retrieve the event
             EventEntity event = eventEntityRepository.findById(eventId)
                     .orElseThrow(() -> new ResponseStatusException(
@@ -111,9 +112,12 @@ public class EventEntityController {
             // Toggle the like
             boolean isLiked = appEventLikeService.toggleLike(event, user);
 
-            return ResponseEntity.ok(isLiked ? "Liked" : "Unliked");
+            return ResponseEntity.ok(Map.of("liked", isLiked));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid request: " + e.getMessage());
         } catch (Exception e) {
-            // Log the full exception for debugging
+            // Log the full exception
+            System.err.println("Error in toggleLike method:");
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error processing like: " + e.getMessage());

@@ -18,19 +18,19 @@ import java.util.Optional;
 public class AppEventLikeService {
     private final AppEventLikeRepository appEventLikeRepository;
 
-    // Constructor injection instead of @Autowired
+    // Constructor injection replaces @Autowired
     public AppEventLikeService(AppEventLikeRepository appEventLikeRepository) {
         this.appEventLikeRepository = appEventLikeRepository;
     }
 
     @Transactional
     public boolean toggleLike(EventEntity event, User user) {
-        try {
-            // Validate input
-            if (event == null || user == null) {
-                throw new IllegalArgumentException("Event and User must not be null");
-            }
+        // Validate input
+        if (event == null || user == null) {
+            throw new IllegalArgumentException("Event and User must not be null");
+        }
 
+        try {
             // Check if the user has already liked the event
             Optional<AppEventLike> existingLike = appEventLikeRepository.findByEventAndUser(event, user);
 
@@ -44,8 +44,8 @@ public class AppEventLikeService {
                 newLike.setEvent(event);
                 newLike.setUser(user);
 
-                // Explicitly save and flush
-                AppEventLike savedLike = appEventLikeRepository.saveAndFlush(newLike);
+                // Save the new like
+                appEventLikeRepository.save(newLike);
                 return true; // Like added
             }
         } catch (Exception e) {
