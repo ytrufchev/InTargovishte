@@ -80,7 +80,7 @@ public class EventEntityController {
         return ResponseEntity.ok(createdEvent);
     }
 
-    @PostMapping("/toggle/{eventId}")
+    @PostMapping("/like/{eventId}")
     public ResponseEntity<?> toggleLike(
             @PathVariable Long eventId,
             Authentication authentication
