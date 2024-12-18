@@ -15,7 +15,7 @@ import java.time.Instant;
 @Entity
 public class AppEventLike {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @ManyToOne
