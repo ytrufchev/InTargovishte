@@ -80,9 +80,9 @@ public class EventEntityController {
         return ResponseEntity.ok(createdEvent);
     }
 
-    @PostMapping("/like/{eventId}")
+    @PostMapping("/like")
     public ResponseEntity<Map<String, Object>> toggleLike(
-            @PathVariable Long eventId,
+            @RequestBody Map<String, Long> requestBody,
             Authentication authentication
     ) {
         // Log entry into the method
@@ -95,6 +95,13 @@ public class EventEntityController {
         }
 
         try {
+            // Extract eventId from request body
+            Long eventId = requestBody.get("eventId");
+            if (eventId == null) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("error", "Missing 'eventId' in request body"));
+            }
+
             // Get authenticated user's username
             String username = authentication.getName();
 
@@ -115,18 +122,14 @@ public class EventEntityController {
 
             // Return success response
             return ResponseEntity.ok(Map.of("liked", isLiked));
-        } catch (IllegalArgumentException e) {
-            // Handle bad requests
-            return ResponseEntity.badRequest()
-                    .body(Map.of("error", "Invalid request: " + e.getMessage()));
         } catch (Exception e) {
-            // Log unexpected exceptions
             System.err.println("Error in toggleLike method:");
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "An unexpected error occurred: " + e.getMessage()));
         }
     }
+
 
 
     // GetMapping to retrieve all events
