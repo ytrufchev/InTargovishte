@@ -80,25 +80,44 @@ public class EventEntityController {
     }
 
     @PostMapping("/toggle/{eventId}")
-    public ResponseEntity<String> toggleLike(@PathVariable Long eventId, Principal principal) {
-        // Retrieve the user from the database
-        User user = new User();
-        Optional<User> optionalUser = userRepository.findByUsernameOrEmail(principal.getName(), principal.getName());
-        if(optionalUser.isPresent()){
-            user = optionalUser.get();
+    public ResponseEntity<?> toggleLike(
+            @PathVariable Long eventId,
+            Authentication authentication
+    ) {
+        // Log authentication details
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("No authentication information found");
         }
+
+        // Get username from authentication
+        String username = authentication.getName();
+
+        // Find user by username
+        User user = userRepository.findByUsername(username);
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("User not found: " + username);
         }
 
-        // Retrieve the event
-        EventEntity event = eventEntityRepository.findById(eventId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+        try {
+            // Retrieve the event
+            EventEntity event = eventEntityRepository.findById(eventId)
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND,
+                            "Event not found with ID: " + eventId
+                    ));
 
-        // Toggle the like
-        boolean isLiked = appEventLikeService.toggleLike(event, user);
+            // Toggle the like
+            boolean isLiked = appEventLikeService.toggleLike(event, user);
 
-        return ResponseEntity.ok(isLiked ? "Liked" : "Unliked");
+            return ResponseEntity.ok(isLiked ? "Liked" : "Unliked");
+        } catch (Exception e) {
+            // Log the full exception for debugging
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error processing like: " + e.getMessage());
+        }
     }
 
 
