@@ -79,7 +79,7 @@ public class EventEntityController {
         return ResponseEntity.ok(createdEvent);
     }
 
-    @GetMapping("/toggle/{eventId}")
+    @PostMapping("/toggle/{eventId}")
     public ResponseEntity<String> toggleLike(@PathVariable Long eventId, Principal principal) {
         // Retrieve the user from the database
         User user = new User();
