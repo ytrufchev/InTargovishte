@@ -74,6 +74,7 @@ public class EventAppService {
                 ResponseEventDTO responseEventDTO = new ResponseEventDTO();
                 responseEventDTO.setId(event.getId());
                 responseEventDTO.setTitle(event.getTitle());
+                responseEventDTO.setContent(event.getContent());
                 responseEventDTO.setImage(event.getImage());
                 responseEventDTO.setDate(event.getDate());
                 responseEventDTO.setLocation(event.getLocation());
