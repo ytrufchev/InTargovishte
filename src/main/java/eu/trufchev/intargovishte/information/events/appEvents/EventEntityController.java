@@ -81,51 +81,53 @@ public class EventEntityController {
     }
 
     @PostMapping("/like/{eventId}")
-    public ResponseEntity<?> toggleLike(
+    public ResponseEntity<Map<String, Object>> toggleLike(
             @PathVariable Long eventId,
             Authentication authentication
     ) {
-        System.out.println("Called toggle like");
-        try {
-            // Validate authentication
-            if (authentication == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body("No authentication information found");
-            }
+        // Log entry into the method
+        System.out.println("Called toggleLike");
 
-            // Get username from authentication
+        // Validate authentication
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "No authentication information found"));
+        }
+
+        try {
+            // Get authenticated user's username
             String username = authentication.getName();
-            System.out.println("User lookup");
+
             // Find user by username
             User user = userRepository.findByUsername(username);
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("User not found: " + username);
+                        .body(Map.of("error", "User not found: " + username));
             }
 
             // Retrieve the event
-            System.out.println("Eventt lookup");
             EventEntity event = eventEntityRepository.findById(eventId)
                     .orElseThrow(() -> new ResponseStatusException(
-                            HttpStatus.NOT_FOUND,
-                            "Event not found with ID: " + eventId
-                    ));
+                            HttpStatus.NOT_FOUND, "Event not found with ID: " + eventId));
 
             // Toggle the like
-            System.out.println("Check if event is liked");
             boolean isLiked = appEventLikeService.toggleLike(event, user);
 
+            // Return success response
             return ResponseEntity.ok(Map.of("liked", isLiked));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Invalid request: " + e.getMessage());
+            // Handle bad requests
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Invalid request: " + e.getMessage()));
         } catch (Exception e) {
-            // Log the full exception
+            // Log unexpected exceptions
             System.err.println("Error in toggleLike method:");
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error processing like: " + e.getMessage());
+                    .body(Map.of("error", "An unexpected error occurred: " + e.getMessage()));
         }
     }
+
 
     // GetMapping to retrieve all events
     @GetMapping("/approved")
