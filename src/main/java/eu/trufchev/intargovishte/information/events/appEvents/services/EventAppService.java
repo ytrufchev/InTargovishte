@@ -81,7 +81,7 @@ public class EventAppService {
                 responseEventDTO.setUserId(event.getUser());
 
                 // Count total likes
-                responseEventDTO.setLikesCount(event.getLikes() != null ? event.getLikes().size() : 0L);
+                responseEventDTO.setLikesCount(event.getLikes() != null ? (long) event.getLikes().size() : 0L);
 
                 // Check if current user has liked this event
                 if (currentUser != null) {

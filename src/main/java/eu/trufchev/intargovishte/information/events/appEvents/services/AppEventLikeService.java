@@ -49,7 +49,6 @@ public class AppEventLikeService {
                 AppEventLike newLike = new AppEventLike();
                 newLike.setEvent(event);
                 newLike.setUser(user);
-
                 // Save the new like
                 appEventLikeRepository.save(newLike);
                 return true; // Like added
