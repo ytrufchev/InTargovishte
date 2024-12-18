@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -25,6 +26,9 @@ public class AppEventLike {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Column(name = "liked_at")
+    private LocalDateTime likedAt;
 
     // Getters, Setters, equals, hashCode
 }

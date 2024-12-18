@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,6 +50,7 @@ public class AppEventLikeService {
                 AppEventLike newLike = new AppEventLike();
                 newLike.setEvent(event);
                 newLike.setUser(user);
+                newLike.setLikedAt(LocalDateTime.now());
                 // Save the new like
                 appEventLikeRepository.save(newLike);
                 return true; // Like added
