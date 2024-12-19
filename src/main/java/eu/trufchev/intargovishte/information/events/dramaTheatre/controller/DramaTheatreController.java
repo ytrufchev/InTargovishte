@@ -112,9 +112,9 @@ public class DramaTheatreController {
         try {
             // Extract eventId from request body
             String eventId = requestBody.get("eventId").toString();
-            if (eventId == null) {
+            if (eventId.isEmpty()) {
                 return ResponseEntity.badRequest()
-                        .body(Map.of("error", "Missing 'eventId' in request body"));
+                        .body(Map.of("error", "Missing or empty 'eventId' in request body"));
             }
 
             // Get authenticated user's username
