@@ -119,7 +119,6 @@ public class EventEntityController {
 
             // Toggle the like
             boolean isLiked = appEventLikeService.toggleLike(event, user);
-
             // Return success response
             return ResponseEntity.ok(Map.of("liked", isLiked));
         } catch (Exception e) {
@@ -130,20 +129,10 @@ public class EventEntityController {
         }
     }
 
-
-
-    // GetMapping to retrieve all events
     @GetMapping("/approved")
-    public ResponseEntity<List<ResponseEventDTO>> getApprovedEvents() {
-        List<ResponseEventDTO> events = eventAppService.findByStatus(StatusENUMS.APPROVED);
-        return ResponseEntity.ok(events);
-    }
-    @GetMapping("/topten")
     public ResponseEntity<List<ResponseEventDTO>> getTopEvents() {
         List<ResponseEventDTO> events = eventAppService.findNextTenApprovedEvents();
-        // Safely get up to 10 elements
-        List<ResponseEventDTO> topTenEvents = events.size() > 10 ? events.subList(0, 10) : events;
-        return ResponseEntity.ok(topTenEvents);
+        return ResponseEntity.ok(events);
     }
 
     @Scheduled(cron = "0 0 0 * * ?")

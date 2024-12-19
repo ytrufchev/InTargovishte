@@ -3,6 +3,7 @@ package eu.trufchev.intargovishte.information.events.appEvents.services;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.AppEventLike;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
 import eu.trufchev.intargovishte.information.events.appEvents.repositories.AppEventLikeRepository;
+import eu.trufchev.intargovishte.information.events.appEvents.repositories.EventEntityRepository;
 import eu.trufchev.intargovishte.user.entity.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +19,12 @@ import java.util.Optional;
 @Service
 public class AppEventLikeService {
     private final AppEventLikeRepository appEventLikeRepository;
+    private final EventEntityRepository eventEntityRepository;
 
     // Constructor injection replaces @Autowired
-    public AppEventLikeService(AppEventLikeRepository appEventLikeRepository) {
+    public AppEventLikeService(AppEventLikeRepository appEventLikeRepository, EventEntityRepository eventEntityRepository) {
         this.appEventLikeRepository = appEventLikeRepository;
+        this.eventEntityRepository = eventEntityRepository;
     }
 
     @Transactional
