@@ -1,5 +1,6 @@
 package eu.trufchev.intargovishte.information.events.puppetTheatre.controllers;
 
+import eu.trufchev.intargovishte.information.events.puppetTheatre.PuppetTheaterDTO;
 import eu.trufchev.intargovishte.information.events.puppetTheatre.entities.PuppetTheater;
 import eu.trufchev.intargovishte.information.events.puppetTheatre.repositories.PuppetTheaterRepository;
 import eu.trufchev.intargovishte.information.events.puppetTheatre.services.PuppetTheaterService;
@@ -45,12 +46,11 @@ public class PuppetTheaterController {
         puppetTheaterRepository.saveAll(puppetTheater);
         return puppetTheater;
     }
-    @GetMapping("all")
-    public List<PuppetTheater> allPuppetTheaterEvents(){
+    @GetMapping("/all")
+    public List<PuppetTheaterDTO> allPuppetTheaterEvents(){
         LocalDate currentDate = LocalDate.now();
         int currentYear = currentDate.getYear();
-        List<PuppetTheater> allEvents = new ArrayList<>();
-        puppetTheaterRepository.findAll().forEach(allEvents::add);
+        List<PuppetTheaterDTO> allEvents = puppetTheaterService.PuppetToDTO();
         // Create formatter for Bulgarian locale
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d yyyy", new Locale("bg"));
 

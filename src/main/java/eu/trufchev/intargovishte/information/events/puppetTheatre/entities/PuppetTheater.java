@@ -1,10 +1,13 @@
 package eu.trufchev.intargovishte.information.events.puppetTheatre.entities;
 
+import eu.trufchev.intargovishte.information.events.appEvents.entities.AppEventLike;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -25,4 +28,6 @@ public class PuppetTheater {
     private String title;
     @Column(name = "playTime")
     private String playTime;
+    @OneToMany(mappedBy = "event")
+    private List<PuppetTheaterLike> likes;
 }
