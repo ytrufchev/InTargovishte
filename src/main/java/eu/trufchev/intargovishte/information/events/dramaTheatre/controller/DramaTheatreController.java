@@ -111,7 +111,7 @@ public class DramaTheatreController {
 
         try {
             // Extract eventId from request body
-            String eventId = requestBody.get("eventId").toString();
+            String eventId = requestBody.get("eventId");
             if (eventId.isEmpty()) {
                 return ResponseEntity.badRequest()
                         .body(Map.of("error", "Missing or empty 'eventId' in request body"));
