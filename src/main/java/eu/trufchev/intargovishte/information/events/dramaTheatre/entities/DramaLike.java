@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Entity
 public class DramaLike {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
