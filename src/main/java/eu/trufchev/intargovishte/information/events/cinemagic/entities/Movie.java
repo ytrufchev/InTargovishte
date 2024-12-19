@@ -3,7 +3,10 @@ package eu.trufchev.intargovishte.information.events.cinemagic.entities;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.*;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,5 +21,7 @@ private @Getter @Setter String id;
 @Column(name ="originalTitle") private @Getter @Setter String originalTitle;
 @Column(name ="isForChildren") private @Getter @Setter Boolean isForChildren;
 @Column(name ="imdbId") private @Getter @Setter String imdbId;
+    @OneToMany(mappedBy = "event")
+    private @Getter @Setter List<MovieLike> likes;
 
 }

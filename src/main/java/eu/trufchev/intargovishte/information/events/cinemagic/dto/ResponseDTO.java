@@ -1,15 +1,16 @@
-package eu.trufchev.intargovishte.information.events.cinemagic.entities;
+package eu.trufchev.intargovishte.information.events.cinemagic.dto;
 
-import eu.trufchev.intargovishte.information.events.dramaTheatre.entities.DramaLike;
-import jakarta.persistence.OneToMany;
+import eu.trufchev.intargovishte.information.events.cinemagic.entities.Projections;
 import lombok.*;
 
 import java.util.List;
 
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class MovieWithProjections {
+public class ResponseDTO {
     private @Getter @Setter String id;
     private @Getter @Setter int duration;
     private @Getter @Setter String description;
@@ -18,6 +19,6 @@ public class MovieWithProjections {
     private @Getter @Setter Boolean isForChildren;
     private @Getter @Setter String imdbId;
     private @Getter @Setter List<Projections> projections;
-    private @Getter @Setter Long likesCount;
-    private @Getter @Setter boolean likedByCurrentUser;
+    private Long likesCount;
+    private boolean likedByCurrentUser;
 }
