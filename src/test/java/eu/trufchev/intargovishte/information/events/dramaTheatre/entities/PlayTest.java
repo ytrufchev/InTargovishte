@@ -3,6 +3,7 @@ package eu.trufchev.intargovishte.information.events.dramaTheatre.entities;
 import eu.trufchev.intargovishte.information.events.dramaTheatre.entities.Play;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,9 +26,10 @@ public class PlayTest {
         // Arrange
         List<String> startDatesList = List.of("2024-12-01", "2024-12-02");
         String startDatesString = String.join(",", startDatesList);
+        List<DramaLike> likes = new ArrayList<>();
 
         // Act
-        Play play = new Play("1", 120, 12, "Hamlet", "large.jpg", "medium.jpg", "small.jpg", "Main Theatre", startDatesString);
+        Play play = new Play("1", 120, 12, "Hamlet", "large.jpg", "medium.jpg", "small.jpg", "Main Theatre", startDatesString, likes);
 
         // Assert
         assertThat(play.getId()).isEqualTo("1");
@@ -98,14 +100,15 @@ public class PlayTest {
     @Test
     public void testToString() {
         // Arrange
-        Play play = new Play("3", 150, 16, "Othello", "large3.jpg", "medium3.jpg", "small3.jpg", "City Theatre", "2024-11-30");
+        List<DramaLike> likes = new ArrayList<>();
+        Play play = new Play("3", 150, 16, "Othello", "large3.jpg", "medium3.jpg", "small3.jpg", "City Theatre", "2024-11-30", likes);
 
         // Act
         String result = play.toString();
 
         // Assert
         assertThat(result).isEqualTo(
-                "Play(id=3, length=150, minAgeRestriction=16, title=Othello, largePhoto=large3.jpg, mediumPhoto=medium3.jpg, smallPhoto=small3.jpg, placeName=City Theatre, startDates=[2024-11-30])"
+                "Play(id=3, length=150, minAgeRestriction=16, title=Othello, largePhoto=large3.jpg, mediumPhoto=medium3.jpg, smallPhoto=small3.jpg, placeName=City Theatre, startDates=[2024-11-30], likes=[])"
         );
     }
 }

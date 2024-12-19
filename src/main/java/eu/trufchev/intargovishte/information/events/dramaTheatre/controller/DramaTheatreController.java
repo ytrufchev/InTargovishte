@@ -1,7 +1,9 @@
 package eu.trufchev.intargovishte.information.events.dramaTheatre.controller;
 
+import eu.trufchev.intargovishte.information.events.dramaTheatre.dto.PlayDTO;
 import eu.trufchev.intargovishte.information.events.dramaTheatre.entities.Play;
 import eu.trufchev.intargovishte.information.events.dramaTheatre.feignClient.CookieClient;
+import eu.trufchev.intargovishte.information.events.dramaTheatre.repository.PlaysLikeRepository;
 import eu.trufchev.intargovishte.information.events.dramaTheatre.repository.PlaysRepository;
 import eu.trufchev.intargovishte.information.events.dramaTheatre.service.DramaLikeService;
 import eu.trufchev.intargovishte.information.events.dramaTheatre.service.GetPlaysResponse;
@@ -13,9 +15,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +40,9 @@ public class DramaTheatreController {
     @Autowired
     GetPlaysResponse getPlaysResponse;
 
+    @Autowired
+    PlaysLikeRepository playsLikeRepository;
+
     @Scheduled(cron = "0 0 9 * * *")
     public  ResponseEntity<List<Play>> cronUpdate(){
         return upcomingPlays();
@@ -53,8 +61,38 @@ public class DramaTheatreController {
         return ResponseEntity.ok(plays);
     }
     @GetMapping("/all")
-    public List<Play> playsList() {
-        return (List<Play>) playsRepository.findAll();
+    public List<PlayDTO> playsList() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = null;
+        if (authentication != null) {
+            currentUser = userRepository.findByUsernameOrEmail(authentication.getName(), authentication.getName())
+                    .orElse(null);
+        }
+        List<PlayDTO> playDTOS = new ArrayList<>();
+        List<Play> plays = new ArrayList<>();
+        plays.addAll((Collection<? extends Play>) playsRepository.findAll());
+        for(Play play: plays){
+            PlayDTO playDTO = new PlayDTO();
+            playDTO.setId(play.getId());
+            playDTO.setTitle(play.getTitle());
+            playDTO.setLength(play.getLength());
+            playDTO.setMinAgeRestriction(play.getMinAgeRestriction());
+            playDTO.setLargePhoto(play.getLargePhoto());
+            playDTO.setPlaceName(play.getPlaceName());
+            playDTO.setStartDates(play.getStartDates());
+            playDTO.setLikesCount(play.getLikes() != null ? (long) play.getLikes().size() : 0L);
+            // Check if current user has liked this event
+            if (currentUser != null) {
+                boolean isLikedByCurrentUser = playsLikeRepository
+                        .findByEventAndUser(play, currentUser)
+                        .isPresent();
+                playDTO.setLikedByCurrentUser(isLikedByCurrentUser);
+            } else {
+                playDTO.setLikedByCurrentUser(false);
+            }
+            playDTOS.add(playDTO);
+        }
+        return playDTOS;
     }
 
     @PostMapping("/like")

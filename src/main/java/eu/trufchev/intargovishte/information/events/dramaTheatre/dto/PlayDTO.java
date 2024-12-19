@@ -2,18 +2,21 @@ package eu.trufchev.intargovishte.information.events.dramaTheatre.dto;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
 public class PlayDTO {
-    private Long id;
+    private String id;
     private String title;
-    private String length;
-    private String minAgeRestriction;
+    private int length;
+    private int minAgeRestriction;
     private String largePhoto;
     private String placeName;
-    private String startDates;
-
+    private List<String> startDates;
+    private Long likesCount;
+    private boolean likedByCurrentUser;
 }
