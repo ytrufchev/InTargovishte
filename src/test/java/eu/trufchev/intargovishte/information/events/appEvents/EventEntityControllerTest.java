@@ -108,7 +108,7 @@ public class EventEntityControllerTest {
     @Test
     void getAllEvents_ReturnsApprovedEvents() throws Exception {
         // Mock the service to return a list of events
-        when(eventAppService.findByStatus(StatusENUMS.APPROVED)).thenReturn(List.of(responseEventDTO));
+        when(eventAppService.findNextTenApprovedEvents()).thenReturn(List.of(responseEventDTO));
 
         mockMvc.perform(get("/content/inapp/events/approved"))
                 .andExpect(status().isOk())

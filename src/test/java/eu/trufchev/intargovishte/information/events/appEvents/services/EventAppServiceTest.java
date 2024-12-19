@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 class EventAppServiceTest {
@@ -109,39 +110,6 @@ class EventAppServiceTest {
         // Assert
         assertEquals(2, events.size());
         verify(eventEntityRepository, times(1)).findNextTenApprovedEvents(anyLong(), eq(StatusENUMS.APPROVED));
-    }
-
-    @Test
-    void findByStatus_ShouldReturnEventsWithSpecifiedStatus() {
-        // Arrange
-        EventEntity event1 = new EventEntity();
-        event1.setId(1L);
-        event1.setTitle("Approved Event");
-        event1.setImage("image.jpg");
-        event1.setDate(System.currentTimeMillis());
-        event1.setLocation("Targovishte");
-        event1.setUser(1L);
-        event1.setStatus(StatusENUMS.APPROVED);
-        event1.setLikes(Arrays.asList(new AppEventLike(), new AppEventLike())); // 2 likes
-
-        when(eventEntityRepository.findByStatus(StatusENUMS.APPROVED)).thenReturn(Arrays.asList(event1));
-
-        // Act
-        List<ResponseEventDTO> responseEvents = eventAppService.findByStatus(StatusENUMS.APPROVED);
-
-        // Assert
-        assertEquals(1, responseEvents.size());
-
-        ResponseEventDTO responseEvent = responseEvents.get(0);
-        assertEquals(1L, responseEvent.getId());
-        assertEquals("Approved Event", responseEvent.getTitle());
-        assertEquals("image.jpg", responseEvent.getImage());
-        assertEquals(event1.getDate(), responseEvent.getDate());
-        assertEquals("Targovishte", responseEvent.getLocation());
-        assertEquals(1L, responseEvent.getUserId());
-        assertEquals(2, responseEvent.getLikesCount()); // Check likes count
-
-        verify(eventEntityRepository, times(1)).findByStatus(StatusENUMS.APPROVED);
     }
 
 }
