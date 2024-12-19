@@ -15,6 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 public class PuppetTheaterDTO {
+    private Long id;
     private String imageUrl;
     private String eventMonth;
     private String eventDay;

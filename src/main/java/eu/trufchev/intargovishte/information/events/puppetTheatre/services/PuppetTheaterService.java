@@ -67,6 +67,7 @@ public class PuppetTheaterService {
         List<PuppetTheaterDTO> responseDTO = new ArrayList<>();
         for(PuppetTheater event: allEvents){
             PuppetTheaterDTO dto = new PuppetTheaterDTO();
+            dto.setId(event.getId());
             dto.setImageUrl(event.getImageUrl());
             dto.setEventMonth(event.getEventMonth());
             dto.setEventDay(event.getEventDay());
