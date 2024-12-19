@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class DramaLike {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private long id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)

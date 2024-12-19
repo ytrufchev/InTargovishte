@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface PlaysLikeRepository extends JpaRepository<DramaLike, String> {
+public interface PlaysLikeRepository extends JpaRepository<DramaLike, Long> {
     List<Play> findByEventId(Long eventId);
     List<Play> findByUserId(Long userId);
     Optional<DramaLike> findByEventAndUser(Play event, User user);
