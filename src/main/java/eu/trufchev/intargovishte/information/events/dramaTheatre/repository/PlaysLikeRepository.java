@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface PlaysLikeRepository extends JpaRepository<DramaLike, String> {
     List<Play> findByEventId(String eventId);
-    List<Play> findByUserId(String userId);
+    List<Play> findByUserId(Long userId);
     Optional<DramaLike> findByEventAndUser(Play event, User user);
     boolean existsByEventAndUser(Play event, User user);
     long countByEvent(Play event);
