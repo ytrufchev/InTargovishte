@@ -1,7 +1,9 @@
 package eu.trufchev.intargovishte.information.events.dramaTheatre.entities;
 
+import eu.trufchev.intargovishte.information.events.puppetTheatre.entities.PuppetTheaterLike;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.*;
 
 import java.util.List;
@@ -23,6 +25,8 @@ public class Play {
     private String smallPhoto;
     private String placeName;
     private String startDates;
+    @OneToMany(mappedBy = "event")
+    private List<DramaLike> likes;
     public void setStartDates(List<String> startDatesList) {
         this.startDates = String.join(",", startDatesList);  // Converts list to a single string
     }
