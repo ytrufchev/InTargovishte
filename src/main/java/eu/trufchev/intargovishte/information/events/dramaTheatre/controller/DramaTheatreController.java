@@ -97,7 +97,7 @@ public class DramaTheatreController {
 
     @PostMapping("/like")
     public ResponseEntity<Map<String, Object>> toggleLike(
-            @RequestBody Map<String, Long> requestBody,
+            @RequestBody Map<String, String> requestBody,
             Authentication authentication
     ) {
         // Log entry into the method
