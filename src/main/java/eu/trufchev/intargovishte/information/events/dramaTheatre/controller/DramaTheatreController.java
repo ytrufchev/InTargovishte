@@ -111,7 +111,7 @@ public class DramaTheatreController {
 
         try {
             // Extract eventId from request body
-            Long eventId = requestBody.get("eventId");
+            String eventId = requestBody.get("eventId").toString();
             if (eventId == null) {
                 return ResponseEntity.badRequest()
                         .body(Map.of("error", "Missing 'eventId' in request body"));
@@ -128,7 +128,7 @@ public class DramaTheatreController {
             }
 
             // Retrieve the event
-            Play event = playsRepository.findById(eventId.toString())
+            Play event = playsRepository.findById(eventId)
                     .orElseThrow(() -> new ResponseStatusException(
                             HttpStatus.NOT_FOUND, "Event not found with ID: " + eventId));
 

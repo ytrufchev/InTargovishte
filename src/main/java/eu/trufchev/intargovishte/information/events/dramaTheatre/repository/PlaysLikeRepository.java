@@ -10,9 +10,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface PlaysLikeRepository extends JpaRepository<DramaLike, Long> {
-    List<Play> findByEventId(Long eventId);
-    List<Play> findByUserId(Long userId);
+public interface PlaysLikeRepository extends JpaRepository<DramaLike, String> {
+    List<Play> findByEventId(String eventId);
+    List<Play> findByUserId(String userId);
     Optional<DramaLike> findByEventAndUser(Play event, User user);
     boolean existsByEventAndUser(Play event, User user);
     long countByEvent(Play event);
