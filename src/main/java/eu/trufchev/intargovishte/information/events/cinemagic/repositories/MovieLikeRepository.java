@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MovieLikeRepository extends JpaRepository<MovieLike, Long> {
-    List<Movie> findByEventId(long eventId);
+    List<Movie> findByEventId(String eventId);
     List<Movie> findByUserId(long userId);
     Optional<MovieLike> findByEventAndUser(Movie event, User user);
     boolean existsByEventAndUser(Movie event, User user);
