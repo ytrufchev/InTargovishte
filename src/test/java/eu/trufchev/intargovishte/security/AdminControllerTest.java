@@ -2,6 +2,7 @@ package eu.trufchev.intargovishte.security;
 
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
 import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
+import eu.trufchev.intargovishte.information.events.appEvents.repositories.AppEventLikeRepository;
 import eu.trufchev.intargovishte.information.events.appEvents.repositories.EventEntityRepository;
 import eu.trufchev.intargovishte.information.fuelo.entities.GasStation;
 import eu.trufchev.intargovishte.information.fuelo.feignclient.FueloClient;
@@ -49,6 +50,9 @@ public class AdminControllerTest {
 
     @Mock
     private EventEntityRepository eventEntityRepository;
+
+    @Mock
+    private AppEventLikeRepository appEventLikeRepository;
 
     @Mock
     private RolesRepository rolesRepository;
@@ -113,6 +117,7 @@ public class AdminControllerTest {
         String response = adminController.deleteInAppEventEntry(eventId);
 
         assertEquals("Event with id 1 deleted", response);
+        verify(appEventLikeRepository, times(1)).deleteByEventId(eventId);
         verify(eventEntityRepository, times(1)).deleteById(eventId);
     }
 
