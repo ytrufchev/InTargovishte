@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "notificationClient", url = "https://api.telegram.org")
 public interface NotificationClient {
 
-    @GetMapping(value = "/bot{token}/sendMessage")
+    @GetMapping(value = "/{token}/sendMessage")
     String sendMessage(
             @PathVariable("token") String token,
             @RequestParam("chat_id") String chatId,

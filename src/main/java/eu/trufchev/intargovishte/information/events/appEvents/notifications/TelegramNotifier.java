@@ -1,9 +1,11 @@
 package eu.trufchev.intargovishte.information.events.appEvents.notifications;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-@Service
+@Component
 public class TelegramNotifier {
 
     private final NotificationClient notificationClient;
@@ -14,6 +16,7 @@ public class TelegramNotifier {
     @Value("${app.chatId}")
     private String chatId;
 
+    @Autowired
     public TelegramNotifier(NotificationClient notificationClient) {
         this.notificationClient = notificationClient;
     }
