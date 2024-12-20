@@ -5,6 +5,7 @@ import eu.trufchev.intargovishte.information.events.appEvents.dto.ResponseEventD
 import eu.trufchev.intargovishte.information.events.appEvents.entities.AppEventLike;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
 import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
+import eu.trufchev.intargovishte.information.events.appEvents.notifications.TelegramNotifier;
 import eu.trufchev.intargovishte.information.events.appEvents.repositories.AppEventLikeRepository;
 import eu.trufchev.intargovishte.information.events.appEvents.repositories.EventEntityRepository;
 import eu.trufchev.intargovishte.information.events.appEvents.services.AppEventLikeService;
@@ -49,6 +50,8 @@ public class EventEntityController {
     private AppEventLikeRepository appEventLikeRepository;
     @Autowired
     private AppEventLikeService appEventLikeService;
+    @Autowired
+    TelegramNotifier telegramNotifier;
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -76,7 +79,7 @@ public class EventEntityController {
                 likes
 
         );
-
+        telegramNotifier.sendNotification(createdEvent.getTitle());
         return ResponseEntity.ok(createdEvent);
     }
 
