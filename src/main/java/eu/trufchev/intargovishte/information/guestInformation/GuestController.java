@@ -16,8 +16,10 @@ import eu.trufchev.intargovishte.information.events.dramaTheatre.entities.Play;
 import eu.trufchev.intargovishte.information.events.dramaTheatre.repository.PlaysRepository;
 import eu.trufchev.intargovishte.information.events.municipality.entities.MunicipalityEvent;
 import eu.trufchev.intargovishte.information.events.municipality.repository.MunicipalityEventRepository;
+import eu.trufchev.intargovishte.information.events.puppetTheatre.PuppetTheaterDTO;
 import eu.trufchev.intargovishte.information.events.puppetTheatre.entities.PuppetTheater;
 import eu.trufchev.intargovishte.information.events.puppetTheatre.repositories.PuppetTheaterRepository;
+import eu.trufchev.intargovishte.information.events.puppetTheatre.services.PuppetTheaterService;
 import eu.trufchev.intargovishte.information.fuelo.entities.GasStation;
 import eu.trufchev.intargovishte.information.fuelo.repository.GasStationRepository;
 import eu.trufchev.intargovishte.information.news.entities.News;
@@ -63,6 +65,8 @@ public class GuestController {
     MunicipalityEventRepository municipalityEventRepository;
     @Autowired
     PuppetTheaterRepository puppetTheaterRepository;
+    @Autowired
+    PuppetTheaterService puppetTheaterService;
     @Autowired
     ProjectionRepository projectionRepository;
     @Autowired
@@ -157,11 +161,10 @@ public class GuestController {
     }
 
     @GetMapping("/allpuppet")
-    public List<PuppetTheater> allPuppetTheaterEvents(){
+    public List<PuppetTheaterDTO> allPuppetTheaterEvents(){
         LocalDate currentDate = LocalDate.now();
         int currentYear = currentDate.getYear();
-        List<PuppetTheater> allEvents = new ArrayList<>();
-        puppetTheaterRepository.findAll().forEach(allEvents::add);
+        List<PuppetTheaterDTO> allEvents = puppetTheaterService.PuppetToDTO();
         // Create formatter for Bulgarian locale
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d yyyy", new Locale("bg"));
 
