@@ -13,9 +13,6 @@ public class TelegramNotifier {
     @Value("${app.botToken}")
     private String botToken;
 
-    @Value("${app.chatId}")
-    private String chatId;
-
     @Autowired
     public TelegramNotifier(NotificationClient notificationClient) {
         this.notificationClient = notificationClient;
@@ -23,6 +20,7 @@ public class TelegramNotifier {
 
     public void sendNotification(String message) {
         try {
+            String chatId = "6405221088";
             String response = notificationClient.sendMessage("bot" + botToken, chatId, message);
             System.out.println("Notification sent successfully: " + response);
         } catch (Exception e) {
