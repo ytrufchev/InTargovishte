@@ -17,6 +17,7 @@ import eu.trufchev.intargovishte.user.repository.RolesRepository;
 import eu.trufchev.intargovishte.user.repository.UserRepository;
 import eu.trufchev.intargovishte.user.service.impl.UserServiceImpl;
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -73,6 +74,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/deleteinappevent/{eventId}")
+    @Transactional
     public String deleteInAppEventEntry(@PathVariable Long eventId) {
         Optional<EventEntity> eventForDeletion = eventEntityRepository.findById(eventId);
         if (eventForDeletion.isPresent()) {
