@@ -18,7 +18,6 @@ public class JwtTokenProvider {
 
 
     public String generateTokenWithUsername(String username) {
-        System.out.println(jwtSecret);
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())

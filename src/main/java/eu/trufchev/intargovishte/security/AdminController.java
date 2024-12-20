@@ -2,6 +2,7 @@ package eu.trufchev.intargovishte.security;
 
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
 import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
+import eu.trufchev.intargovishte.information.events.appEvents.repositories.AppEventLikeRepository;
 import eu.trufchev.intargovishte.information.events.appEvents.repositories.EventEntityRepository;
 import eu.trufchev.intargovishte.information.fuelo.entities.GasStation;
 import eu.trufchev.intargovishte.information.fuelo.entities.GasstationsList;
@@ -44,6 +45,8 @@ public class AdminController {
     private RolesRepository rolesRepository;
     @Autowired
     private UserServiceImpl userService;
+    @Autowired
+    private AppEventLikeRepository appEventLikeRepository;
 
     @GetMapping("/getusers")
     public ResponseEntity<List<User>> getAllUsers() {
@@ -73,6 +76,7 @@ public class AdminController {
     public String deleteInAppEventEntry(@PathVariable Long eventId) {
         Optional<EventEntity> eventForDeletion = eventEntityRepository.findById(eventId);
         if (eventForDeletion.isPresent()) {
+            appEventLikeRepository.deleteByEventId(eventId);
             eventEntityRepository.deleteById(eventId);
             return "Event with id " + eventId + " deleted";
         } else {

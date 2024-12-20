@@ -14,4 +14,6 @@ public interface AppEventLikeRepository extends JpaRepository<AppEventLike, Long
     Optional<AppEventLike> findByEventAndUser(EventEntity event, User user);
     boolean existsByEventAndUser(EventEntity event, User user);
     long countByEvent(EventEntity event);
-    }
+
+    void deleteByEventId(Long eventId);
+}
