@@ -11,6 +11,7 @@ import eu.trufchev.intargovishte.information.events.cinemagic.entities.MovieWith
 import eu.trufchev.intargovishte.information.events.cinemagic.entities.Projections;
 import eu.trufchev.intargovishte.information.events.cinemagic.repositories.MovieRepository;
 import eu.trufchev.intargovishte.information.events.cinemagic.repositories.ProjectionRepository;
+import eu.trufchev.intargovishte.information.events.dramaTheatre.dto.PlayDTO;
 import eu.trufchev.intargovishte.information.events.dramaTheatre.entities.Play;
 import eu.trufchev.intargovishte.information.events.dramaTheatre.repository.PlaysRepository;
 import eu.trufchev.intargovishte.information.events.municipality.entities.MunicipalityEvent;
@@ -25,8 +26,11 @@ import eu.trufchev.intargovishte.information.roadConditions.entities.RoadConditi
 import eu.trufchev.intargovishte.information.roadConditions.repositories.RoadConditionsRepository;
 import eu.trufchev.intargovishte.information.vikOutage.entities.VikOutage;
 import eu.trufchev.intargovishte.information.vikOutage.repositories.VikOutageRepository;
+import eu.trufchev.intargovishte.user.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,10 +39,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -113,8 +114,24 @@ public class GuestController {
     }
 
     @GetMapping("/allplays")
-    public List<Play> playsList() {
-        return (List<Play>) playsRepository.findAll();
+    public List<PlayDTO> playsList() {
+        List<PlayDTO> playDTOS = new ArrayList<>();
+        List<Play> plays = new ArrayList<>();
+        plays.addAll((Collection<? extends Play>) playsRepository.findAll());
+        for(Play play: plays){
+            PlayDTO playDTO = new PlayDTO();
+            playDTO.setId(play.getId());
+            playDTO.setTitle(play.getTitle());
+            playDTO.setLength(play.getLength());
+            playDTO.setMinAgeRestriction(play.getMinAgeRestriction());
+            playDTO.setLargePhoto(play.getLargePhoto());
+            playDTO.setPlaceName(play.getPlaceName());
+            playDTO.setStartDates(play.getStartDates());
+            playDTO.setLikesCount(play.getLikes() != null ? (long) play.getLikes().size() : 0L);
+            playDTO.setLikedByCurrentUser(false);
+            playDTOS.add(playDTO);
+        }
+        return playDTOS;
     }
 
     @GetMapping("/allmunicipality")
