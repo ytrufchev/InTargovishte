@@ -4,7 +4,9 @@ import eu.trufchev.intargovishte.information.events.appEvents.dto.EventDTO;
 import eu.trufchev.intargovishte.information.events.appEvents.dto.ResponseEventDTO;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
 import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
+import eu.trufchev.intargovishte.information.events.appEvents.notifications.TelegramNotifier;
 import eu.trufchev.intargovishte.information.events.appEvents.services.EventAppService;
+import eu.trufchev.intargovishte.information.events.appEvents.notifications.NotificationClient; // Import NotificationClient
 import eu.trufchev.intargovishte.user.entity.User;
 import eu.trufchev.intargovishte.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +37,13 @@ public class EventEntityControllerTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private NotificationClient notificationClient; // Mock NotificationClient
+
+    @Mock
+    private TelegramNotifier notificationService;
+
+
     @InjectMocks
     private EventEntityController eventEntityController;
 
@@ -46,6 +55,7 @@ public class EventEntityControllerTest {
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(eventEntityController).build();
+
         user = new User();
         user.setId(1L);
         user.setUsername("testuser");
@@ -78,12 +88,15 @@ public class EventEntityControllerTest {
         responseEventDTO.setLikesCount(1L);
     }
 
+
     @Test
     void addEvent_ValidData_ReturnsCreatedEvent() throws Exception {
         // Mock the user repository
         when(userRepository.findById(eventDTO.getUserId())).thenReturn(Optional.of(user));
         // Mock the service to return a created event
         when(eventAppService.addEvent(anyString(), anyString(), anyLong(), anyString(), anyString(), anyLong(), any(), anyList())).thenReturn(eventEntity);
+        // Mock the notification service to simulate success
+        doNothing().when(notificationService).sendNotification(anyString());
 
         mockMvc.perform(post("/content/inapp/events/add")
                         .contentType("application/json")
@@ -92,6 +105,7 @@ public class EventEntityControllerTest {
                 .andExpect(jsonPath("$.title").value("Event 1"))
                 .andExpect(jsonPath("$.content").value("Event content"));
     }
+
 
     @Test
     void addEvent_UserNotFound_ReturnsNotFound() throws Exception {
