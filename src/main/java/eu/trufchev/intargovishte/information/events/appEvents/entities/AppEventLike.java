@@ -1,6 +1,7 @@
 package eu.trufchev.intargovishte.information.events.appEvents.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import eu.trufchev.intargovishte.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,6 +22,7 @@ public class AppEventLike {
 
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
+    @JsonBackReference
     private EventEntity event;
 
     @ManyToOne

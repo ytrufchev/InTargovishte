@@ -2,6 +2,7 @@ package eu.trufchev.intargovishte.information.events.appEvents.entities;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
 import eu.trufchev.intargovishte.user.entity.User;
 import jakarta.persistence.*;
@@ -36,6 +37,7 @@ public class EventEntity {
     @Column(name = "status")
     private StatusENUMS status;
     @OneToMany(mappedBy = "event")
+    @JsonManagedReference
     private List<AppEventLike> likes;
 //    @Column(name = "comments")
 //    @ManyToOne
