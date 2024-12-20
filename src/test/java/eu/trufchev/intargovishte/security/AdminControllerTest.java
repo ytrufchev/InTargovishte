@@ -112,12 +112,22 @@ public class AdminControllerTest {
     @Test
     public void testDeleteInAppEventEntrySuccess() {
         Long eventId = 1L;
-        when(eventEntityRepository.findById(eventId)).thenReturn(Optional.of(new EventEntity()));
 
+        // Mock EventEntity
+        EventEntity mockEventEntity = new EventEntity();
+        mockEventEntity.setId(eventId); // Set the eventId or any other required fields
+
+        // Mock repository behavior
+        when(eventEntityRepository.findById(eventId)).thenReturn(Optional.of(mockEventEntity));
+
+        // Call the method under test
         String response = adminController.deleteInAppEventEntry(eventId);
 
+        // Assertions
         assertEquals("Event with id 1 deleted", response);
-        verify(appEventLikeRepository, times(1)).deleteByEventId(eventId);
+
+        // Verify interactions
+        verify(appEventLikeRepository, times(1)).deleteByEventId(mockEventEntity);
         verify(eventEntityRepository, times(1)).deleteById(eventId);
     }
 

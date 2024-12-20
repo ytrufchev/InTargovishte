@@ -76,7 +76,7 @@ public class AdminController {
     public String deleteInAppEventEntry(@PathVariable Long eventId) {
         Optional<EventEntity> eventForDeletion = eventEntityRepository.findById(eventId);
         if (eventForDeletion.isPresent()) {
-            appEventLikeRepository.deleteByEventId(eventId);
+            appEventLikeRepository.deleteByEventId(eventForDeletion.get());
             eventEntityRepository.deleteById(eventId);
             return "Event with id " + eventId + " deleted";
         } else {
