@@ -127,7 +127,7 @@ public class AdminControllerTest {
         assertEquals("Event with id 1 deleted", response);
 
         // Verify interactions
-        verify(appEventLikeRepository, times(1)).deleteByEventId(mockEventEntity);
+        verify(appEventLikeRepository, times(1)).deleteByEvent(mockEventEntity);
         verify(eventEntityRepository, times(1)).deleteById(eventId);
     }
 
