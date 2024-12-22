@@ -16,12 +16,17 @@ import java.util.List;
 
 @Service
 public class DeleteOldMovies {
+    private final MovieRepository movieRepository;
+    private final ProjectionRepository projectionRepository;
+    private final MovieLikeRepository movieLikeRepository;
+
     @Autowired
-    MovieRepository movieRepository;
-    @Autowired
-    ProjectionRepository projectionRepository;
-    @Autowired
-    MovieLikeRepository movieLikeRepository;
+    public DeleteOldMovies(MovieRepository movieRepository, ProjectionRepository projectionRepository, MovieLikeRepository movieLikeRepository) {
+        this.movieRepository = movieRepository;
+        this.projectionRepository = projectionRepository;
+        this.movieLikeRepository = movieLikeRepository;
+    }
+
 
     public void deleteOldMovies() {
         LocalDateTime now = LocalDateTime.now();
