@@ -53,12 +53,35 @@ public class PuppetTheaterController {
     }
 
     public List<PuppetTheater> updatePuppetTheaterEvents() throws IOException {
-        List<PuppetTheater> puppetTheater = new ArrayList<>();
-        puppetTheaterService.getTheaterEvents().forEach(puppetTheater::add);
-        puppetTheaterLikeRepository.deleteAll();
-        puppetTheaterRepository.deleteAll();
-        puppetTheaterRepository.saveAll(puppetTheater);
-        return puppetTheater;
+        // Get new events from service
+        List<PuppetTheater> newEvents = puppetTheaterService.getTheaterEvents();
+
+        // Get existing events from repository
+        List<PuppetTheater> existingEvents = new ArrayList<>();
+        puppetTheaterRepository.findAll().forEach(existingEvents::add);
+
+        // Filter out events that already exist
+        List<PuppetTheater> eventsToAdd = newEvents.stream()
+                .filter(newEvent -> !existingEvents.stream()
+                        .anyMatch(existingEvent -> areEventsEqual(newEvent, existingEvent)))
+                .collect(Collectors.toList());
+
+        // Save only new events
+        if (!eventsToAdd.isEmpty()) {
+            puppetTheaterRepository.saveAll(eventsToAdd);
+        }
+        List<PuppetTheater> eventsToReturn = new ArrayList<>();
+        puppetTheaterRepository.findAll().forEach(eventsToReturn::add);
+        return eventsToReturn;
+    }
+
+    // Helper method to compare events
+    private boolean areEventsEqual(PuppetTheater event1, PuppetTheater event2) {
+        // Implement comparison logic based on your event properties
+        // For example:
+        return event1.getTitle().equals(event2.getTitle()) &&
+                event1.getEventDay().equals(event2.getEventDay());
+        // Add more fields as needed for comparison
     }
     @GetMapping("/all")
     public List<PuppetTheaterDTO> allPuppetTheaterEvents(){
