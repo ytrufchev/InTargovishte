@@ -4,6 +4,7 @@ import eu.trufchev.intargovishte.information.events.cinemagic.entities.Movie;
 import eu.trufchev.intargovishte.information.events.cinemagic.repositories.MovieRepository;
 import  eu.trufchev.intargovishte.information.events.cinemagic.feignClients.MoviesClient;
 import eu.trufchev.intargovishte.information.events.cinemagic.dto.MovieDTO;
+import eu.trufchev.intargovishte.information.events.cinemagic.services.DeleteOldMovies;
 import eu.trufchev.intargovishte.information.events.cinemagic.services.MovieDTOToMovie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +45,8 @@ public class MovieController {
     }
 
     private ResponseEntity<List<Movie>> updateMovieList() {
+        DeleteOldMovies deleteOldMovies = new DeleteOldMovies();
+        deleteOldMovies.deleteOldMovies();
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime sevenDaysLater = now.plusDays(7);
 

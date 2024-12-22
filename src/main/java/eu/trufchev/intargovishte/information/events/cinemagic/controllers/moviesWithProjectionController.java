@@ -35,8 +35,6 @@ public class moviesWithProjectionController {
 
     @GetMapping("/all")
     public ResponseEntity<List<MovieWithProjections>> screenings(){
-        DeleteOldMovies deleteOldMovies = new DeleteOldMovies();
-        deleteOldMovies.deleteOldMovies();
         List<Movie> movies = (List<Movie>) movieRepository.findAll();
         List<Projections> projections = (List<Projections>) projectionRepository.findAll();
         MovieWithProjectionsDTO movieWithProjectionsDTO = new MovieWithProjectionsDTO();
