@@ -3,6 +3,8 @@ package eu.trufchev.intargovishte.information.events.puppetTheatre.controllers;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
 import eu.trufchev.intargovishte.information.events.puppetTheatre.PuppetTheaterDTO;
 import eu.trufchev.intargovishte.information.events.puppetTheatre.entities.PuppetTheater;
+import eu.trufchev.intargovishte.information.events.puppetTheatre.entities.PuppetTheaterLike;
+import eu.trufchev.intargovishte.information.events.puppetTheatre.repositories.PuppetTheaterLikeRepository;
 import eu.trufchev.intargovishte.information.events.puppetTheatre.repositories.PuppetTheaterRepository;
 import eu.trufchev.intargovishte.information.events.puppetTheatre.services.PuppetTheaterLikeService;
 import eu.trufchev.intargovishte.information.events.puppetTheatre.services.PuppetTheaterService;
@@ -34,6 +36,10 @@ public class PuppetTheaterController {
     private UserRepository userRepository;
     @Autowired
     PuppetTheaterLikeService puppetTheaterLikeService;
+    @Autowired
+    PuppetTheaterLike puppetTheaterLike;
+    @Autowired
+    PuppetTheaterLikeRepository puppetTheaterLikeRepository;
 
 
     @Scheduled(cron = "0 0 9 * * *")
@@ -49,6 +55,7 @@ public class PuppetTheaterController {
     public List<PuppetTheater> updatePuppetTheaterEvents() throws IOException {
         List<PuppetTheater> puppetTheater = new ArrayList<>();
         puppetTheaterService.getTheaterEvents().forEach(puppetTheater::add);
+        puppetTheaterLikeRepository.deleteAll();
         puppetTheaterRepository.deleteAll();
         puppetTheaterRepository.saveAll(puppetTheater);
         return puppetTheater;
