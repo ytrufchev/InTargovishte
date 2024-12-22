@@ -1,11 +1,14 @@
 package eu.trufchev.intargovishte.information.events.cinemagic.controllers;
 
 import eu.trufchev.intargovishte.information.events.cinemagic.entities.Movie;
+import eu.trufchev.intargovishte.information.events.cinemagic.repositories.MovieLikeRepository;
 import eu.trufchev.intargovishte.information.events.cinemagic.repositories.MovieRepository;
 import  eu.trufchev.intargovishte.information.events.cinemagic.feignClients.MoviesClient;
 import eu.trufchev.intargovishte.information.events.cinemagic.dto.MovieDTO;
+import eu.trufchev.intargovishte.information.events.cinemagic.repositories.ProjectionRepository;
 import eu.trufchev.intargovishte.information.events.cinemagic.services.DeleteOldMovies;
 import eu.trufchev.intargovishte.information.events.cinemagic.services.MovieDTOToMovie;
+import eu.trufchev.intargovishte.information.events.cinemagic.services.MovieLikeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,6 +25,10 @@ public class MovieController {
     @Autowired
     private MovieRepository movieRepository;
     @Autowired
+    MovieLikeRepository movieLikeRepository;
+    @Autowired
+    ProjectionRepository projectionsRepository;
+
     private final MoviesClient moviesClient;
 
     public MovieController(MoviesClient moviesClient){
@@ -45,7 +52,7 @@ public class MovieController {
     }
 
     private ResponseEntity<List<Movie>> updateMovieList() {
-        DeleteOldMovies deleteOldMovies = new DeleteOldMovies();
+        DeleteOldMovies deleteOldMovies = new DeleteOldMovies(movieRepository, projectionsRepository, movieLikeRepository);
         deleteOldMovies.deleteOldMovies();
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime sevenDaysLater = now.plusDays(7);
