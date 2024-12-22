@@ -1,5 +1,6 @@
 package eu.trufchev.intargovishte.information.events.puppetTheatre.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
 import eu.trufchev.intargovishte.user.entity.User;
 import jakarta.persistence.*;
@@ -18,6 +19,7 @@ public class PuppetTheaterLike {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
     private PuppetTheater event;

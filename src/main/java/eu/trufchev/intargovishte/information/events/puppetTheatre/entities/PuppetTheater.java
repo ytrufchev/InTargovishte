@@ -1,5 +1,6 @@
 package eu.trufchev.intargovishte.information.events.puppetTheatre.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import eu.trufchev.intargovishte.information.events.appEvents.entities.AppEventLike;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,7 @@ public class PuppetTheater {
     private String title;
     @Column(name = "playTime")
     private String playTime;
+    @JsonManagedReference
     @OneToMany(mappedBy = "event")
     private List<PuppetTheaterLike> likes;
 }
