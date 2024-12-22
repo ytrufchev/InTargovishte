@@ -15,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,6 +45,7 @@ public class MovieWithProjectionsDTO {
                 .collect(Collectors.groupingBy(Projections::getMovieId));
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = null;
+        LocalDateTime now = LocalDateTime.now();
         List<MovieWithProjections> moviesWithProjections = new java.util.ArrayList<>();
             for (Movie movie : movies) {
                 List<Projections> movieProjections = projectionsByMovieId.getOrDefault(movie.getId(), Collections.emptyList());
@@ -56,16 +59,16 @@ public class MovieWithProjectionsDTO {
                     movieWithProjections.setImdbId(movie.getImdbId());
                     movieWithProjections.setProjections(movieProjections);
                     movieWithProjections.setLikesCount(movie.getLikes() != null ? (long) movie.getLikes().size() : 0L);
-                if (currentUser != null) {
-                    boolean isLikedByCurrentUser = movieLikeRepository
-                            .findByEventAndUser(movie, currentUser)
-                            .isPresent();
-                    movieWithProjections.setLikedByCurrentUser(isLikedByCurrentUser);
-                } else {
-                    movieWithProjections.setLikedByCurrentUser(false);
+                movieWithProjections.setLikedByCurrentUser(false);
+                LocalDateTime projectionTime = LocalDateTime.parse(movieProjections.get(movieProjections.size()-1).getScreeningTimeFrom());
+                if(projectionTime.isBefore(now)) {
+                    movieLikeRepository.deleteByMovie(movie);
+                    assert movieRepository != null;
+                    movieRepository.deleteById(movie.getId());
                 }
                     moviesWithProjections.add(movieWithProjections);
                 }
+
             return moviesWithProjections;
     }
 }

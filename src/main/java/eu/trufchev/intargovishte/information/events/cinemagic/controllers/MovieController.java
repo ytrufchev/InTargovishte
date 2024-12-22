@@ -57,8 +57,6 @@ public class MovieController {
         MovieDTOToMovie movieDTOToMovie = new MovieDTOToMovie();
         List<Movie> movies = movieDTOToMovie.toMovie(movieDTO);
 
-        // Clear old movies and save the updated list
-        movieRepository.deleteAll();
         movieRepository.saveAll(movies);
 
         return ResponseEntity.ok(movies);

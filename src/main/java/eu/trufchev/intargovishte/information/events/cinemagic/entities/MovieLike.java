@@ -1,5 +1,6 @@
 package eu.trufchev.intargovishte.information.events.cinemagic.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import eu.trufchev.intargovishte.information.events.dramaTheatre.entities.Play;
 import eu.trufchev.intargovishte.user.entity.User;
 import jakarta.persistence.*;
@@ -18,6 +19,7 @@ public class MovieLike {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
     private Movie event;

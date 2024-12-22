@@ -1,5 +1,6 @@
 package eu.trufchev.intargovishte.information.events.cinemagic.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -21,6 +22,7 @@ private @Getter @Setter String id;
 @Column(name ="originalTitle") private @Getter @Setter String originalTitle;
 @Column(name ="isForChildren") private @Getter @Setter Boolean isForChildren;
 @Column(name ="imdbId") private @Getter @Setter String imdbId;
+    @JsonManagedReference
 @OneToMany(mappedBy = "event")
 private @Getter @Setter List<MovieLike> likes;
 
