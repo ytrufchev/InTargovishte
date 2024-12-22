@@ -45,7 +45,6 @@ public class MovieWithProjectionsDTO {
                 .collect(Collectors.groupingBy(Projections::getMovieId));
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = null;
-        LocalDateTime now = LocalDateTime.now();
         List<MovieWithProjections> moviesWithProjections = new java.util.ArrayList<>();
             for (Movie movie : movies) {
                 List<Projections> movieProjections = projectionsByMovieId.getOrDefault(movie.getId(), Collections.emptyList());
@@ -60,12 +59,6 @@ public class MovieWithProjectionsDTO {
                     movieWithProjections.setProjections(movieProjections);
                     movieWithProjections.setLikesCount(movie.getLikes() != null ? (long) movie.getLikes().size() : 0L);
                 movieWithProjections.setLikedByCurrentUser(false);
-                LocalDateTime projectionTime = LocalDateTime.parse(movieProjections.get(movieProjections.size()-1).getScreeningTimeFrom());
-                if(projectionTime.isBefore(now)) {
-                    movieLikeRepository.deleteByEventId(movie.getId());
-                    assert movieRepository != null;
-                    movieRepository.deleteById(movie.getId());
-                }
                     moviesWithProjections.add(movieWithProjections);
                 }
 

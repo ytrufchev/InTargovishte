@@ -6,6 +6,7 @@ import eu.trufchev.intargovishte.information.events.cinemagic.entities.MovieWith
 import eu.trufchev.intargovishte.information.events.cinemagic.entities.Projections;
 import eu.trufchev.intargovishte.information.events.cinemagic.repositories.MovieRepository;
 import eu.trufchev.intargovishte.information.events.cinemagic.repositories.ProjectionRepository;
+import eu.trufchev.intargovishte.information.events.cinemagic.services.DeleteOldMovies;
 import eu.trufchev.intargovishte.information.events.cinemagic.services.MovieLikeService;
 import eu.trufchev.intargovishte.information.events.puppetTheatre.entities.PuppetTheater;
 import eu.trufchev.intargovishte.user.entity.User;
@@ -34,6 +35,8 @@ public class moviesWithProjectionController {
 
     @GetMapping("/all")
     public ResponseEntity<List<MovieWithProjections>> screenings(){
+        DeleteOldMovies deleteOldMovies = new DeleteOldMovies();
+        deleteOldMovies.deleteOldMovies();
         List<Movie> movies = (List<Movie>) movieRepository.findAll();
         List<Projections> projections = (List<Projections>) projectionRepository.findAll();
         MovieWithProjectionsDTO movieWithProjectionsDTO = new MovieWithProjectionsDTO();
