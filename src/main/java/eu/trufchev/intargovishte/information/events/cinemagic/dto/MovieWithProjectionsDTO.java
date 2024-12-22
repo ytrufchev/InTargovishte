@@ -62,7 +62,7 @@ public class MovieWithProjectionsDTO {
                 movieWithProjections.setLikedByCurrentUser(false);
                 LocalDateTime projectionTime = LocalDateTime.parse(movieProjections.get(movieProjections.size()-1).getScreeningTimeFrom());
                 if(projectionTime.isBefore(now)) {
-                    movieLikeRepository.deleteByMovie(movie);
+                    movieLikeRepository.deleteByMovieId(movie.getId());
                     assert movieRepository != null;
                     movieRepository.deleteById(movie.getId());
                 }
