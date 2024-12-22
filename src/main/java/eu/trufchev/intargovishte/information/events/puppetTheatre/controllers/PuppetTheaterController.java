@@ -37,8 +37,6 @@ public class PuppetTheaterController {
     @Autowired
     PuppetTheaterLikeService puppetTheaterLikeService;
     @Autowired
-    PuppetTheaterLike puppetTheaterLike;
-    @Autowired
     PuppetTheaterLikeRepository puppetTheaterLikeRepository;
 
 
