@@ -16,6 +16,6 @@ public interface MovieLikeRepository extends JpaRepository<MovieLike, Long> {
     List<Movie> findByUserId(long userId);
     Optional<MovieLike> findByEventAndUser(Movie event, User user);
     boolean existsByEventAndUser(Movie event, User user);
-    void deleteByMovieId(String movieId);
+    void deleteByEventId(String movieId);
     long countByEvent(Movie event);
 }
