@@ -28,6 +28,8 @@ public class MovieController {
     MovieLikeRepository movieLikeRepository;
     @Autowired
     ProjectionRepository projectionsRepository;
+    @Autowired
+    DeleteOldMovies deleteOldMovies;
 
     private final MoviesClient moviesClient;
 
@@ -68,7 +70,7 @@ public class MovieController {
         List<Movie> movies = movieDTOToMovie.toMovie(movieDTO);
 
         movieRepository.saveAll(movies);
-
+        deleteOldMovies.deleteOldMovies();
         return ResponseEntity.ok(movies);
     }
 }
