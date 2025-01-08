@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class DeleteOldMovies {
     }
 
     public void deleteOldMovies() {
-        LocalDateTime now = LocalDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now();
 
         List<Movie> movies = (List<Movie>) movieRepository.findAll();
         List<Projections> projections = (List<Projections>) projectionRepository.findAll();
@@ -40,12 +41,12 @@ public class DeleteOldMovies {
                 // Get the last projection
                 Projections lastProjection = movieWithProjections.getProjections()
                         .stream()
-                        .max((p1, p2) -> LocalDateTime.parse(p1.getScreeningTimeTo())
-                                .compareTo(LocalDateTime.parse(p2.getScreeningTimeTo())))
+                        .max((p1, p2) -> ZonedDateTime.parse(p1.getScreeningTimeTo())
+                                .compareTo(ZonedDateTime.parse(p2.getScreeningTimeTo())))
                         .orElse(null);
 
                 if (lastProjection != null) {
-                    LocalDateTime lastProjectionTime = LocalDateTime.parse(lastProjection.getScreeningTimeTo());
+                    ZonedDateTime lastProjectionTime = ZonedDateTime.parse(lastProjection.getScreeningTimeTo());
 
                     // Check if the last projection has passed
                     if (lastProjectionTime.isBefore(now)) {
