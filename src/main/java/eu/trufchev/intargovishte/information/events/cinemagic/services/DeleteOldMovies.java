@@ -19,13 +19,11 @@ public class DeleteOldMovies {
 
     private final MovieRepository movieRepository;
     private final ProjectionRepository projectionRepository;
-    private final MovieLikeRepository movieLikeRepository;
 
     @Autowired
-    public DeleteOldMovies(MovieRepository movieRepository, ProjectionRepository projectionRepository, MovieLikeRepository movieLikeRepository) {
+    public DeleteOldMovies(MovieRepository movieRepository, ProjectionRepository projectionRepository) {
         this.movieRepository = movieRepository;
         this.projectionRepository = projectionRepository;
-        this.movieLikeRepository = movieLikeRepository;
     }
 
     public void deleteOldMovies() {
@@ -55,10 +53,7 @@ public class DeleteOldMovies {
                 // Check if the last projection has ended
                 if (lastProjectionTime.isBefore(now)) {
                     try {
-                        // Delete associated likes first
-                        movieLikeRepository.deleteByEventId(movieWithProjections.getId());
-
-                        // Then delete the movie
+                        // Delete the movie (associated likes will be deleted automatically)
                         movieRepository.deleteById(movieWithProjections.getId());
                     } catch (Exception e) {
                         // Log the error and continue processing other movies

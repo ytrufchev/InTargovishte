@@ -1,10 +1,7 @@
 package eu.trufchev.intargovishte.information.events.cinemagic.entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
@@ -23,7 +20,7 @@ private @Getter @Setter String id;
 @Column(name ="isForChildren") private @Getter @Setter Boolean isForChildren;
 @Column(name ="imdbId") private @Getter @Setter String imdbId;
     @JsonManagedReference
-@OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "event", cascade = CascadeType.REMOVE, orphanRemoval = true)
 private @Getter @Setter List<MovieLike> likes;
 
 }
