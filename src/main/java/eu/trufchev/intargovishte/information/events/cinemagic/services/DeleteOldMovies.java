@@ -62,5 +62,21 @@ public class DeleteOldMovies {
                 }
             }
         }
+
+        // Handle movies with no projections
+        for (Movie movie : movies) {
+            boolean hasProjections = projections.stream()
+                    .anyMatch(projection -> projection.getMovieId().equals(movie.getId()));
+
+            if (!hasProjections) {
+                try {
+                    // Delete the movie with no projections
+                    movieRepository.deleteById(movie.getId());
+                } catch (Exception e) {
+                    // Log the error and continue processing other movies
+                    System.err.println("Error deleting movie with no projections and ID " + movie.getId() + ": " + e.getMessage());
+                }
+            }
+        }
     }
 }
