@@ -10,13 +10,13 @@ import eu.trufchev.intargovishte.information.events.cinemagic.repositories.Proje
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class DeleteOldMovies {
+
     private final MovieRepository movieRepository;
     private final ProjectionRepository projectionRepository;
     private final MovieLikeRepository movieLikeRepository;
@@ -31,28 +31,32 @@ public class DeleteOldMovies {
     public void deleteOldMovies() {
         ZonedDateTime now = ZonedDateTime.now();
 
-        List<Movie> movies = (List<Movie>) movieRepository.findAll();
-        List<Projections> projections = (List<Projections>) projectionRepository.findAll();
+        // Fetch movies and their projections
+        List<Movie> movies = new ArrayList<>();
+                movieRepository.findAll().forEach(movies::add);
+        List<Projections> projections = new ArrayList<>();
+                projectionRepository.findAll().forEach(projections::add);
+
+        // Combine movies and projections
         MovieWithProjectionsDTO movieWithProjectionsDTO = new MovieWithProjectionsDTO();
         List<MovieWithProjections> movieWithProjectionsList = movieWithProjectionsDTO.combineMovieWithProjections(movies, projections);
 
+        // Process each movie with its projections
         for (MovieWithProjections movieWithProjections : movieWithProjectionsList) {
-            if (!movieWithProjections.getProjections().isEmpty()) {
-                // Get the last projection
-                Projections lastProjection = movieWithProjections.getProjections()
-                        .stream()
-                        .max((p1, p2) -> ZonedDateTime.parse(p1.getScreeningTimeTo())
-                                .compareTo(ZonedDateTime.parse(p2.getScreeningTimeTo())))
-                        .orElse(null);
+            // Find the last projection
+            Projections lastProjection = movieWithProjections.getProjections().stream()
+                    .max((p1, p2) -> ZonedDateTime.parse(p1.getScreeningTimeTo())
+                            .compareTo(ZonedDateTime.parse(p2.getScreeningTimeTo())))
+                    .orElse(null);
 
-                if (lastProjection != null) {
-                    ZonedDateTime lastProjectionTime = ZonedDateTime.parse(lastProjection.getScreeningTimeTo());
+            if (lastProjection != null) {
+                ZonedDateTime lastProjectionTime = ZonedDateTime.parse(lastProjection.getScreeningTimeTo());
 
-                    // Check if the last projection has passed
-                    if (lastProjectionTime.isBefore(now)) {
-                        movieLikeRepository.deleteByEventId(movieWithProjections.getId());
-                        movieRepository.deleteById(movieWithProjections.getId());
-                    }
+                // Check if the last projection has ended
+                if (lastProjectionTime.isBefore(now)) {
+                    // Delete associated likes and movie entry
+                    movieLikeRepository.deleteByEventId(movieWithProjections.getId());
+                    movieRepository.deleteById(movieWithProjections.getId());
                 }
             }
         }
