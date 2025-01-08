@@ -54,7 +54,7 @@ public class MovieController {
     }
 
     private ResponseEntity<List<Movie>> updateMovieList() {
-        DeleteOldMovies deleteOldMovies = new DeleteOldMovies(movieRepository, projectionsRepository, movieLikeRepository);
+        DeleteOldMovies deleteOldMovies = new DeleteOldMovies(movieRepository, projectionsRepository);
         deleteOldMovies.deleteOldMovies();
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime sevenDaysLater = now.plusDays(7);
@@ -70,7 +70,6 @@ public class MovieController {
         List<Movie> movies = movieDTOToMovie.toMovie(movieDTO);
 
         movieRepository.saveAll(movies);
-        deleteOldMovies.deleteOldMovies();
         return ResponseEntity.ok(movies);
     }
 }
