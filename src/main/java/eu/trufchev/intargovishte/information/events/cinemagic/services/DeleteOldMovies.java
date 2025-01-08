@@ -33,9 +33,9 @@ public class DeleteOldMovies {
 
         // Fetch movies and their projections
         List<Movie> movies = new ArrayList<>();
-                movieRepository.findAll().forEach(movies::add);
+        movieRepository.findAll().forEach(movies::add);
         List<Projections> projections = new ArrayList<>();
-                projectionRepository.findAll().forEach(projections::add);
+        projectionRepository.findAll().forEach(projections::add);
 
         // Combine movies and projections
         MovieWithProjectionsDTO movieWithProjectionsDTO = new MovieWithProjectionsDTO();
@@ -54,9 +54,16 @@ public class DeleteOldMovies {
 
                 // Check if the last projection has ended
                 if (lastProjectionTime.isBefore(now)) {
-                    // Delete associated likes and movie entry
-                    movieLikeRepository.deleteByEventId(movieWithProjections.getId());
-                    movieRepository.deleteById(movieWithProjections.getId());
+                    try {
+                        // Delete associated likes first
+                        movieLikeRepository.deleteByEventId(movieWithProjections.getId());
+
+                        // Then delete the movie
+                        movieRepository.deleteById(movieWithProjections.getId());
+                    } catch (Exception e) {
+                        // Log the error and continue processing other movies
+                        System.err.println("Error deleting movie with ID " + movieWithProjections.getId() + ": " + e.getMessage());
+                    }
                 }
             }
         }
