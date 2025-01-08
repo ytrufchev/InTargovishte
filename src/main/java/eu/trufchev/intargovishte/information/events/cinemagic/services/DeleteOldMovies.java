@@ -27,21 +27,32 @@ public class DeleteOldMovies {
         this.movieLikeRepository = movieLikeRepository;
     }
 
-
     public void deleteOldMovies() {
         LocalDateTime now = LocalDateTime.now();
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-
-        String dateTimeTo = now.format(formatter);
         List<Movie> movies = (List<Movie>) movieRepository.findAll();
         List<Projections> projections = (List<Projections>) projectionRepository.findAll();
         MovieWithProjectionsDTO movieWithProjectionsDTO = new MovieWithProjectionsDTO();
         List<MovieWithProjections> movieWithProjectionsList = movieWithProjectionsDTO.combineMovieWithProjections(movies, projections);
-        for(MovieWithProjections movieWithProjections : movieWithProjectionsList){
-            if(movieWithProjections.getProjections().get(movieWithProjections.getProjections().size()-1).getScreeningTimeTo().equals(dateTimeTo)){
-                movieLikeRepository.deleteByEventId(movieWithProjections.getId());
-                movieRepository.deleteById(movieWithProjections.getId());
+
+        for (MovieWithProjections movieWithProjections : movieWithProjectionsList) {
+            if (!movieWithProjections.getProjections().isEmpty()) {
+                // Get the last projection
+                Projections lastProjection = movieWithProjections.getProjections()
+                        .stream()
+                        .max((p1, p2) -> LocalDateTime.parse(p1.getScreeningTimeTo())
+                                .compareTo(LocalDateTime.parse(p2.getScreeningTimeTo())))
+                        .orElse(null);
+
+                if (lastProjection != null) {
+                    LocalDateTime lastProjectionTime = LocalDateTime.parse(lastProjection.getScreeningTimeTo());
+
+                    // Check if the last projection has passed
+                    if (lastProjectionTime.isBefore(now)) {
+                        movieLikeRepository.deleteByEventId(movieWithProjections.getId());
+                        movieRepository.deleteById(movieWithProjections.getId());
+                    }
+                }
             }
         }
     }
