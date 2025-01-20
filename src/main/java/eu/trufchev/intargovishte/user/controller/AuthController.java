@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @CrossOrigin("*")
@@ -43,7 +44,20 @@ public class AuthController {
     private RolesRepository rolesRepository;
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto){
+    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
+        // Password validation regex
+        String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{8,}$";
+        Pattern pattern = Pattern.compile(passwordRegex);
+
+        // Check if the password matches the regex
+        if (!pattern.matcher(registerDto.getPassword()).matches()) {
+            return new ResponseEntity<>(
+                    "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, and one number.",
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        // Proceed with registration if password is valid
         String response = userService.register(registerDto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
