@@ -49,7 +49,6 @@ public class SecurityConfig {
                     authorize.requestMatchers("/stats/**").permitAll();
                     authorize.requestMatchers("/guest/**").permitAll();
                     authorize.requestMatchers("/content/inapp/**").authenticated();
-                    authorize.requestMatchers("/information/news/update").permitAll();
                     authorize.requestMatchers("/content/**").authenticated();
                     authorize.requestMatchers("/information/**").authenticated();
                     authorize.requestMatchers("/user/**").authenticated();

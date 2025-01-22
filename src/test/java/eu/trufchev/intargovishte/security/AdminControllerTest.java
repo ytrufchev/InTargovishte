@@ -8,8 +8,6 @@ import eu.trufchev.intargovishte.information.fuelo.entities.GasStation;
 import eu.trufchev.intargovishte.information.fuelo.feignclient.FueloClient;
 import eu.trufchev.intargovishte.information.fuelo.repository.GasStationRepository;
 import eu.trufchev.intargovishte.information.fuelo.services.ParseGasStationToHtml;
-import eu.trufchev.intargovishte.information.news.entities.News;
-import eu.trufchev.intargovishte.information.news.repositories.NewsRepository;
 import eu.trufchev.intargovishte.user.entity.Roles;
 import eu.trufchev.intargovishte.user.entity.User;
 import eu.trufchev.intargovishte.user.repository.RolesRepository;
@@ -35,9 +33,6 @@ public class AdminControllerTest {
 
     @Mock
     private UserRepository userRepository;
-
-    @Mock
-    private NewsRepository newsRepository;
 
     @Mock
     private GasStationRepository gasStationRepository;
@@ -85,28 +80,6 @@ public class AdminControllerTest {
 
         assertEquals("User deleted", response);
         verify(userService, times(1)).deleteUserById(userId);
-    }
-
-    @Test
-    public void testDeleteNewsEntrySuccess() {
-        Long newsId = 1L;
-        when(newsRepository.findById(newsId)).thenReturn(Optional.of(new News()));
-
-        String response = adminController.deleteNewsEntry(newsId);
-
-        assertEquals("News with id 1 deleted", response);
-        verify(newsRepository, times(1)).deleteById(newsId);
-    }
-
-    @Test
-    public void testDeleteNewsEntryNotFound() {
-        Long newsId = 1L;
-        when(newsRepository.findById(newsId)).thenReturn(Optional.empty());
-
-        String response = adminController.deleteNewsEntry(newsId);
-
-        assertEquals("News with id 1 not found", response);
-        verify(newsRepository, never()).deleteById(newsId);
     }
 
     @Test

@@ -19,8 +19,6 @@ import eu.trufchev.intargovishte.information.events.puppetTheatre.entities.Puppe
 import eu.trufchev.intargovishte.information.events.puppetTheatre.repositories.PuppetTheaterRepository;
 import eu.trufchev.intargovishte.information.fuelo.entities.GasStation;
 import eu.trufchev.intargovishte.information.fuelo.repository.GasStationRepository;
-import eu.trufchev.intargovishte.information.news.entities.News;
-import eu.trufchev.intargovishte.information.news.services.NewsService;
 import eu.trufchev.intargovishte.information.roadConditions.entities.RoadConditions;
 import eu.trufchev.intargovishte.information.roadConditions.repositories.RoadConditionsRepository;
 import eu.trufchev.intargovishte.information.vikOutage.entities.VikOutage;
@@ -73,9 +71,6 @@ class GuestControllerTest {
 
     @Mock
     private PuppetTheaterRepository puppetTheaterRepository;
-
-    @Mock
-    private NewsService newsService;
 
     @BeforeEach
     void setUp() {
@@ -140,17 +135,5 @@ class GuestControllerTest {
         assertEquals(200, response.getStatusCodeValue());
         assertEquals(2, response.getBody().size());
         verify(eventAppService, times(1)).findNextTenApprovedEvents();
-    }
-
-    @Test
-    void testGetAllNews() {
-        List<News> mockNews = Arrays.asList(new News(), new News());
-        when(newsService.getAllNews()).thenReturn(mockNews);
-
-        ResponseEntity<List<News>> response = guestController.getAllNews();
-
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(2, response.getBody().size());
-        verify(newsService, times(1)).getAllNews();
     }
 }

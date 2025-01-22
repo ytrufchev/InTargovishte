@@ -9,8 +9,6 @@ import eu.trufchev.intargovishte.information.fuelo.entities.GasstationsList;
 import eu.trufchev.intargovishte.information.fuelo.feignclient.FueloClient;
 import eu.trufchev.intargovishte.information.fuelo.repository.GasStationRepository;
 import eu.trufchev.intargovishte.information.fuelo.services.ParseGasStationToHtml;
-import eu.trufchev.intargovishte.information.news.entities.News;
-import eu.trufchev.intargovishte.information.news.repositories.NewsRepository;
 import eu.trufchev.intargovishte.user.entity.Roles;
 import eu.trufchev.intargovishte.user.entity.User;
 import eu.trufchev.intargovishte.user.repository.RolesRepository;
@@ -32,8 +30,6 @@ import java.util.Optional;
 public class AdminController {
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private NewsRepository newsRepository;
     @Autowired
     private GasStationRepository gasStationRepository;
     @Autowired
@@ -59,18 +55,6 @@ public class AdminController {
     @DeleteMapping("/deleteuser/{userId}")
     public String deleteUser(@PathVariable Long userId) {
         return userService.deleteUserById(userId);
-    }
-
-
-    @DeleteMapping("/deletenews/{newsId}")
-    public String deleteNewsEntry(@PathVariable Long newsId) {
-        Optional<News> newsForDeletion = newsRepository.findById(newsId);
-        if (newsForDeletion.isPresent()) {
-            newsRepository.deleteById(newsId);
-            return "News with id " + newsId + " deleted";
-        } else {
-            return "News with id " + newsId + " not found";
-        }
     }
 
     @DeleteMapping("/deleteinappevent/{eventId}")
