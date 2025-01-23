@@ -130,7 +130,7 @@ public class AdminController {
         eventEntityRepository.save(approvedEvent);
         return ResponseEntity.ok(approvedEvent);
     }
-    @PostMapping("/movie/imdbid/{movieId}/{imdbid}")
+    @PostMapping("/movie/imdbid/{movieId}/{imdbId}")
     public ResponseEntity<Movie> addImdbId(@PathVariable String movieId, @PathVariable String imdbId) {
         Optional<Movie> movie = movieRepository.findById(movieId); // Use a repository method to filter by status
         if (movie.isEmpty()) {
