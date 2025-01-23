@@ -71,7 +71,8 @@ public class VikOutageService {
                 String desc = cleanEntry.replace(startTime, "").replace(endTime, "").replace(date, "").replace("до  часа", "").replaceAll("\\s+", " ")
                         .replace("на г.", "")
                         .replace("от часа", "")
-                        .replaceAll("</?span>", "");
+                        .replace("- от - ", "")
+                        .replaceAll("Район Омуртаг", "");
                 // Create the VikOutage entity and set the fields
                 VikOutage vikOutage = new VikOutage();
                 vikOutage.setDate(date);
