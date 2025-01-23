@@ -27,7 +27,7 @@ public class ProjectionsController {
         this.moviesClient = moviesClient;
     }
 
-    @Scheduled(cron = "0 0 9 * * *")
+
     public ResponseEntity<List<Projections>> getAllProjections(){
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime sevenDaysLater = now.plusDays(7);
