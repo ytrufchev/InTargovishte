@@ -4,11 +4,14 @@ import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEnti
 import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
 import eu.trufchev.intargovishte.information.events.appEvents.repositories.AppEventLikeRepository;
 import eu.trufchev.intargovishte.information.events.appEvents.repositories.EventEntityRepository;
+import eu.trufchev.intargovishte.information.events.cinemagic.entities.Movie;
+import eu.trufchev.intargovishte.information.events.cinemagic.repositories.MovieRepository;
 import eu.trufchev.intargovishte.information.fuelo.entities.GasStation;
 import eu.trufchev.intargovishte.information.fuelo.entities.GasstationsList;
 import eu.trufchev.intargovishte.information.fuelo.feignclient.FueloClient;
 import eu.trufchev.intargovishte.information.fuelo.repository.GasStationRepository;
 import eu.trufchev.intargovishte.information.fuelo.services.ParseGasStationToHtml;
+import eu.trufchev.intargovishte.user.dto.PasswordUpdateDto;
 import eu.trufchev.intargovishte.user.entity.Roles;
 import eu.trufchev.intargovishte.user.entity.User;
 import eu.trufchev.intargovishte.user.repository.RolesRepository;
@@ -44,6 +47,8 @@ public class AdminController {
     private UserServiceImpl userService;
     @Autowired
     private AppEventLikeRepository appEventLikeRepository;
+    @Autowired
+    private MovieRepository movieRepository;
 
     @GetMapping("/getusers")
     public ResponseEntity<List<User>> getAllUsers() {
@@ -125,7 +130,17 @@ public class AdminController {
         eventEntityRepository.save(approvedEvent);
         return ResponseEntity.ok(approvedEvent);
     }
-
+    @PutMapping("/movie/{movieId}")
+    public ResponseEntity<Movie> addImdbId(@PathVariable String movieId, @RequestBody String imdbId) {
+        Optional<Movie> movie = movieRepository.findById(movieId); // Use a repository method to filter by status
+        if (movie.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Return 204 if no pending events found
+        }
+        Movie addImdbId = movie.get();
+        addImdbId.setImdbId(imdbId);
+        movieRepository.save(addImdbId);
+        return ResponseEntity.ok(addImdbId);
+    }
 
 
 }
