@@ -46,8 +46,8 @@ public class MovieController {
     }
 
     @Scheduled(cron = "0 0 9 * * *")
-    public ResponseEntity<List<Movie>> updateMovies() {
-        return updateMovieList();
+    public void updateMovies() {
+        updateMovieList();
     }
 
     // Manual update endpoint
