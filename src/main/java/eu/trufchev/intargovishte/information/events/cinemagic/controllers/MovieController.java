@@ -9,6 +9,7 @@ import eu.trufchev.intargovishte.information.events.cinemagic.repositories.Proje
 import eu.trufchev.intargovishte.information.events.cinemagic.services.DeleteOldMovies;
 import eu.trufchev.intargovishte.information.events.cinemagic.services.MovieDTOToMovie;
 import eu.trufchev.intargovishte.information.events.cinemagic.services.MovieLikeService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -45,11 +46,11 @@ public class MovieController {
         return (List<Movie>) movieRepository.findAll();
     }
 
-    @Scheduled(cron = "0 0 9 * * *")
+    @Scheduled(cron = "0 0 9 * * ?")
+    @Transactional
     public void updateMovies() {
         updateMovieList();
     }
-
     // Manual update endpoint
     @GetMapping("/update")
     public ResponseEntity<List<Movie>> manualUpdateMovies() {
