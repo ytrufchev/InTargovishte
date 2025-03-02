@@ -186,6 +186,41 @@ public class EventEntityController {
             throw new AccessDeniedException("User not authenticated");
         }
     }
+    @PutMapping("/edit/{eventId}")
+    public ResponseEntity<EventEntity> editEvent(
+            @PathVariable("eventId") Long eventId,
+            @RequestBody EventDTO eventDTO,
+            Authentication authentication) {
+
+        Optional<EventEntity> eventForEdit = eventEntityRepository.findById(eventId);
+
+        if (eventForEdit.isPresent()) {
+            EventEntity event = eventForEdit.get();
+
+            // Get the authenticated user's ID
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            Long authenticatedUserId = Long.parseLong(userDetails.getUsername()); // Assuming username stores the user ID
+
+            // Check if the authenticated user is the publisher of the event
+            if (!event.getUser().equals(authenticatedUserId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+
+            // Update event fields
+            event.setTitle(eventDTO.getTitle());
+            event.setContent(eventDTO.getContent());
+            event.setDate(eventDTO.getDate());
+            event.setLocation(eventDTO.getLocation());
+            event.setImage(eventDTO.getImage());
+            event.setStatus(StatusENUMS.PENDING);
+
+            eventEntityRepository.save(event);
+            return ResponseEntity.ok(event);
+        }
+
+        return ResponseEntity.notFound().build();
+    }
+
 
 
 
