@@ -181,6 +181,7 @@ public class EventEntityController {
             throw new AccessDeniedException("User not authenticated");
         }
     }
+    @Transactional
     @PutMapping("/edit/{eventId}")
     public ResponseEntity<EventEntity> editEvent(
             @PathVariable("eventId") Long eventId,
