@@ -10,10 +10,8 @@ import eu.trufchev.intargovishte.information.events.appEvents.repositories.AppEv
 import eu.trufchev.intargovishte.information.events.appEvents.repositories.EventEntityRepository;
 import eu.trufchev.intargovishte.information.events.appEvents.services.AppEventLikeService;
 import eu.trufchev.intargovishte.information.events.appEvents.services.EventAppService;
-import eu.trufchev.intargovishte.security.CustomUserDetailsService;
 import eu.trufchev.intargovishte.user.entity.User;
 import eu.trufchev.intargovishte.user.repository.UserRepository;
-import eu.trufchev.intargovishte.user.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,14 +19,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.security.Principal;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -220,9 +215,12 @@ public class EventEntityController {
 
         return ResponseEntity.notFound().build();
     }
-
-
-
-
-
+    @GetMapping("/{eventId}")
+    public ResponseEntity<Optional<EventEntity>> getEventsById(@PathVariable Long eventId) {
+        Optional<EventEntity> event = eventEntityRepository.findById(eventId); // Ensure this method exists in your repository
+        if (event == null) {
+            return ResponseEntity.noContent().build(); // 204 No Content if no events found
+        }
+        return ResponseEntity.ok(event); // 200 OK with the list of events
+    }
 }
