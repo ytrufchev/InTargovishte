@@ -217,6 +217,7 @@ public class EventEntityController {
             event.setStatus(StatusENUMS.PENDING);
 
             eventEntityRepository.save(event);
+            telegramNotifier.sendNotification(event.getTitle());
             return ResponseEntity.ok(event);
         }
 
