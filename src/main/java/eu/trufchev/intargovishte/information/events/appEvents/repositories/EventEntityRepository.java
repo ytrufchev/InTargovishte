@@ -21,4 +21,5 @@ public interface EventEntityRepository extends CrudRepository<EventEntity, Long>
     List<EventEntity> findByUser(Long user);
 
     List<EventEntity> findByStatus(StatusENUMS status);
+
 }

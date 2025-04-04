@@ -216,11 +216,13 @@ public class EventEntityController {
         return ResponseEntity.notFound().build();
     }
     @GetMapping("/{eventId}")
-    public ResponseEntity<Optional<EventEntity>> getEventsById(@PathVariable Long eventId) {
+    public ResponseEntity<EventEntity> getEventsById(@PathVariable Long eventId) {
         Optional<EventEntity> event = eventEntityRepository.findById(eventId); // Ensure this method exists in your repository
-        if (event == null) {
-            return ResponseEntity.noContent().build(); // 204 No Content if no events found
+        if (event.isPresent()) {
+            EventEntity ev = event.get();
+            return ResponseEntity.ok(ev);
+             // 204 No Content if no events found
         }
-        return ResponseEntity.ok(event); // 200 OK with the list of events
+        return ResponseEntity.noContent().build(); // 200 OK with the list of events
     }
 }
