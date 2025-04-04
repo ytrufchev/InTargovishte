@@ -194,10 +194,16 @@ public class EventEntityController {
 
             // Get the authenticated user's ID
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            Long authenticatedUserId = Long.parseLong(userDetails.getUsername()); // Assuming username stores the user ID
+            String authenticatedUser = userDetails.getUsername(); // Assuming username stores the user ID
+            Optional<User> optionalUser = Optional.ofNullable(userRepository.findByUsername(authenticatedUser));
 
+            if (optionalUser.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // User not found
+            }
+
+            User user = optionalUser.get();
             // Check if the authenticated user is the publisher of the event
-            if (!event.getUser().equals(authenticatedUserId)) {
+            if (!event.getUser().equals(user.getId())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
