@@ -109,7 +109,7 @@ public class GuestController {
         List<Movie> movies = (List<Movie>) movieRepository.findAll();
         List<Projections> projections = (List<Projections>) projectionRepository.findAll();
         MovieWithProjectionsDTO movieWithProjectionsDTO = new MovieWithProjectionsDTO();
-        List<MovieWithProjections> movieWithProjectionsList = movieWithProjectionsDTO.combineMovieWithProjections(movies, projections);
+        List<MovieWithProjections> movieWithProjectionsList = movieWithProjectionsDTO.combineMovieWithProjections(movies, projections, null);
         return ResponseEntity.ok(movieWithProjectionsList);
     }
 
