@@ -37,7 +37,7 @@ public class DeleteOldMovies {
 
         // Combine movies and projections
         MovieWithProjectionsDTO movieWithProjectionsDTO = new MovieWithProjectionsDTO();
-        List<MovieWithProjections> movieWithProjectionsList = movieWithProjectionsDTO.combineMovieWithProjections(movies, projections);
+        List<MovieWithProjections> movieWithProjectionsList = movieWithProjectionsDTO.combineMovieWithProjections(movies, projections, null);
 
         // Process each movie with its projections
         for (MovieWithProjections movieWithProjections : movieWithProjectionsList) {
