@@ -1,6 +1,7 @@
 package eu.trufchev.intargovishte.information.events.cinemagic.dto;
 
 import eu.trufchev.intargovishte.information.events.cinemagic.entities.Movie;
+import eu.trufchev.intargovishte.information.events.cinemagic.entities.MovieLike;
 import eu.trufchev.intargovishte.information.events.cinemagic.entities.MovieWithProjections;
 import eu.trufchev.intargovishte.information.events.cinemagic.entities.Projections;
 import eu.trufchev.intargovishte.information.events.cinemagic.repositories.MovieLikeRepository;
@@ -17,10 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @ToString
@@ -45,6 +43,11 @@ public class MovieWithProjectionsDTO {
                 .collect(Collectors.groupingBy(Projections::getMovieId));
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = null;
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName(); // Get the username of the current user
+            currentUser = userRepository.findByUsername(username); // Fetch the current user from the DB
+        }
         List<MovieWithProjections> moviesWithProjections = new java.util.ArrayList<>();
             for (Movie movie : movies) {
                 List<Projections> movieProjections = projectionsByMovieId.getOrDefault(movie.getId(), Collections.emptyList());
@@ -58,7 +61,10 @@ public class MovieWithProjectionsDTO {
                     movieWithProjections.setImdbId(movie.getImdbId());
                     movieWithProjections.setProjections(movieProjections);
                     movieWithProjections.setLikesCount(movie.getLikes() != null ? (long) movie.getLikes().size() : 0L);
-                movieWithProjections.setLikedByCurrentUser(false);
+                if (currentUser != null) {
+                    Optional<MovieLike> movieLike = movieLikeRepository.findByEventAndUser(movie, currentUser);
+                    movieWithProjections.setLikedByCurrentUser(movieLike.isPresent());
+                }
                     moviesWithProjections.add(movieWithProjections);
                 }
 

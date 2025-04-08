@@ -74,7 +74,7 @@ public class EventEntityController {
                 likes
 
         );
-        telegramNotifier.sendNotification(createdEvent.getTitle());
+        telegramNotifier.sendNotification("Ново събитие " + createdEvent.getTitle());
         return ResponseEntity.ok(createdEvent);
     }
 
@@ -217,7 +217,7 @@ public class EventEntityController {
             event.setStatus(StatusENUMS.PENDING);
 
             eventEntityRepository.save(event);
-            telegramNotifier.sendNotification(event.getTitle());
+            telegramNotifier.sendNotification("Редакция: " + event.getTitle());
             return ResponseEntity.ok(event);
         }
 
