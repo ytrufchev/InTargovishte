@@ -12,6 +12,8 @@ import eu.trufchev.intargovishte.user.repository.UserRepository;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -45,36 +47,54 @@ public class MovieWithProjectionsDTO {
 
         // Retrieve current user only once
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = null;
 
-        if (authentication != null && authentication.isAuthenticated()) {
-            String username = authentication.getName(); // Get the username of the current user
-            currentUser = userRepository.findByUsername(username); // Fetch the current user from the DB
+        // If user is not authenticated, set likedByCurrentUser to false for all movies
+        if (authentication == null || !authentication.isAuthenticated()) {
+            List<MovieWithProjections> moviesWithProjections = new ArrayList<>();
+            for (Movie movie : movies) {
+                List<Projections> movieProjections = projectionsByMovieId.getOrDefault(movie.getId(), Collections.emptyList());
+
+                MovieWithProjections movieWithProjections = new MovieWithProjections();
+                movieWithProjections.setId(movie.getId());
+                movieWithProjections.setDuration(movie.getDuration());
+                movieWithProjections.setDescription(movie.getDescription());
+                movieWithProjections.setTitle(movie.getTitle());
+                movieWithProjections.setOriginalTitle(movie.getOriginalTitle());
+                movieWithProjections.setIsForChildren(movie.getIsForChildren());
+                movieWithProjections.setImdbId(movie.getImdbId());
+                movieWithProjections.setProjections(movieProjections);
+                movieWithProjections.setLikesCount(movie.getLikes() != null ? (long) movie.getLikes().size() : 0L);
+
+                // Set likedByCurrentUser to false for unauthenticated users
+                movieWithProjections.setLikedByCurrentUser(false);
+
+                moviesWithProjections.add(movieWithProjections);
+            }
+            return moviesWithProjections;
         }
 
-        // If currentUser is null (unauthenticated), handle accordingly
-        if (currentUser == null) {
-            // Option 1: Return movies with a "likedByCurrentUser" flag set to false (for unauthenticated users)
-            return movies.stream()
-                    .map(movie -> {
-                        MovieWithProjections movieWithProjections = new MovieWithProjections();
-                        movieWithProjections.setId(movie.getId());
-                        movieWithProjections.setDuration(movie.getDuration());
-                        movieWithProjections.setDescription(movie.getDescription());
-                        movieWithProjections.setTitle(movie.getTitle());
-                        movieWithProjections.setOriginalTitle(movie.getOriginalTitle());
-                        movieWithProjections.setIsForChildren(movie.getIsForChildren());
-                        movieWithProjections.setImdbId(movie.getImdbId());
-                        movieWithProjections.setLikesCount(movie.getLikes() != null ? (long) movie.getLikes().size() : 0L);
-                        movieWithProjections.setLikedByCurrentUser(false); // Unaunthenticated user won't have liked status
-                        return movieWithProjections;
-                    })
-                    .collect(Collectors.toList());
+        // If authenticated, fetch user and set likedByCurrentUser based on likes
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            // Return the movie list with likedByCurrentUser set to false
+            return movies.stream().map(movie -> {
+                MovieWithProjections movieWithProjections = new MovieWithProjections();
+                movieWithProjections.setId(movie.getId());
+                movieWithProjections.setDuration(movie.getDuration());
+                movieWithProjections.setDescription(movie.getDescription());
+                movieWithProjections.setTitle(movie.getTitle());
+                movieWithProjections.setOriginalTitle(movie.getOriginalTitle());
+                movieWithProjections.setIsForChildren(movie.getIsForChildren());
+                movieWithProjections.setImdbId(movie.getImdbId());
+                movieWithProjections.setProjections(projectionsByMovieId.getOrDefault(movie.getId(), Collections.emptyList()));
+                movieWithProjections.setLikesCount(movie.getLikes() != null ? (long) movie.getLikes().size() : 0L);
+                movieWithProjections.setLikedByCurrentUser(false);
+                return movieWithProjections;
+            }).collect(Collectors.toList());
         }
 
-        // Process authenticated user and return the response
         List<MovieWithProjections> moviesWithProjections = new ArrayList<>();
-
         for (Movie movie : movies) {
             List<Projections> movieProjections = projectionsByMovieId.getOrDefault(movie.getId(), Collections.emptyList());
 
@@ -89,9 +109,9 @@ public class MovieWithProjectionsDTO {
             movieWithProjections.setProjections(movieProjections);
             movieWithProjections.setLikesCount(movie.getLikes() != null ? (long) movie.getLikes().size() : 0L);
 
-            // Check if the current user has liked this movie
-            Optional<MovieLike> movieLike = movieLikeRepository.findByEventAndUser(movie, currentUser);
-            movieWithProjections.setLikedByCurrentUser(movieLike.isPresent());
+            // Set likedByCurrentUser based on whether the user has liked the movie
+            boolean likedByCurrentUser = movieLikeRepository.existsByEventAndUser(movie, user);
+            movieWithProjections.setLikedByCurrentUser(likedByCurrentUser);
 
             moviesWithProjections.add(movieWithProjections);
         }
