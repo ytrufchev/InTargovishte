@@ -32,6 +32,8 @@ public class moviesWithProjectionController {
     UserRepository userRepository;
     @Autowired
     MovieLikeService movieLikeService;
+    @Autowired
+    private MovieWithProjectionsDTO movieWithProjectionsDTO;
 
     @GetMapping("/all")
     public ResponseEntity<List<MovieWithProjections>> screenings(Authentication authentication){
@@ -41,7 +43,6 @@ public class moviesWithProjectionController {
         if (authentication != null) {
             user = userRepository.findByUsername(authentication.getName());
         }
-        MovieWithProjectionsDTO movieWithProjectionsDTO = new MovieWithProjectionsDTO();
     List<MovieWithProjections> movieWithProjectionsList = movieWithProjectionsDTO.combineMovieWithProjections(movies, projections, user);
     return ResponseEntity.ok(movieWithProjectionsList);
     }
