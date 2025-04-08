@@ -30,6 +30,7 @@ public class MovieWithProjectionsDTO {
     private final MovieRepository movieRepository;
     private final ProjectionRepository projectionRepository;
     private final UserRepository userRepository;
+    @Autowired
     private MovieLikeRepository movieLikeRepository;
 
 
