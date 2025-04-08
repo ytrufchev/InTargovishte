@@ -22,66 +22,72 @@ public class VikOutageService {
     public List<VikOutage> fetchAndParseVikOutage() {
         String htmlResponse = vikOutageClient.getOutage("15", "53", "50");
         if (htmlResponse == null || htmlResponse.isBlank()) {
+            System.out.println("Received empty or null HTML response from VIK client.");
             return new ArrayList<>();
         }
-        Document doc = Jsoup.parse(htmlResponse);
 
+        Document doc = Jsoup.parse(htmlResponse);
         List<VikOutage> vikOutages = new ArrayList<>();
 
-        // Assuming the target div is still the one you extracted via XPath
-        Element targetDiv = doc.select("div:nth-of-type(5) > div:nth-of-type(3) > ul > li:nth-of-type(2) > div > div > div:first-child").first();
+        Element targetLi = doc.select("ul.info_main_object_title_big_text > li:nth-child(2)").first();
 
-        if (targetDiv != null) {
-            String[] outageEntries = targetDiv.html().split("<br><br>");
+        if (targetLi != null) {
+            Element outageDiv = targetLi.select("div:first-child > div:first-child > div:first-child").first();
 
-            for (String entry : outageEntries) {
-                String cleanEntry = Jsoup.parse(entry).text().trim();  // Clean HTML tags and trim whitespace
+            if (outageDiv != null) {
+                String outageInfoHtml = outageDiv.html();
+                String[] outageEntries = outageInfoHtml.split("<br><br>");
 
-                // Skip empty or whitespace entries
-                if (cleanEntry.isEmpty()) {
-                    continue;
+                for (String entry : outageEntries) {
+                    String cleanEntry = Jsoup.parse(entry).text().trim();
+
+                    // Skip empty or whitespace entries
+                    if (cleanEntry.isEmpty()) {
+                        continue;
+                    }
+
+                    String date = "";
+                    String startTime = "";
+                    String endTime = "";
+                    String description = "";
+
+                    Pattern datePattern = Pattern.compile("(\\d{2}\\.\\d{2}\\.\\d{4})г");
+                    Matcher dateMatcher = datePattern.matcher(cleanEntry);
+                    if (dateMatcher.find()) {
+                        date = dateMatcher.group(1);
+                    }
+
+                    Pattern startTimePattern = Pattern.compile("от (\\d{2}:\\d{2})");
+                    Matcher startTimeMatcher = startTimePattern.matcher(cleanEntry);
+                    if (startTimeMatcher.find()) {
+                        startTime = startTimeMatcher.group(1);
+                    }
+
+                    Pattern endTimePattern = Pattern.compile("до (\\d{2}:\\d{2})");
+                    Matcher endTimeMatcher = endTimePattern.matcher(cleanEntry);
+                    if (endTimeMatcher.find()) {
+                        endTime = endTimeMatcher.group(1);
+                    }
+
+                    String desc = cleanEntry.replace(startTime, "").replace(endTime, "").replace(date, "").replace("до  часа", "").replaceAll("\\s+", " ")
+                            .replace("на г.", "")
+                            .replace("от часа", "")
+                            .replace("- от - ", "")
+                            .replaceAll("Район Омуртаг", "").trim(); // Added trim() here
+
+                    VikOutage vikOutage = new VikOutage();
+                    vikOutage.setDate(date);
+                    vikOutage.setStartTime(startTime);
+                    vikOutage.setEndTime(endTime);
+                    vikOutage.setDescription(desc.replace("\\", ""));
+
+                    vikOutages.add(vikOutage);
                 }
-
-                // Set default values
-                String date = "";
-                String startTime = "";
-                String endTime = "";
-                String description = "";
-
-                // Match the date
-                Pattern datePattern = Pattern.compile("(\\d{2}\\.\\d{2}\\.\\d{4})г");
-                Matcher dateMatcher = datePattern.matcher(cleanEntry);
-                if (dateMatcher.find()) {
-                    date = dateMatcher.group(1);
-                }
-
-                // Match the startTime
-                Pattern startTimePattern = Pattern.compile("от (\\d{2}:\\d{2})");
-                Matcher startTimeMatcher = startTimePattern.matcher(cleanEntry);
-                if (startTimeMatcher.find()) {
-                    startTime = startTimeMatcher.group(1);
-                }
-
-                // Match the endTime
-                Pattern endTimePattern = Pattern.compile("до (\\d{2}:\\d{2})");
-                Matcher endTimeMatcher = endTimePattern.matcher(cleanEntry);
-                if (endTimeMatcher.find()) {
-                    endTime = endTimeMatcher.group(1);
-                }
-                String desc = cleanEntry.replace(startTime, "").replace(endTime, "").replace(date, "").replace("до  часа", "").replaceAll("\\s+", " ")
-                        .replace("на г.", "")
-                        .replace("от часа", "")
-                        .replace("- от - ", "")
-                        .replaceAll("Район Омуртаг", "");
-                // Create the VikOutage entity and set the fields
-                VikOutage vikOutage = new VikOutage();
-                vikOutage.setDate(date);
-                vikOutage.setStartTime(startTime);
-                vikOutage.setEndTime(endTime);
-                vikOutage.setDescription(desc.replace("\\", ""));
-
-                vikOutages.add(vikOutage);
+            } else {
+                System.out.println("Could not find the outage details div within the target li.");
             }
+        } else {
+            System.out.println("Could not find the target li element containing outage information.");
         }
 
         return vikOutages;
