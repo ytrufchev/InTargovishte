@@ -111,7 +111,7 @@ public class MovieWithProjectionsDTO {
 
             // Set likedByCurrentUser based on whether the user has liked the movie
             boolean likedByCurrentUser = movieLikeRepository.existsByEventAndUser(movie, user);
-            movieWithProjections.setLikedByCurrentUser(likedByCurrentUser);
+            movieWithProjections.setLikedByCurrentUser(false);
 
             moviesWithProjections.add(movieWithProjections);
         }
