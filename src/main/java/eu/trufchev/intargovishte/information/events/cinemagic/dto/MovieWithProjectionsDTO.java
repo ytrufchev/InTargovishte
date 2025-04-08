@@ -40,42 +40,12 @@ public class MovieWithProjectionsDTO {
         this.movieLikeRepository = movieLikeRepository;
     }
 
-    public List<MovieWithProjections> combineMovieWithProjections(List<Movie> movies, List<Projections> projections) {
+    public List<MovieWithProjections> combineMovieWithProjections(List<Movie> movies, List<Projections> projections, User user) {
         // Map projections by movieId
         Map<String, List<Projections>> projectionsByMovieId = projections.stream()
                 .collect(Collectors.groupingBy(Projections::getMovieId));
 
-        // Retrieve current user only once
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        // If user is not authenticated, set likedByCurrentUser to false for all movies
-        if (authentication == null || !authentication.isAuthenticated()) {
-            List<MovieWithProjections> moviesWithProjections = new ArrayList<>();
-            for (Movie movie : movies) {
-                List<Projections> movieProjections = projectionsByMovieId.getOrDefault(movie.getId(), Collections.emptyList());
-
-                MovieWithProjections movieWithProjections = new MovieWithProjections();
-                movieWithProjections.setId(movie.getId());
-                movieWithProjections.setDuration(movie.getDuration());
-                movieWithProjections.setDescription(movie.getDescription());
-                movieWithProjections.setTitle(movie.getTitle());
-                movieWithProjections.setOriginalTitle(movie.getOriginalTitle());
-                movieWithProjections.setIsForChildren(movie.getIsForChildren());
-                movieWithProjections.setImdbId(movie.getImdbId());
-                movieWithProjections.setProjections(movieProjections);
-                movieWithProjections.setLikesCount(movie.getLikes() != null ? (long) movie.getLikes().size() : 0L);
-
-                // Set likedByCurrentUser to false for unauthenticated users
-                movieWithProjections.setLikedByCurrentUser(false);
-
-                moviesWithProjections.add(movieWithProjections);
-            }
-            return moviesWithProjections;
-        }
-
         // If authenticated, fetch user and set likedByCurrentUser based on likes
-        String username = authentication.getName();
-        User user = userRepository.findByUsername(username);
         if (user == null) {
             // Return the movie list with likedByCurrentUser set to false
             return movies.stream().map(movie -> {
@@ -111,7 +81,7 @@ public class MovieWithProjectionsDTO {
 
             // Set likedByCurrentUser based on whether the user has liked the movie
             boolean likedByCurrentUser = movieLikeRepository.existsByEventAndUser(movie, user);
-            movieWithProjections.setLikedByCurrentUser(false);
+            movieWithProjections.setLikedByCurrentUser(likedByCurrentUser);
 
             moviesWithProjections.add(movieWithProjections);
         }

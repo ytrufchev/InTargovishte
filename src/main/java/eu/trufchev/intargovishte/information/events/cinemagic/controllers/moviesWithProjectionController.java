@@ -34,11 +34,15 @@ public class moviesWithProjectionController {
     MovieLikeService movieLikeService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<MovieWithProjections>> screenings(){
+    public ResponseEntity<List<MovieWithProjections>> screenings(Authentication authentication){
         List<Movie> movies = (List<Movie>) movieRepository.findAll();
         List<Projections> projections = (List<Projections>) projectionRepository.findAll();
+        User user = null;
+        if (authentication != null) {
+            user = userRepository.findByUsername(authentication.getName());
+        }
         MovieWithProjectionsDTO movieWithProjectionsDTO = new MovieWithProjectionsDTO();
-    List<MovieWithProjections> movieWithProjectionsList = movieWithProjectionsDTO.combineMovieWithProjections(movies, projections);
+    List<MovieWithProjections> movieWithProjectionsList = movieWithProjectionsDTO.combineMovieWithProjections(movies, projections, user);
     return ResponseEntity.ok(movieWithProjectionsList);
     }
 
