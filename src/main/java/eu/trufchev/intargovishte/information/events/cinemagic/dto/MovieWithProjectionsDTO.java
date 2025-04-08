@@ -39,26 +39,42 @@ public class MovieWithProjectionsDTO {
     }
 
     public List<MovieWithProjections> combineMovieWithProjections(List<Movie> movies, List<Projections> projections) {
+        // Map projections by movieId
         Map<String, List<Projections>> projectionsByMovieId = projections.stream()
                 .collect(Collectors.groupingBy(Projections::getMovieId));
 
+        // Retrieve current user only once
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = null;
 
-        // Retrieve current user only once
         if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName(); // Get the username of the current user
             currentUser = userRepository.findByUsername(username); // Fetch the current user from the DB
         }
 
-        List<MovieWithProjections> moviesWithProjections = new ArrayList<>();
-
-        // If currentUser is null, return empty list or handle the error
+        // If currentUser is null (unauthenticated), handle accordingly
         if (currentUser == null) {
-            return moviesWithProjections; // Return an empty list if no user is authenticated
+            // Option 1: Return movies with a "likedByCurrentUser" flag set to false (for unauthenticated users)
+            return movies.stream()
+                    .map(movie -> {
+                        MovieWithProjections movieWithProjections = new MovieWithProjections();
+                        movieWithProjections.setId(movie.getId());
+                        movieWithProjections.setDuration(movie.getDuration());
+                        movieWithProjections.setDescription(movie.getDescription());
+                        movieWithProjections.setTitle(movie.getTitle());
+                        movieWithProjections.setOriginalTitle(movie.getOriginalTitle());
+                        movieWithProjections.setIsForChildren(movie.getIsForChildren());
+                        movieWithProjections.setImdbId(movie.getImdbId());
+                        movieWithProjections.setLikesCount(movie.getLikes() != null ? (long) movie.getLikes().size() : 0L);
+                        movieWithProjections.setLikedByCurrentUser(false); // Unaunthenticated user won't have liked status
+                        return movieWithProjections;
+                    })
+                    .collect(Collectors.toList());
         }
 
-        // Process each movie
+        // Process authenticated user and return the response
+        List<MovieWithProjections> moviesWithProjections = new ArrayList<>();
+
         for (Movie movie : movies) {
             List<Projections> movieProjections = projectionsByMovieId.getOrDefault(movie.getId(), Collections.emptyList());
 
@@ -82,5 +98,6 @@ public class MovieWithProjectionsDTO {
 
         return moviesWithProjections;
     }
+
 
 }
