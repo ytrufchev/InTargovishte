@@ -11,13 +11,25 @@ import java.util.stream.Collectors;
 public class ResponseToPlayList {
 
     public List<Play> playsResponseToPlays(List<Production> productions, List<Event> events) {
-        // Map events by production ID for faster lookup
-        Map<String, List<Event>> eventsByProductionId = new HashMap<>();
+        // Map events by production ID and city name for faster lookup
+        Map<String, List<Event>> eventsByProductionAndCity = new HashMap<>();
         System.out.println(events);
+
         for (Event event : events) {
-            eventsByProductionId
-                    .computeIfAbsent(event.getProduction().getId(), k -> new ArrayList<>())
-                    .add(event);
+            String productionId = event.getProduction().getId();
+            String cityName = event.getHost() != null && event.getHost().getLocationStr() != null
+                    ? event.getHost().getLocationStr()
+                    : "";
+
+            // Extract only the city name from the locationStr (before the comma)
+            String cityFromLocationStr = cityName.split(",")[0].trim();  // Get city name only
+
+            // Only store events that match "Търговище"
+            if ("Търговище".equals(cityFromLocationStr)) {
+                eventsByProductionAndCity
+                        .computeIfAbsent(productionId, k -> new ArrayList<>())
+                        .add(event);
+            }
         }
 
         List<Play> playList = new ArrayList<>();
@@ -45,7 +57,7 @@ public class ResponseToPlayList {
                 continue;
             }
 
-            List<Event> matchingEvents = eventsByProductionId.getOrDefault(production.getId(), Collections.emptyList());
+            List<Event> matchingEvents = eventsByProductionAndCity.getOrDefault(production.getId(), Collections.emptyList());
 
             List<String> startDates = matchingEvents.stream()
                     .map(Event::getDateStart)
