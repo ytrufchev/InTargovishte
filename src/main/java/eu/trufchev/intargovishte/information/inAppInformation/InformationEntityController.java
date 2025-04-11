@@ -149,7 +149,7 @@ public class InformationEntityController {
             info.setStatus(StatusENUMS.PENDING);
 
             informationEntityRepository.save(info);
-            telegramNotifier.sendNotification("Редакция: " + info.getTitle());
+            infoTelegramNotifier.sendNotification("Редакция: " + info.getTitle());
             return ResponseEntity.ok(info);
         }
 
