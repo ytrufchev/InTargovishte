@@ -11,6 +11,8 @@ import eu.trufchev.intargovishte.information.fuelo.entities.GasstationsList;
 import eu.trufchev.intargovishte.information.fuelo.feignclient.FueloClient;
 import eu.trufchev.intargovishte.information.fuelo.repository.GasStationRepository;
 import eu.trufchev.intargovishte.information.fuelo.services.ParseGasStationToHtml;
+import eu.trufchev.intargovishte.information.inAppInformation.entity.Information;
+import eu.trufchev.intargovishte.information.inAppInformation.repositories.InformationEntityRepository;
 import eu.trufchev.intargovishte.user.dto.PasswordUpdateDto;
 import eu.trufchev.intargovishte.user.entity.Roles;
 import eu.trufchev.intargovishte.user.entity.User;
@@ -49,6 +51,8 @@ public class AdminController {
     private AppEventLikeRepository appEventLikeRepository;
     @Autowired
     private MovieRepository movieRepository;
+    @Autowired
+    private InformationEntityRepository informationEntityRepository;
 
     @GetMapping("/getusers")
     public ResponseEntity<List<User>> getAllUsers() {
@@ -72,6 +76,18 @@ public class AdminController {
             return "Event with id " + eventId + " deleted";
         } else {
             return "Event with id " + eventId + " not found";
+        }
+    }
+
+    @DeleteMapping("/deleteinappinfo/{infoId}")
+    @Transactional
+    public String deleteInAppInfoEntry(@PathVariable Long infoId) {
+        Optional<Information> infoForDeletion = informationEntityRepository.findById(infoId);
+        if (infoForDeletion.isPresent()) {
+            informationEntityRepository.deleteById(infoId);
+            return "Info with id " + infoId + " deleted";
+        } else {
+            return "Info with id " + infoForDeletion + " not found";
         }
     }
 
@@ -118,6 +134,14 @@ public class AdminController {
         }
         return ResponseEntity.ok(events);
     }
+    @GetMapping("/info/pending")
+    public ResponseEntity<List<Information>> getPendingInfos() {
+        List<Information> infos = informationEntityRepository.findByStatus(StatusENUMS.PENDING); // Use a repository method to filter by status
+        if (infos.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Return 204 if no pending events found
+        }
+        return ResponseEntity.ok(infos);
+    }
 
     @PostMapping("/events/approve/{eventId}")
     public ResponseEntity<EventEntity> approveAnEvents(@PathVariable Long eventId) {
@@ -130,6 +154,19 @@ public class AdminController {
         eventEntityRepository.save(approvedEvent);
         return ResponseEntity.ok(approvedEvent);
     }
+
+    @PostMapping("/info/approve/{infoId}")
+    public ResponseEntity<Information> approveAnInfo(@PathVariable Long infoId) {
+        Optional<Information> info = informationEntityRepository.findById(infoId); // Use a repository method to filter by status
+        if (info.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Return 204 if no pending events found
+        }
+        Information approvedInfo = info.get();
+        approvedInfo.setStatus(StatusENUMS.APPROVED);
+        informationEntityRepository.save(approvedInfo);
+        return ResponseEntity.ok(approvedInfo);
+    }
+
     @PostMapping("/movie/imdbid/{movieId}/{imdbId}")
     public ResponseEntity<Movie> addImdbId(@PathVariable String movieId, @PathVariable String imdbId) {
         Optional<Movie> movie = movieRepository.findById(movieId); // Use a repository method to filter by status
