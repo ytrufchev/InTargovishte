@@ -12,6 +12,7 @@ import eu.trufchev.intargovishte.information.fuelo.feignclient.FueloClient;
 import eu.trufchev.intargovishte.information.fuelo.repository.GasStationRepository;
 import eu.trufchev.intargovishte.information.fuelo.services.ParseGasStationToHtml;
 import eu.trufchev.intargovishte.information.inAppInformation.entity.Information;
+import eu.trufchev.intargovishte.information.inAppInformation.enums.InfoStatusENUMS;
 import eu.trufchev.intargovishte.information.inAppInformation.repositories.InformationEntityRepository;
 import eu.trufchev.intargovishte.user.dto.PasswordUpdateDto;
 import eu.trufchev.intargovishte.user.entity.Roles;
@@ -162,7 +163,7 @@ public class AdminController {
             return ResponseEntity.noContent().build(); // Return 204 if no pending events found
         }
         Information approvedInfo = info.get();
-        approvedInfo.setStatus(StatusENUMS.APPROVED);
+        approvedInfo.setStatus(InfoStatusENUMS.APPROVED);
         informationEntityRepository.save(approvedInfo);
         return ResponseEntity.ok(approvedInfo);
     }
