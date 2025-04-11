@@ -5,15 +5,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TelegramNotifier {
+public class InfoTelegramNotifier {
 
-    private final NotificationClient notificationClient;
+    private final InfoNotificationClient notificationClient;
 
     @Value("${app.botToken}")
     private String botToken;
 
     @Autowired
-    public TelegramNotifier(NotificationClient notificationClient) {
+    public InfoTelegramNotifier(InfoNotificationClient notificationClient) {
         this.notificationClient = notificationClient;
     }
 

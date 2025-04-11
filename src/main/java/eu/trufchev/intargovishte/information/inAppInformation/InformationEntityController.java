@@ -5,6 +5,7 @@ import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEnti
 import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
 import eu.trufchev.intargovishte.information.events.appEvents.notifications.TelegramNotifier;
 import eu.trufchev.intargovishte.information.inAppInformation.entity.Information;
+import eu.trufchev.intargovishte.information.inAppInformation.notifications.InfoTelegramNotifier;
 import eu.trufchev.intargovishte.information.inAppInformation.repositories.InformationEntityRepository;
 import eu.trufchev.intargovishte.information.inAppInformation.services.InformationAppService;
 import eu.trufchev.intargovishte.user.entity.User;
@@ -39,7 +40,7 @@ public class InformationEntityController {
     @Autowired
     private InformationEntityRepository informationEntityRepository;
     @Autowired
-    TelegramNotifier telegramNotifier;
+    InfoTelegramNotifier infoTelegramNotifier;
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -56,7 +57,7 @@ public class InformationEntityController {
 
         Information createdInformation = informationAppService.addInformation(information.getTitle(), information.getValidTo(), information.getDescription(), information.getUser(), StatusENUMS.PENDING);
 
-        telegramNotifier.sendNotification("Нова информация " + createdInformation.getTitle());
+        infoTelegramNotifier.sendNotification("Нова информация " + createdInformation.getTitle());
         return ResponseEntity.ok(createdInformation);
     }
 
