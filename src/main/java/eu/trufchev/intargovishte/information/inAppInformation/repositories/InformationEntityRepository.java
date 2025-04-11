@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface InformationEntityRepository extends CrudRepository<Information, Long> {
 
-    @Query("SELECT e FROM Information e WHERE e.status = :status ORDER BY e.date ASC")
+    @Query("SELECT e FROM Information e WHERE e.status = :status ORDER BY e.validto ASC")
     List<Information> findApprovedInformation(@Param("status") StatusENUMS status);
 
     @Query("SELECT e FROM Information e WHERE e.validTo <= :validTo")
