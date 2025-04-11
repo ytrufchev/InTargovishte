@@ -1,10 +1,7 @@
 package eu.trufchev.intargovishte.information.inAppInformation;
 
-import eu.trufchev.intargovishte.information.events.appEvents.dto.EventDTO;
-import eu.trufchev.intargovishte.information.events.appEvents.entities.EventEntity;
-import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
-import eu.trufchev.intargovishte.information.events.appEvents.notifications.TelegramNotifier;
 import eu.trufchev.intargovishte.information.inAppInformation.entity.Information;
+import eu.trufchev.intargovishte.information.inAppInformation.enums.InfoStatusENUMS;
 import eu.trufchev.intargovishte.information.inAppInformation.notifications.InfoTelegramNotifier;
 import eu.trufchev.intargovishte.information.inAppInformation.repositories.InformationEntityRepository;
 import eu.trufchev.intargovishte.information.inAppInformation.services.InformationAppService;
@@ -55,7 +52,7 @@ public class InformationEntityController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
 
-        Information createdInformation = informationAppService.addInformation(information.getTitle(), information.getValidTo(), information.getDescription(), information.getUser(), StatusENUMS.PENDING);
+        Information createdInformation = informationAppService.addInformation(information.getTitle(), information.getValidTo(), information.getDescription(), information.getUser(), InfoStatusENUMS.PENDING);
 
         infoTelegramNotifier.sendNotification("Нова информация " + createdInformation.getTitle());
         return ResponseEntity.ok(createdInformation);
@@ -146,7 +143,7 @@ public class InformationEntityController {
             info.setTitle(information.getTitle());
             info.setDescription(information.getDescription());
             info.setValidTo(information.getValidTo());
-            info.setStatus(StatusENUMS.PENDING);
+            info.setStatus(InfoStatusENUMS.PENDING);
 
             informationEntityRepository.save(info);
             infoTelegramNotifier.sendNotification("Редакция: " + info.getTitle());
