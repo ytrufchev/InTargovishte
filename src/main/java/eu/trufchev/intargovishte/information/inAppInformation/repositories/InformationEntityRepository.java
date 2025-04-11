@@ -12,7 +12,7 @@ import java.util.List;
 public interface InformationEntityRepository extends CrudRepository<Information, Long> {
 
     @Query("SELECT e FROM Information e WHERE e.status = :status ORDER BY e.date ASC")
-    List<Information> findNextApprovedInformation(@Param("status") StatusENUMS status);
+    List<Information> findApprovedInformation(@Param("status") StatusENUMS status);
 
     @Query("SELECT e FROM Information e WHERE e.validTo <= :validTo")
     List<Information> findInformationBefore(@Param("validTo") String validTo);

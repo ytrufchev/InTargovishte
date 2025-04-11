@@ -39,7 +39,7 @@ public class InformationAppService {
         // Save and return the event
         return informationEntityRepository.save(info);
     }
-    public List<Information> findNextTenApprovedInformation() {
+    public List<Information> findApprovedInformation() {
             // Get the current authenticated user
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             User currentUser = null;
@@ -48,9 +48,8 @@ public class InformationAppService {
                         .orElse(null);
             }
 
-            Long today = System.currentTimeMillis();
             List<Information> infos = new ArrayList<>();
-            informationEntityRepository.findNextApprovedInformation(StatusENUMS.APPROVED).forEach(infos::add);
+            informationEntityRepository.findApprovedInformation(StatusENUMS.APPROVED).forEach(infos::add);
 
             return infos;
     }

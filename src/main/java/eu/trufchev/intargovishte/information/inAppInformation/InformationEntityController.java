@@ -63,7 +63,7 @@ public class InformationEntityController {
 
     @GetMapping("/approved")
     public ResponseEntity<List<Information>> getTopInfos() {
-        List<Information> infos = informationAppService.findNextTenApprovedInformation();
+        List<Information> infos = informationAppService.findApprovedInformation();
         return ResponseEntity.ok(infos);
     }
 
