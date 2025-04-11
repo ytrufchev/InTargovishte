@@ -50,7 +50,7 @@ public class InformationAppService {
 
             Long today = System.currentTimeMillis();
             List<Information> infos = new ArrayList<>();
-            informationEntityRepository.findNextTenApprovedInformation(today, StatusENUMS.APPROVED).forEach(infos::add);
+            informationEntityRepository.findNextApprovedInformation(StatusENUMS.APPROVED).forEach(infos::add);
 
             return infos;
     }
