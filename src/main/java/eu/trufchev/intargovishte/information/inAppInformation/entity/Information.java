@@ -1,6 +1,7 @@
 package eu.trufchev.intargovishte.information.inAppInformation.entity;
 
 import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
+import eu.trufchev.intargovishte.information.inAppInformation.enums.InfoStatusENUMS;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,5 +24,5 @@ public class Information {
         @Column(name = "publisher")
         private Long user;
         @Column(name = "status")
-        private StatusENUMS status;
+        private InfoStatusENUMS status;
 }

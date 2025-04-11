@@ -1,6 +1,6 @@
 package eu.trufchev.intargovishte.information.inAppInformation.services;
 
-import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
+import eu.trufchev.intargovishte.information.inAppInformation.enums.InfoStatusENUMS;
 import eu.trufchev.intargovishte.information.inAppInformation.entity.Information;
 import eu.trufchev.intargovishte.information.inAppInformation.repositories.InformationEntityRepository;
 import eu.trufchev.intargovishte.user.entity.User;
@@ -28,7 +28,7 @@ public class InformationAppService {
         return infos;
     }
 
-    public Information addInformation(String title, String validTo, String description,  Long user, StatusENUMS status) {
+    public Information addInformation(String title, String validTo, String description,  Long user, InfoStatusENUMS status) {
         Information info = new Information();
         info.setTitle(title);
         info.setValidTo(validTo);
@@ -49,7 +49,7 @@ public class InformationAppService {
             }
 
             List<Information> infos = new ArrayList<>();
-            informationEntityRepository.findApprovedInformation(StatusENUMS.APPROVED).forEach(infos::add);
+            informationEntityRepository.findApprovedInformation(InfoStatusENUMS.APPROVED).forEach(infos::add);
 
             return infos;
     }
