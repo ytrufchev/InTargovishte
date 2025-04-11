@@ -73,7 +73,7 @@ public class InformationEntityController {
         Instant endOfYesterday = LocalDate.now().minusDays(1).atTime(LocalTime.MAX).toInstant(ZoneOffset.UTC);
         String yesterdayTimestamp = String.valueOf(endOfYesterday.getEpochSecond());
 
-        List<Information> oldInfos = informationEntityRepository.findEventsBefore(yesterdayTimestamp);
+        List<Information> oldInfos = informationEntityRepository.findInformationBefore(yesterdayTimestamp);
 
         if (!oldInfos.isEmpty()) {
             informationEntityRepository.deleteAll(oldInfos);

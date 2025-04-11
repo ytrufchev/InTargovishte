@@ -12,10 +12,10 @@ import java.util.List;
 public interface InformationEntityRepository extends CrudRepository<Information, Long> {
 
     @Query("SELECT e FROM Information e WHERE e.date >= :today AND e.status = :status ORDER BY e.date ASC")
-    List<Information> findNextTenApprovedEvents(@Param("today") Long today, @Param("status") StatusENUMS status);
+    List<Information> findNextTenApprovedInformation(@Param("today") Long today, @Param("status") StatusENUMS status);
 
     @Query("SELECT e FROM Information e WHERE e.date <= :yesterday")
-    List<Information> findEventsBefore(@Param("yesterday") String yesterday);
+    List<Information> findInformationBefore(@Param("yesterday") String yesterday);
 
     List<Information> findByUser(Long user);
 
