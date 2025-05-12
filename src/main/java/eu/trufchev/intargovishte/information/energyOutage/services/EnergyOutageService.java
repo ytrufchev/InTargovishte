@@ -44,6 +44,7 @@ public class EnergyOutageService {
                 period.replace("\\", "");
                 String text = Jsoup.parse(eventNode.get("location_text").asText()).text();
                 text.replace("\\", "");
+                text.replace("Проверете за Вашия обект тук", "");
 
                 // Create MunicipalityEvent and set fields
                 EnergyOutage energyOutage = new EnergyOutage();
