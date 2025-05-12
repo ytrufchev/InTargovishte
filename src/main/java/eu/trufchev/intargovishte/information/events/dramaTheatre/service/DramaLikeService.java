@@ -63,4 +63,7 @@ public class DramaLikeService {
             throw new RuntimeException("Failed to toggle like", e);
         }
     }
+    public void deleteLikesForPlay(Play play) {
+        playsLikeRepository.deleteAllByEvent(play);
+    }
 }

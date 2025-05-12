@@ -19,10 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RequestMapping("/content/plays")
 @RestController
@@ -54,12 +51,49 @@ public class DramaTheatreController {
     }
 
     public ResponseEntity<List<Play>> upcomingPlays() {
-        List<Play> plays = getPlaysResponse.getPlaysForTargovishte();
+        List<Play> newPlays = getPlaysResponse.getPlaysForTargovishte();
+        List<Play> existingPlays = new ArrayList<>();
+                playsRepository.findAll().forEach(existingPlays::add);
 
-        playsRepository.deleteAll();  // Deletes all plays in the DB
-        playsRepository.saveAll(plays);  // Save new plays to the DB
-        return ResponseEntity.ok(plays);
+        // Map existing plays by a unique identifier (e.g., title + date)
+        Map<String, Play> existingPlaysMap = new HashMap<>();
+        for (Play play : existingPlays) {
+            existingPlaysMap.put(play.getTitle() + play.getStartDates(), play);
+        }
+
+        // Track updated list and found keys
+        List<Play> finalPlayList = new ArrayList<>();
+        Set<String> newKeys = new HashSet<>();
+
+        for (Play newPlay : newPlays) {
+            String key = newPlay.getTitle() + newPlay.getStartDates(); // unique key
+            newKeys.add(key);
+
+            if (existingPlaysMap.containsKey(key)) {
+                Play existingPlay = existingPlaysMap.get(key);
+                // Preserve likes
+                newPlay.setId(existingPlay.getId());
+                newPlay.setLikes(existingPlay.getLikes());
+            }
+
+            finalPlayList.add(newPlay);
+        }
+
+        // Delete plays not present in the new list
+        for (Play existingPlay : existingPlays) {
+            String key = existingPlay.getTitle() + existingPlay.getStartDates();
+            if (!newKeys.contains(key)) {
+                // Delete likes first if needed (depends on cascade config)
+                dramaLikeService.deleteLikesForPlay(existingPlay);
+                playsRepository.delete(existingPlay);
+            }
+        }
+
+        playsRepository.saveAll(finalPlayList);
+
+        return ResponseEntity.ok(finalPlayList);
     }
+
     @GetMapping("/all")
     public List<PlayDTO> playsList() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
