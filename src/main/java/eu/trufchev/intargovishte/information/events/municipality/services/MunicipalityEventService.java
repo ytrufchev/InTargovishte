@@ -70,7 +70,7 @@ public class MunicipalityEventService {
                 municipalityEvent.setDescription(body);
 
                 municipalityEvents.add(municipalityEvent);
-                System.out.println("Saving event: Title='" + title + "', Description Length=" + (body != null ? body.length() : 0));
+                System.out.println("Saving event: Title='" + title + "', Description =" + body);
             }
 
             // Optionally save to repository
