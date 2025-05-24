@@ -54,6 +54,9 @@ public class MunicipalityEventService {
                 String title = eventNode.get("contentTitle").get("title").asText();
                 String bodyHtml = eventNode.get("contentbody").get("body").asText();
                 String body = Jsoup.parse(bodyHtml).text(); // Remove HTML
+                if(body.length() > 4999) {
+                    body = body.substring(0, 4999); // Truncate to 4999 characters
+                }
 
                 // Create MunicipalityEvent and set fields
                 MunicipalityEvent municipalityEvent = new MunicipalityEvent();
