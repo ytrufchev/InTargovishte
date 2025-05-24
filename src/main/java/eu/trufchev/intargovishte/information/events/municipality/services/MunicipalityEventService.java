@@ -54,6 +54,11 @@ public class MunicipalityEventService {
                 String title = eventNode.get("contentTitle").get("title").asText();
                 String bodyHtml = eventNode.get("contentbody").get("body").asText();
                 String body = Jsoup.parse(bodyHtml).text(); // Remove HTML
+
+                if (i == 1) {
+                    System.out.println("First Event - Parsed Body Length: " + body.length()); // Log length of parsed text for the first event
+                }
+
                 if(body.length() > 4999) {
                     body = body.substring(0, 4999); // Truncate to 4999 characters
                 }
