@@ -55,10 +55,6 @@ public class MunicipalityEventService {
                 String bodyHtml = eventNode.get("contentbody").get("body").asText();
                 String body = Jsoup.parse(bodyHtml).text(); // Remove HTML
 
-                if (i == 1) {
-                    System.out.println("First Event - Parsed Body Length: " + body.length()); // Log length of parsed text for the first event
-                }
-
                 if(body.length() > 4999) {
                     body = body.substring(0, 4999); // Truncate to 4999 characters
                 }
@@ -69,13 +65,9 @@ public class MunicipalityEventService {
                 municipalityEvent.setTitle(title);
                 municipalityEvent.setDescription(body);
 
-                System.out.println("First Event - Final Description Length: " + (municipalityEvent.getDescription() != null ? municipalityEvent.getDescription().length() : 0));
-                System.out.println("First Event - Description to be saved: " + municipalityEvent.getDescription());
-
                 municipalityEvents.add(municipalityEvent);
             }
 
-            // Optionally save to repository
             municipalityEventRepository.deleteAll();
             municipalityEventRepository.saveAll(municipalityEvents);
 
