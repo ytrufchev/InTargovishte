@@ -21,4 +21,12 @@ public class MunicipalityEvent {
     private String title;
     @Column(name = "description", length = 5000)
     private String description;
+
+    @PrePersist
+    @PreUpdate
+    public void truncateDescription() {
+        if (this.description != null && this.description.length() > 5000) {
+            this.description = this.description.substring(0, 4999);
+        }
+    }
 }
