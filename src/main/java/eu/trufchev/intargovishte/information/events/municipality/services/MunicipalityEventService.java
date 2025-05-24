@@ -69,8 +69,10 @@ public class MunicipalityEventService {
                 municipalityEvent.setTitle(title);
                 municipalityEvent.setDescription(body);
 
+                System.out.println("First Event - Final Description Length: " + (municipalityEvent.getDescription() != null ? municipalityEvent.getDescription().length() : 0));
+                System.out.println("First Event - Description to be saved: " + municipalityEvent.getDescription());
+
                 municipalityEvents.add(municipalityEvent);
-                System.out.println("Saving event: Title='" + title + "', Description =" + body);
             }
 
             // Optionally save to repository
