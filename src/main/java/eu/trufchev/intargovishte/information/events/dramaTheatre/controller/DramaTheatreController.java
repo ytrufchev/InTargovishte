@@ -10,6 +10,7 @@ import eu.trufchev.intargovishte.information.events.dramaTheatre.service.GetPlay
 import eu.trufchev.intargovishte.information.events.puppetTheatre.entities.PuppetTheater;
 import eu.trufchev.intargovishte.user.entity.User;
 import eu.trufchev.intargovishte.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +51,7 @@ public class DramaTheatreController {
         return upcomingPlays();
     }
 
+    @Transactional
     public ResponseEntity<List<Play>> upcomingPlays() {
         List<Play> newPlays = getPlaysResponse.getPlaysForTargovishte();
         List<Play> existingPlays = new ArrayList<>();
