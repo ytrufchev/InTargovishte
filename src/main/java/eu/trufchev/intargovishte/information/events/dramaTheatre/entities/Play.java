@@ -2,6 +2,7 @@ package eu.trufchev.intargovishte.information.events.dramaTheatre.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.trufchev.intargovishte.information.events.puppetTheatre.entities.PuppetTheaterLike;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -26,7 +27,7 @@ public class Play {
     private String smallPhoto;
     private String placeName;
     private String startDates;
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore  // prevent infinite recursion
     private List<DramaLike> likes;
     public void setStartDates(List<String> startDatesList) {

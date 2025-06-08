@@ -1,6 +1,7 @@
 package eu.trufchev.intargovishte.information.events.dramaTheatre.controller;
 
 import eu.trufchev.intargovishte.information.events.dramaTheatre.dto.PlayDTO;
+import eu.trufchev.intargovishte.information.events.dramaTheatre.entities.DramaLike;
 import eu.trufchev.intargovishte.information.events.dramaTheatre.entities.Play;
 import eu.trufchev.intargovishte.information.events.dramaTheatre.feignClient.CookieClient;
 import eu.trufchev.intargovishte.information.events.dramaTheatre.repository.PlaysLikeRepository;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @RequestMapping("/content/plays")
 @RestController
@@ -54,47 +57,50 @@ public class DramaTheatreController {
     @Transactional
     public ResponseEntity<List<Play>> upcomingPlays() {
         List<Play> newPlays = getPlaysResponse.getPlaysForTargovishte();
+
+        // Step 1: Fetch existing plays from DB and map by ID
         List<Play> existingPlays = new ArrayList<>();
-                playsRepository.findAll().forEach(existingPlays::add);
+        playsRepository.findAll().forEach(existingPlays::add);
+        Map<String, Play> existingPlayMap = existingPlays.stream()
+                .collect(Collectors.toMap(Play::getId, Function.identity()));
 
-        // Map existing plays by a unique identifier (e.g., title + date)
-        Map<String, Play> existingPlaysMap = new HashMap<>();
-        for (Play play : existingPlays) {
-            existingPlaysMap.put(play.getTitle() + play.getStartDates(), play);
-        }
-
-        // Track updated list and found keys
-        List<Play> finalPlayList = new ArrayList<>();
-        Set<String> newKeys = new HashSet<>();
+        List<Play> finalPlaysToSave = new ArrayList<>();
 
         for (Play newPlay : newPlays) {
-            String key = newPlay.getTitle() + newPlay.getStartDates(); // unique key
-            newKeys.add(key);
+            Play existingPlay = existingPlayMap.get(newPlay.getId());
 
-            if (existingPlaysMap.containsKey(key)) {
-                Play existingPlay = existingPlaysMap.get(key);
-                // Preserve likes
-                newPlay.setId(existingPlay.getId());
-                newPlay.setLikes(existingPlay.getLikes());
+            if (existingPlay != null && existingPlay.getLikes() != null) {
+                List<DramaLike> preservedLikes = existingPlay.getLikes();
+
+                // Reassign ownership of likes to new play
+                for (DramaLike like : preservedLikes) {
+                    like.setEvent(newPlay);
+                }
+
+                newPlay.setLikes(preservedLikes);
             }
 
-            finalPlayList.add(newPlay);
+            finalPlaysToSave.add(newPlay);
         }
 
-        // Delete plays not present in the new list
+        // Step 2: Delete plays not present in the new list
+        Set<String> newPlayIds = newPlays.stream()
+                .map(Play::getId)
+                .collect(Collectors.toSet());
+
         for (Play existingPlay : existingPlays) {
-            String key = existingPlay.getTitle() + existingPlay.getStartDates();
-            if (!newKeys.contains(key)) {
-                // Delete likes first if needed (depends on cascade config)
-                dramaLikeService.deleteLikesForPlay(existingPlay);
+            if (!newPlayIds.contains(existingPlay.getId())) {
+                dramaLikeService.deleteLikesForPlay(existingPlay); // optional if orphanRemoval is used
                 playsRepository.delete(existingPlay);
             }
         }
 
-        playsRepository.saveAll(finalPlayList);
+        // Step 3: Save updated/merged plays
+        playsRepository.saveAll(finalPlaysToSave);
 
-        return ResponseEntity.ok(finalPlayList);
+        return ResponseEntity.ok(finalPlaysToSave);
     }
+
 
     @GetMapping("/all")
     public List<PlayDTO> playsList() {
