@@ -54,7 +54,7 @@ public class DramaTheatreController {
         return upcomingPlays();
     }
 
-    @Transactional
+
     public ResponseEntity<List<Play>> upcomingPlays() {
         List<Play> newPlays = getPlaysResponse.getPlaysForTargovishte();
 
