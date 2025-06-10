@@ -44,14 +44,14 @@ public class DramaTheatreController {
     @Autowired
     PlaysLikeRepository playsLikeRepository;
 
-    @Scheduled(cron = "0 0 9 * * *")
+    @Scheduled(cron = "0 0 9 * * *", zone = "Europe/Sofia")
     public  ResponseEntity<List<Play>> cronUpdate(){
         return upcomingPlays();
     }
 
     @GetMapping("/update")
     public ResponseEntity<List<Play>> manualUpdate(){
-        return upcomingPlays();
+        return cronUpdate();
     }
 
 
