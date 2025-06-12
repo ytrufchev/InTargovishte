@@ -8,11 +8,15 @@ import eu.trufchev.intargovishte.information.events.appEvents.repositories.Event
 import eu.trufchev.intargovishte.information.events.dramaTheatre.entities.Response;
 import eu.trufchev.intargovishte.user.entity.User;
 import eu.trufchev.intargovishte.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import eu.trufchev.intargovishte.information.events.appEvents.enums.StatusENUMS;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -96,5 +100,22 @@ public class EventAppService {
                 eventDTO.add(responseEventDTO);
             }
             return eventDTO;
+    }
+    @Transactional
+    public void deleteEvent(Long eventId, String requestingUsername) {
+        User requestingUser = userRepository.findByUsername(requestingUsername);
+        if (requestingUser == null) {
+            throw new AccessDeniedException("Authenticated user not found in database.");
+        }
+
+        EventEntity eventForDeletion = eventEntityRepository.findById(eventId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found with ID: " + eventId));
+
+        if (!eventForDeletion.getUser().equals(requestingUser.getId())) {
+            throw new AccessDeniedException("You are not authorized to delete this event.");
+        }
+        appEventLikeRepository.deleteByEvent(eventForDeletion);
+
+        eventEntityRepository.delete(eventForDeletion);
     }
 }

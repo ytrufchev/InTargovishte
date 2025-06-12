@@ -157,29 +157,25 @@ public class EventEntityController {
     }
 
     @DeleteMapping("/delete/{eventId}")
-    public void deleteEvent(@PathVariable("eventId")Long eventId) {
+    public ResponseEntity<Void> deleteEvent(@PathVariable("eventId") Long eventId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        if (authentication == null || !(authentication.getPrincipal() instanceof UserDetails)) {
+            throw new AccessDeniedException("User not authenticated.");
+        }
 
-            // Use userDetails.getUsername() to identify the user without casting
-            String username = userDetails.getUsername();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
 
-            // Optional: Fetch custom User entity if needed
-            User user = userRepository.findByUsername(username);
-
-            Optional<EventEntity> eventForDeletion = eventEntityRepository.findById(eventId);
-            if(eventForDeletion.isPresent()){
-                EventEntity ev = eventForDeletion.get();
-                if(ev.getUser().equals(user.getId())){
-                    appEventLikeRepository.deleteByEvent(ev);
-                    eventEntityRepository.delete(ev);
-                }
-
-            }
-        } else {
-            throw new AccessDeniedException("User not authenticated");
+        try {
+            eventAppService.deleteEvent(eventId, username);
+            return ResponseEntity.noContent().build();
+        } catch (ResponseStatusException e) {
+            throw e;
+        } catch (AccessDeniedException e) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage(), e);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred during event deletion.", e);
         }
     }
 
