@@ -173,6 +173,7 @@ public class EventEntityController {
             if(eventForDeletion.isPresent()){
                 EventEntity ev = eventForDeletion.get();
                 if(ev.getUser().equals(user.getId())){
+                    appEventLikeRepository.deleteByEvent(ev);
                     eventEntityRepository.delete(ev);
                 }
 
