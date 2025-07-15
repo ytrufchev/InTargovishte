@@ -4,35 +4,21 @@ on:
   push:
     branches:
       - main
-      - develop # Trigger on pushes to 'develop'
+      - develop
   pull_request:
     branches:
-      - main # Only PRs to main will trigger a build for potential production deployment
+      - main
+      - develop
     types: [opened, synchronize, reopened]
-  workflow_dispatch: # Manual trigger for specific environments
-    inputs:
-      environment:
-        description: 'Deployment Environment'
-        required: true
-        default: 'test-push-only' # Changed default for clarity
-        type: choice
-        options:
-          - test-push-only # Option to only push test image to Docker Hub
-          - production     # Option to build, push prod image, and deploy to production
 
 env:
-  # Your Docker Hub username (same for both test and prod images)
-  DOCKER_REGISTRY_USERNAME: ytrufchev
-
-  # Base image name for production
-  PROD_IMAGE_NAME: intargovishte
-
-  # Image name for test builds (push-only)
-  TEST_IMAGE_NAME: testtargohub
+  REGISTRY: ytrufchev
+  IMAGE_NAME: intargovishte
 
 jobs:
   build_and_publish:
-    name: Build, Analyze, and Publish Docker Image
+    if: github.ref == 'refs/heads/main'
+    name: Build, Analyze, and Publish Docker Image (Main Only)
     runs-on: ubuntu-latest
 
     steps:
@@ -69,91 +55,48 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ytrufchev_InTargovishte
 
-      # --- Login to Docker Hub (single login) ---
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ env.DOCKER_REGISTRY_USERNAME }}
-          password: ${{ secrets.PAT }} # Using your existing PAT secret
-
-      # --- Determine Image Name and Tag, then Build and Push Docker Image ---
-      - name: Build and Push Docker Image
         run: |
-          # Initialize variables
-          TARGET_IMAGE_NAME=""
-          IMAGE_TAG=""
-          SHOULD_PUSH="true" # Assume push by default
-          
-          # Determine the target image name and tag based on the branch or manual input
-          if [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
-            TARGET_IMAGE_NAME="${{ env.TEST_IMAGE_NAME }}"
-            IMAGE_TAG="test-latest"
-          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            TARGET_IMAGE_NAME="${{ env.PROD_IMAGE_NAME }}"
-            IMAGE_TAG="latest"
-          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            if [[ "${{ github.event.inputs.environment }}" == "test-push-only" ]]; then
-              TARGET_IMAGE_NAME="${{ env.TEST_IMAGE_NAME }}"
-              IMAGE_TAG="test-latest"
-            elif [[ "${{ github.event.inputs.environment }}" == "production" ]]; then
-              TARGET_IMAGE_NAME="${{ env.PROD_IMAGE_NAME }}"
-              IMAGE_TAG="latest"
-            else
-              echo "Unknown workflow_dispatch environment. Skipping Docker push."
-              SHOULD_PUSH="false"
-            fi
-          elif [[ "${{ github.event_name }}" == "pull_request" && "${{ github.base_ref }}" == "main" ]]; then
-            # For PRs to main, you might want to build for testing but not necessarily push
-            # For now, we'll build and push the prod image with a PR-specific tag
-            TARGET_IMAGE_NAME="${{ env.PROD_IMAGE_NAME }}"
-            IMAGE_TAG="pr-${{ github.event.number }}" # Tag with PR number for review
-          else
-            echo "No valid branch or environment detected for Docker image push. Skipping."
-            SHOULD_PUSH="false"
-          fi
-          
-          if [[ "${SHOULD_PUSH}" == "true" ]]; then
-            FULL_IMAGE_NAME="${{ env.DOCKER_REGISTRY_USERNAME }}/${TARGET_IMAGE_NAME}:${IMAGE_TAG}"
-            echo "Building and pushing: ${FULL_IMAGE_NAME}"
-            docker build . --tag "${FULL_IMAGE_NAME}"
-            docker push "${FULL_IMAGE_NAME}"
-          else
-            echo "Docker image build and push skipped based on workflow conditions."
-          fi
+          echo ${{ secrets.PAT }} | docker login -u ${{ github.actor }} --password-stdin
 
-  # --- Production Deployment Job (No separate test deployment job) ---
+      - name: Build and Publish Docker Image
+        run: |
+          docker build . --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
-  deploy_prod:
+  deploy_production:
+    if: github.ref == 'refs/heads/main'
+    name: Deploy to Production
     needs: build_and_publish
-    name: Deploy to Production Environment
     runs-on: ubuntu-latest
-
-    # This job runs ONLY if:
-    # 1. It's a push to the 'main' branch
-    # 2. It's a pull_request targeting 'main' (if you want PRs to main to deploy to prod)
-    # 3. It's a manual workflow_dispatch with 'production' environment selected
-    if: |
-      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'pull_request' && github.base_ref == 'main') ||
-      (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production')
-
-    env:
-      SSH_HOST_TARGET: ${{ secrets.SSH_HOST_PROD }} # Your production server host
-      SSH_USER_TARGET: ${{ secrets.SSH_USER_PROD }} # Your production server user
-      SSH_PRIVATE_KEY_TARGET: ${{ secrets.SSH_PRIVATE_KEY_PROD }} # Your production server SSH key
-      DOCKER_COMPOSE_FILE: docker-compose.yml # Your production Docker Compose file
 
     steps:
       - name: Install SSH keys
         run: |
           install -m 600 -D /dev/null ~/.ssh/id_rsa
-          echo "${{ env.SSH_PRIVATE_KEY_TARGET }}" > ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ env.SSH_HOST_TARGET }} > ~/.ssh/known_hosts
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
 
-      - name: Connect and pull (Prod)
-        # Your docker-compose.yml on the production server should reference:
-        # image: ytrufchev/intargovishte:latest
-        run: ssh ${{ env.SSH_USER_TARGET }}@${{ env.SSH_HOST_TARGET }} "docker compose -f ${DOCKER_COMPOSE_FILE} pull && docker compose -f ${DOCKER_COMPOSE_FILE} up -d && exit"
+      - name: Connect and Deploy
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker compose pull && docker compose up -d"
+
+      - name: Cleanup
+        run: rm -rf ~/.ssh
+
+  deploy_test:
+    if: github.ref == 'refs/heads/develop'
+    name: Deploy to Test Server
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install SSH keys
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.TEST_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.TEST_SSH_HOST }} > ~/.ssh/known_hosts
+
+      - name: Connect and Deploy
+        run: ssh ${{ secrets.TEST_SSH_USER }}@${{ secrets.TEST_SSH_HOST }} "sudo docker compose pull && docker compose up -d"
 
       - name: Cleanup
         run: rm -rf ~/.ssh
