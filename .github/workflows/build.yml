@@ -11,14 +11,9 @@ on:
       - develop
     types: [opened, synchronize, reopened]
 
-env:
-  REGISTRY: ytrufchev
-  IMAGE_NAME: intargovishte
-
 jobs:
   build_and_publish:
-    if: github.ref == 'refs/heads/main'
-    name: Build, Analyze, and Publish Docker Image (Main Only)
+    name: Build and Publish Docker Image
     runs-on: ubuntu-latest
 
     steps:
@@ -50,6 +45,7 @@ jobs:
         run: mvn clean package -DskipTests
 
       - name: SonarCloud Analysis
+        if: github.ref == 'refs/heads/main'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -59,10 +55,19 @@ jobs:
         run: |
           echo ${{ secrets.PAT }} | docker login -u ${{ github.actor }} --password-stdin
 
-      - name: Build and Publish Docker Image
+      - name: Set Docker Tag Based on Branch
+        id: vars
         run: |
-          docker build . --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          if [[ "${GITHUB_REF##*/}" == "main" ]]; then
+            echo "image_name=intargovishte" >> $GITHUB_OUTPUT
+          else
+            echo "image_name=testtargohub" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build . --tag ytrufchev/${{ steps.vars.outputs.image_name }}:latest
+          docker push ytrufchev/${{ steps.vars.outputs.image_name }}:latest
 
   deploy_production:
     if: github.ref == 'refs/heads/main'
@@ -78,7 +83,7 @@ jobs:
           ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
 
       - name: Connect and Deploy
-        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker compose pull && docker compose up -d"
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker-compose pull && docker-compose up -d"
 
       - name: Cleanup
         run: rm -rf ~/.ssh
@@ -86,6 +91,7 @@ jobs:
   deploy_test:
     if: github.ref == 'refs/heads/develop'
     name: Deploy to Test Server
+    needs: build_and_publish
     runs-on: ubuntu-latest
 
     steps:
@@ -96,7 +102,7 @@ jobs:
           ssh-keyscan -H ${{ secrets.TEST_SSH_HOST }} > ~/.ssh/known_hosts
 
       - name: Connect and Deploy
-        run: ssh ${{ secrets.TEST_SSH_USER }}@${{ secrets.TEST_SSH_HOST }} "sudo docker-compose pull && docker-compose up -d"
+        run: ssh ${{ secrets.TEST_SSH_USER }}@${{ secrets.TEST_SSH_HOST }} "docker-compose pull && docker-compose up -d"
 
       - name: Cleanup
         run: rm -rf ~/.ssh
