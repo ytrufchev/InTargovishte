@@ -4,14 +4,31 @@ on:
   push:
     branches:
       - main
+      - develop # Trigger on pushes to 'develop'
   pull_request:
     branches:
-      - main
+      - main # Only PRs to main will trigger a build for potential production deployment
     types: [opened, synchronize, reopened]
+  workflow_dispatch: # Manual trigger for specific environments
+    inputs:
+      environment:
+        description: 'Deployment Environment'
+        required: true
+        default: 'test-push-only' # Changed default for clarity
+        type: choice
+        options:
+          - test-push-only # Option to only push test image to Docker Hub
+          - production     # Option to build, push prod image, and deploy to production
 
 env:
-  REGISTRY: ytrufchev
-  IMAGE_NAME: intargovishte
+  # Your Docker Hub username (same for both test and prod images)
+  DOCKER_REGISTRY_USERNAME: ytrufchev
+
+  # Base image name for production
+  PROD_IMAGE_NAME: intargovishte
+
+  # Image name for test builds (push-only)
+  TEST_IMAGE_NAME: testtargohub
 
 jobs:
   build_and_publish:
@@ -19,62 +36,124 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # Shallow clones should be disabled for better relevancy of analysis
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: 17
-        distribution: 'zulu'
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'zulu'
 
-    - name: Cache SonarCloud packages
-      uses: actions/cache@v4
-      with:
-        path: ~/.sonar/cache
-        key: ${{ runner.os }}-sonar
-        restore-keys: ${{ runner.os }}-sonar
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
 
-    - name: Cache Maven packages
-      uses: actions/cache@v4
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
 
-    - name: Build with Maven
-      run: mvn clean package -DskipTests
+      - name: Build with Maven
+        run: mvn clean package -DskipTests
 
-    - name: SonarCloud Analysis
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ytrufchev_InTargovishte
+      - name: SonarCloud Analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=ytrufchev_InTargovishte
 
-    - name: Login to Docker Hub
-      run: |
-        echo ${{ secrets.PAT }} | docker login -u ${{ github.actor }} --password-stdin
+      # --- Login to Docker Hub (single login) ---
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_REGISTRY_USERNAME }}
+          password: ${{ secrets.PAT }} # Using your existing PAT secret
 
-    - name: Build and Publish Docker Image
-      run: |
-        docker build . --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+      # --- Determine Image Name and Tag, then Build and Push Docker Image ---
+      - name: Build and Push Docker Image
+        run: |
+          # Initialize variables
+          TARGET_IMAGE_NAME=""
+          IMAGE_TAG=""
+          SHOULD_PUSH="true" # Assume push by default
+          
+          # Determine the target image name and tag based on the branch or manual input
+          if [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+            TARGET_IMAGE_NAME="${{ env.TEST_IMAGE_NAME }}"
+            IMAGE_TAG="test-latest"
+          elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            TARGET_IMAGE_NAME="${{ env.PROD_IMAGE_NAME }}"
+            IMAGE_TAG="latest"
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            if [[ "${{ github.event.inputs.environment }}" == "test-push-only" ]]; then
+              TARGET_IMAGE_NAME="${{ env.TEST_IMAGE_NAME }}"
+              IMAGE_TAG="test-latest"
+            elif [[ "${{ github.event.inputs.environment }}" == "production" ]]; then
+              TARGET_IMAGE_NAME="${{ env.PROD_IMAGE_NAME }}"
+              IMAGE_TAG="latest"
+            else
+              echo "Unknown workflow_dispatch environment. Skipping Docker push."
+              SHOULD_PUSH="false"
+            fi
+          elif [[ "${{ github.event_name }}" == "pull_request" && "${{ github.base_ref }}" == "main" ]]; then
+            # For PRs to main, you might want to build for testing but not necessarily push
+            # For now, we'll build and push the prod image with a PR-specific tag
+            TARGET_IMAGE_NAME="${{ env.PROD_IMAGE_NAME }}"
+            IMAGE_TAG="pr-${{ github.event.number }}" # Tag with PR number for review
+          else
+            echo "No valid branch or environment detected for Docker image push. Skipping."
+            SHOULD_PUSH="false"
+          fi
+          
+          if [[ "${SHOULD_PUSH}" == "true" ]]; then
+            FULL_IMAGE_NAME="${{ env.DOCKER_REGISTRY_USERNAME }}/${TARGET_IMAGE_NAME}:${IMAGE_TAG}"
+            echo "Building and pushing: ${FULL_IMAGE_NAME}"
+            docker build . --tag "${FULL_IMAGE_NAME}"
+            docker push "${FULL_IMAGE_NAME}"
+          else
+            echo "Docker image build and push skipped based on workflow conditions."
+          fi
 
-  deploy:
+  # --- Production Deployment Job (No separate test deployment job) ---
+
+  deploy_prod:
     needs: build_and_publish
-    name: deploy image
+    name: Deploy to Production Environment
     runs-on: ubuntu-latest
 
+    # This job runs ONLY if:
+    # 1. It's a push to the 'main' branch
+    # 2. It's a pull_request targeting 'main' (if you want PRs to main to deploy to prod)
+    # 3. It's a manual workflow_dispatch with 'production' environment selected
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'pull_request' && github.base_ref == 'main') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production')
+
+    env:
+      SSH_HOST_TARGET: ${{ secrets.SSH_HOST_PROD }} # Your production server host
+      SSH_USER_TARGET: ${{ secrets.SSH_USER_PROD }} # Your production server user
+      SSH_PRIVATE_KEY_TARGET: ${{ secrets.SSH_PRIVATE_KEY_PROD }} # Your production server SSH key
+      DOCKER_COMPOSE_FILE: docker-compose.yml # Your production Docker Compose file
+
     steps:
-      - name: install ssh keys
-        # check this thread to understand why its needed:
-        # <https://stackoverflow.com/a/70447517>
+      - name: Install SSH keys
         run: |
           install -m 600 -D /dev/null ~/.ssh/id_rsa
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
-      - name: connect and pull
-        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "docker compose pull && docker compose up -d && exit"
-      - name: cleanup
+          echo "${{ env.SSH_PRIVATE_KEY_TARGET }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ env.SSH_HOST_TARGET }} > ~/.ssh/known_hosts
+
+      - name: Connect and pull (Prod)
+        # Your docker-compose.yml on the production server should reference:
+        # image: ytrufchev/intargovishte:latest
+        run: ssh ${{ env.SSH_USER_TARGET }}@${{ env.SSH_HOST_TARGET }} "docker compose -f ${DOCKER_COMPOSE_FILE} pull && docker compose -f ${DOCKER_COMPOSE_FILE} up -d && exit"
+
+      - name: Cleanup
         run: rm -rf ~/.ssh

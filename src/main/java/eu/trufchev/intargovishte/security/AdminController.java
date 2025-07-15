@@ -11,6 +11,10 @@ import eu.trufchev.intargovishte.information.fuelo.entities.GasstationsList;
 import eu.trufchev.intargovishte.information.fuelo.feignclient.FueloClient;
 import eu.trufchev.intargovishte.information.fuelo.repository.GasStationRepository;
 import eu.trufchev.intargovishte.information.fuelo.services.ParseGasStationToHtml;
+import eu.trufchev.intargovishte.information.inAppInformation.DTO.InfoDTO;
+import eu.trufchev.intargovishte.information.inAppInformation.entities.Information;
+import eu.trufchev.intargovishte.information.inAppInformation.repositories.InformationRepository;
+import eu.trufchev.intargovishte.information.inAppInformation.services.InformationService;
 import eu.trufchev.intargovishte.user.dto.PasswordUpdateDto;
 import eu.trufchev.intargovishte.user.entity.Roles;
 import eu.trufchev.intargovishte.user.entity.User;
@@ -20,9 +24,11 @@ import eu.trufchev.intargovishte.user.service.impl.UserServiceImpl;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +55,10 @@ public class AdminController {
     private AppEventLikeRepository appEventLikeRepository;
     @Autowired
     private MovieRepository movieRepository;
+    @Autowired
+    private InformationRepository informationRepository;
+    @Autowired
+    private InformationService informationService;
 
     @GetMapping("/getusers")
     public ResponseEntity<List<User>> getAllUsers() {
@@ -129,6 +139,34 @@ public class AdminController {
         approvedEvent.setStatus(StatusENUMS.APPROVED);
         eventEntityRepository.save(approvedEvent);
         return ResponseEntity.ok(approvedEvent);
+    }
+
+    //Get pending information
+    @GetMapping("/pending")
+    public ResponseEntity<List<InfoDTO>> getPendingInfo() {
+        List<InfoDTO> infoList = informationService.getPendingInfo();
+        return ResponseEntity.ok(infoList);
+    }
+
+    // Approve information
+    @PutMapping("information/approve/{infoId}")
+    public ResponseEntity<Information> approveInformation(@PathVariable("infoId") Long infoId) {
+        try {
+            Information info = informationRepository.findById(infoId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Information not found with ID: " + infoId));
+
+            // In a real application, you would add robust role-based authorization here,
+            // e.g., checking if the authenticated user has an 'ADMIN' role.
+            // For this example, we're assuming the caller of this endpoint is authorized.
+
+            info.setStatus(StatusENUMS.APPROVED);
+            informationRepository.save(info);
+            return ResponseEntity.ok(info);
+        } catch (ResponseStatusException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred during information approval.", e);
+        }
     }
 
 
