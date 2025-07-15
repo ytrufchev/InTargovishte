@@ -102,7 +102,7 @@ jobs:
           ssh-keyscan -H ${{ secrets.TEST_SSH_HOST }} > ~/.ssh/known_hosts
 
       - name: Connect and Deploy
-        run: ssh ${{ secrets.TEST_SSH_USER }}@${{ secrets.TEST_SSH_HOST }} "sudo docker-compose pull && sudo docker-compose up -d"
+        run: ssh ${{ secrets.TEST_SSH_USER }}@${{ secrets.TEST_SSH_HOST }} "sudo -E docker-compose pull && sudo -E docker-compose up -d"
 
       - name: Cleanup
         run: rm -rf ~/.ssh
