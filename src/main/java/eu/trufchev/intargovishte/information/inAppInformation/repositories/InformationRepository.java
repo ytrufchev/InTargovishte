@@ -12,6 +12,6 @@ import java.util.List;
 public interface InformationRepository extends CrudRepository<Information, Long> {
     List<Information> findByStatus(StatusENUMS status);
     List<Information> findByUser(Long user);
-    @Query("SELECT e FROM Information e WHERE e.date <= :yesterdayEpochSeconds")
+    @Query("SELECT e FROM Information e WHERE e.endDate <= :yesterdayEpochSeconds")
     List<Information> findInformationBeforeEndDate(@Param("yesterdayEpochSeconds") Long yesterdayEpochSeconds);
 }
