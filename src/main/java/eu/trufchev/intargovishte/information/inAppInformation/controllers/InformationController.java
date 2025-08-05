@@ -149,7 +149,7 @@ public class InformationController {
     }
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Information>> getInfoByUser(@PathVariable Long userId) {
-        List<Information> info = informationRepository.findByUser(userId); // Ensure this method exists in your repository
+        List<Information> info = informationRepository.findByUserId(userId); // Ensure this method exists in your repository
         if (info.isEmpty()) {
             return ResponseEntity.noContent().build(); // 204 No Content if no events found
         }
