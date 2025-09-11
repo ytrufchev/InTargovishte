@@ -27,9 +27,10 @@ public class Publication {
     private String text;
     @Column(name = "likescount")
     private int likescount;
+    @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<PublicationLike> likes;
-    @Column(name = "comments")
+    @OneToMany(mappedBy = "publication", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Comment> comments;
 }
