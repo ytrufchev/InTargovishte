@@ -64,10 +64,15 @@ jobs:
             echo "image_name=testtargohub" >> $GITHUB_OUTPUT
           fi
 
-      - name: Build and Push Docker Image
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and Push Docker Image (Multi-Arch)
         run: |
-          docker build . --tag ytrufchev/${{ steps.vars.outputs.image_name }}:latest
-          docker push ytrufchev/${{ steps.vars.outputs.image_name }}:latest
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            --tag ytrufchev/${{ steps.vars.outputs.image_name }}:latest \
+            --push .
 
   deploy_production:
     if: github.ref == 'refs/heads/main'
