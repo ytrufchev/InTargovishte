@@ -38,19 +38,15 @@ public class ProfitshareFeignConfig {
             try {
                 String method = template.method();
                 URI url = URI.create(template.url());
-                String path = url.getPath().substring(1); // remove leading "/"
+                String path = url.getPath().substring(1);
                 String queryString = (url.getQuery() != null) ? url.getQuery() : "";
 
-                // **Corrected Date Format** ⏰
-                // The PHP example uses 'GMT' as a literal string.
                 SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.ENGLISH);
                 dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                 String date = dateFormat.format(new Date());
 
-                // **Corrected Signature String** ✅
-                // Replicates the PHP example's structure, including the `?` and removing the extra slash.
-                // The PHP example shows "POSTaffiliate-links/?" + queryString + "/" + ...
-                String signatureString = method + path + (queryString.isEmpty() ? "?" : "?" + queryString) + "/" + apiUser + date;
+                // Corrected Signature String based on the PHP example
+                String signatureString = method + path + "?" + queryString + "/" + apiUser + date;
 
                 String hmac = hmacSha1Hex(apiKey, signatureString);
 
@@ -70,7 +66,6 @@ public class ProfitshareFeignConfig {
         mac.init(new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA1"));
         byte[] rawHmac = mac.doFinal(data.getBytes(StandardCharsets.UTF_8));
 
-        // convert to hex manually
         StringBuilder hex = new StringBuilder(2 * rawHmac.length);
         for (byte b : rawHmac) {
             hex.append(String.format("%02x", b));
