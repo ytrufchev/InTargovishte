@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> {
                     authorize.requestMatchers("/swagger-ui/**").permitAll();
                     authorize.requestMatchers("/campaigns/**").permitAll();
+                    authorize.requestMatchers("/api/v1/sync/run").permitAll();
                     authorize.requestMatchers("/v3/api-docs/**").permitAll();
                     authorize.requestMatchers("/swagger-resources/**").permitAll();
                     authorize.requestMatchers("/webjars/**").permitAll();
