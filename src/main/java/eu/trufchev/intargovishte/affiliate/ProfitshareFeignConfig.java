@@ -46,13 +46,15 @@ public class ProfitshareFeignConfig {
                 String date = dateFormat.format(new Date());
 
                 String signatureString;
-
-                // Replicate the exact PHP logic for the signature string
+                // Replicate the exact PHP logic
                 if (method.equals("GET") && !queryString.isEmpty()) {
-                    // For GET requests with query parameters (e.g., page=2)
+                    // For GET requests with query parameters
                     signatureString = method + path + "/?" + queryString + "/" + apiUser + date;
+                } else if (method.equals("POST")) {
+                    // For POST requests (which have no query string)
+                    signatureString = method + path + "/" + apiUser + date;
                 } else {
-                    // For all other requests (GET without query, and all POST requests)
+                    // For GET requests with no query parameters
                     signatureString = method + path + "/" + apiUser + date;
                 }
 
