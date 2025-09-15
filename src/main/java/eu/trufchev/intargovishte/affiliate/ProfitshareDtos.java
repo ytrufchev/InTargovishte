@@ -25,7 +25,9 @@ public class ProfitshareDtos {
     public record Banner(int width, int height, String src) {}
 
     // ===== Referral Links =====
-    public record ReferralLinkRequest(String link) {}
+    public record ReferralLinkRequest(List<LinkData> links) {}
+
+    public record LinkData(String name, String url) {}
 
     public record ReferralLinkResponse(ReferralLinkResult result) {}
 
