@@ -1,13 +1,13 @@
 package eu.trufchev.intargovishte.affiliate;
 
-import eu.trufchev.intargovishte.affiliate.ProfitshareDtos.ReferralLinkRequest;
-import eu.trufchev.intargovishte.affiliate.ProfitshareDtos.ReferralLinkResponse;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.MediaType;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name = "profitshareLinks", url = "${profitshare.api-url}", configuration = ProfitshareFeignConfig.class)
 public interface ProfitshareLinkClient {
-    @PostMapping("/affiliate-links/")
-    ReferralLinkResponse createLink(@RequestBody ReferralLinkRequest request);
+    @PostMapping(value = "/affiliate-links/", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    ProfitshareDtos.ReferralLinkResponse createLink(@RequestBody MultiValueMap<String, String> formData);
 }
