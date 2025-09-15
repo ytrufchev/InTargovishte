@@ -4,10 +4,8 @@ import jakarta.persistence.Entity;
 import lombok.*;
 
 import java.util.Map;
-@Entity
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
+@Value
+@Builder
 @Getter
 @Setter
 public class Campaign {
