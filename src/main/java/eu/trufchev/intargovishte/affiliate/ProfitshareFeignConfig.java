@@ -45,8 +45,15 @@ public class ProfitshareFeignConfig {
                 dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                 String date = dateFormat.format(new Date());
 
-                // Corrected Signature String based on the PHP example
-                String signatureString = method + path + "?" + queryString + "/" + apiUser + date;
+                String signatureString;
+                // Use a conditional to apply different logic for GET vs. POST
+                if (method.equals("POST")) {
+                    // This is the specific format required for the POST /affiliate-links/ endpoint.
+                    signatureString = method + path + "?" + queryString + "/" + apiUser + date;
+                } else {
+                    // This format is what works for your GET requests (e.g., /affiliate-campaigns/).
+                    signatureString = method + path + (queryString.isEmpty() ? "" : "?" + queryString) + "/" + apiUser + date;
+                }
 
                 String hmac = hmacSha1Hex(apiKey, signatureString);
 
