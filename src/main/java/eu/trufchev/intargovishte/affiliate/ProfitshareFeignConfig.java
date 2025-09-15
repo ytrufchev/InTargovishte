@@ -46,13 +46,14 @@ public class ProfitshareFeignConfig {
                 String date = dateFormat.format(new Date());
 
                 String signatureString;
-                // Use a conditional to apply different logic for GET vs. POST
-                if (method.equals("POST")) {
-                    // This is the specific format required for the POST /affiliate-links/ endpoint.
-                    signatureString = method + path + "?" + queryString + "/" + apiUser + date;
+
+                // Replicate the exact PHP logic for the signature string
+                if (method.equals("GET") && !queryString.isEmpty()) {
+                    // For GET requests with query parameters (e.g., page=2)
+                    signatureString = method + path + "/?" + queryString + "/" + apiUser + date;
                 } else {
-                    // This format is what works for your GET requests (e.g., /affiliate-campaigns/).
-                    signatureString = method + path + (queryString.isEmpty() ? "" : "?" + queryString) + "/" + apiUser + date;
+                    // For all other requests (GET without query, and all POST requests)
+                    signatureString = method + path + "/" + apiUser + date;
                 }
 
                 String hmac = hmacSha1Hex(apiKey, signatureString);
