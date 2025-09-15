@@ -5,8 +5,6 @@ import lombok.*;
 
 @Value
 @Builder
-@Getter
-@Setter
 public class CampaignsResponse {
     CampaignsResult result;
 }

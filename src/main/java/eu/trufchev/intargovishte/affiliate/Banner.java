@@ -5,8 +5,6 @@ import lombok.*;
 
 @Value
 @Builder
-@Getter
-@Setter
 public class Banner {
     int width;
     int height;

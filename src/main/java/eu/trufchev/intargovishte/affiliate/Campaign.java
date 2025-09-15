@@ -6,8 +6,6 @@ import lombok.*;
 import java.util.Map;
 @Value
 @Builder
-@Getter
-@Setter
 public class Campaign {
     int id;
     String name;
