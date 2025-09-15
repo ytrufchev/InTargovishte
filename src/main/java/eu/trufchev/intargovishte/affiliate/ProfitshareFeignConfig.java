@@ -45,18 +45,8 @@ public class ProfitshareFeignConfig {
                 dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                 String date = dateFormat.format(new Date());
 
-                String signatureString;
-                // Replicate the exact PHP logic
-                if (method.equals("GET") && !queryString.isEmpty()) {
-                    // For GET requests with query parameters
-                    signatureString = method + path + "/?" + queryString + "/" + apiUser + date;
-                } else if (method.equals("POST")) {
-                    // For POST requests (which have no query string)
-                    signatureString = method + path + "/" + apiUser + date;
-                } else {
-                    // For GET requests with no query parameters
-                    signatureString = method + path + "/" + apiUser + date;
-                }
+                // Corrected Signature String based on the PHP example
+                String signatureString = method + path + "?" + queryString + "/" + apiUser + date;
 
                 String hmac = hmacSha1Hex(apiKey, signatureString);
 
