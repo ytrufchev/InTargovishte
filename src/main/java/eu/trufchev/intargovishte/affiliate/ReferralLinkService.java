@@ -13,8 +13,9 @@ public class ReferralLinkService {
 
     public String createReferralLink(String campaignUrl) {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("0[name]", "Pazaruvai Lesno");
-        formData.add("0[url]", campaignUrl);
+        // Try the exact format from the documentation
+        formData.add("links[0][name]", "Pazaruvai Lesno");
+        formData.add("links[0][url]", campaignUrl);
 
         ProfitshareDtos.ReferralLinkResponse response = linkClient.createLink(formData);
 
