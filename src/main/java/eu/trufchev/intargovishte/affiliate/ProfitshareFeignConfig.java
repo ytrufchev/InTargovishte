@@ -38,7 +38,11 @@ public class ProfitshareFeignConfig {
             try {
                 String method = template.method();
                 URI url = URI.create(template.url());
-                String path = url.getPath().substring(1); // Remove leading slash
+                String path = url.getPath();
+                // Remove leading slash if present
+                if (path.startsWith("/")) {
+                    path = path.substring(1);
+                }
                 String queryString = (url.getQuery() != null) ? url.getQuery() : "";
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.ENGLISH);
@@ -68,6 +72,11 @@ public class ProfitshareFeignConfig {
                 template.header("X-PS-Auth", hmac);
 
                 // Debug logging - remove in production
+                System.out.println("Method: " + method);
+                System.out.println("Path: " + path);
+                System.out.println("Query string: " + queryString);
+                System.out.println("API User: " + apiUser);
+                System.out.println("Date: " + date);
                 System.out.println("Signature string: " + signatureString);
                 System.out.println("Generated HMAC: " + hmac);
 
