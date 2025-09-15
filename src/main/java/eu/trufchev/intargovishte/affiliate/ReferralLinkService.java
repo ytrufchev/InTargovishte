@@ -5,6 +5,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
 @Service
 @RequiredArgsConstructor
 public class ReferralLinkService {
@@ -12,15 +15,11 @@ public class ReferralLinkService {
     private final ProfitshareLinkClient linkClient;
 
     public String createReferralLink(String campaignUrl) {
-        // Create the LinkData object from the provided URL
-        ProfitshareDtos.LinkData linkData = new ProfitshareDtos.LinkData(null, campaignUrl);
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("0[name]", "Pazaruvai Lesno");
+        formData.add("0[url]", campaignUrl);
 
-        // Create the ReferralLinkRequest with a list containing the single LinkData object
-        ProfitshareDtos.ReferralLinkRequest request = new ProfitshareDtos.ReferralLinkRequest(Collections.singletonList(linkData));
-
-        // Call the Feign client with the correctly formatted request object
-        ProfitshareDtos.ReferralLinkResponse response = linkClient.createLink(request);
-
-        return response.result().short_link(); // Return the short link
+        ProfitshareDtos.ReferralLinkResponse response = linkClient.createLink(formData);
+        return response.result().short_link();
     }
 }
