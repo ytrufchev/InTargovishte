@@ -38,7 +38,7 @@ public class ProfitshareFeignConfig {
             try {
                 String method = template.method();
                 URI url = URI.create(template.url());
-                String path = url.getPath().substring(1);
+                String path = url.getPath().substring(1); // Remove leading slash
                 String queryString = (url.getQuery() != null) ? url.getQuery() : "";
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.ENGLISH);
@@ -46,15 +46,17 @@ public class ProfitshareFeignConfig {
                 String date = dateFormat.format(new Date());
 
                 String signatureString;
-                // Correct signature string logic based on working cURL and PHP examples
-                if (method.equals("POST")) {
-                    // This format works for POST /affiliate-links/
-                    signatureString = method + path + "/" + apiUser + date;
-                } else if (method.equals("GET") && !queryString.isEmpty()) {
-                    // This format works for GET requests with query parameters like /affiliate-campaigns/?page=1
-                    signatureString = method + path + "/?" + queryString + "/" + apiUser + date;
+
+                // Based on working curl examples:
+                // POST: POSTaffiliate-links/*554907f055e66[DATE]
+                // GET with query: GETaffiliate-campaigns/?page=1/*554907f055e66[DATE]
+                // GET without query: GETaffiliate-advertisers/*554907f055e66[DATE]
+
+                if (!queryString.isEmpty()) {
+                    // GET with query parameters: method + path + "?" + queryString + "/" + apiUser + date
+                    signatureString = method + path + "?" + queryString + "/" + apiUser + date;
                 } else {
-                    // This format works for GET requests with no query parameters
+                    // POST or GET without query: method + path + "/" + apiUser + date
                     signatureString = method + path + "/" + apiUser + date;
                 }
 
@@ -64,6 +66,10 @@ public class ProfitshareFeignConfig {
                 template.header("X-PS-Client", apiUser);
                 template.header("X-PS-Accept", "json");
                 template.header("X-PS-Auth", hmac);
+
+                // Debug logging - remove in production
+                System.out.println("Signature string: " + signatureString);
+                System.out.println("Generated HMAC: " + hmac);
 
             } catch (Exception e) {
                 throw new RuntimeException("Error generating Profitshare HMAC", e);
