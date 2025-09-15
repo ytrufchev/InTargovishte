@@ -25,11 +25,8 @@ public class ProfitshareDtos {
     public record Banner(int width, int height, String src) {}
 
     // ===== Referral Links =====
-    public record ReferralLinkRequest(Map<String, String> linkData) {}
+    // Fixed: The API returns an array of link objects, not a single result
+    public record ReferralLinkResponse(List<ReferralLinkResult> result) {}
 
-    public record LinkData(String name, String url) {}
-
-    public record ReferralLinkResponse(ReferralLinkResult result) {}
-
-    public record ReferralLinkResult(String short_link, String long_link) {}
+    public record ReferralLinkResult(String name, String url, String ps_url) {}
 }
