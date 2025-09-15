@@ -20,23 +20,23 @@ public class CampaignService {
 
         do {
             response = client.getCampaigns(page);
-            if (response == null || response.result() == null) break;
+            if (response == null || response.getResult() == null) break;
 
-            List<Campaign> campaigns = response.result().campaigns();
+            List<Campaign> campaigns = response.getResult().getCampaigns();
             if (campaigns != null) {
                 all.addAll(campaigns.stream()
-                        .filter(c -> c.banners() != null && hasSquareBanner(c.banners()))
+                        .filter(c -> c.getBanners() != null && hasSquareBanner(c.getBanners()))
                         .toList());
             }
 
             page++;
-        } while (page <= response.result().paginator().totalPages());
+        } while (page <= response.getResult().getPaginator().getTotalPages());
 
         return all;
     }
 
     private boolean hasSquareBanner(Map<String, Banner> banners) {
         return banners.values().stream()
-                .anyMatch(b -> Math.abs(b.width() - b.height()) < 30); // "square-ish"
+                .anyMatch(b -> Math.abs(b.getWidth() - b.getWidth()) < 30); // "square-ish"
     }
 }

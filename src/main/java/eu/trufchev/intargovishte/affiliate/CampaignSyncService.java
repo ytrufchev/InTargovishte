@@ -29,27 +29,27 @@ public class CampaignSyncService {
         });
 
         for (Campaign campaign : profitshareCampaigns) {
-            LocalDateTime start = LocalDateTime.parse(campaign.startDate(), formatter);
-            LocalDateTime end = LocalDateTime.parse(campaign.endDate(), formatter);
+            LocalDateTime start = LocalDateTime.parse(campaign.getStartDate(), formatter);
+            LocalDateTime end = LocalDateTime.parse(campaign.getEndDate(), formatter);
 
             // Skip campaigns that are already expired
             if (end.isBefore(LocalDateTime.now())) continue;
 
-            CampaignEntity entity = repository.findById(campaign.id())
+            CampaignEntity entity = repository.findById(campaign.getId())
                     .orElseGet(() -> {
                         // First time we see this campaign -> create referral link
-                        String referralLink = referralLinkService.createReferralLink(campaign.url());
+                        String referralLink = referralLinkService.createReferralLink(campaign.getUrl());
                         return CampaignEntity.builder()
-                                .id(campaign.id())
+                                .id(campaign.getId())
                                 .referralLink(referralLink)
                                 .build();
                     });
 
-            entity.setName(campaign.name());
-            entity.setCommissionType(campaign.commissionType());
+            entity.setName(campaign.getName());
+            entity.setCommissionType(campaign.getCommissionType());
             entity.setStartDate(start);
             entity.setEndDate(end);
-            entity.setUrl(campaign.url());
+            entity.setUrl(campaign.getUrl());
             entity.setActive(true);
 
             repository.save(entity);
