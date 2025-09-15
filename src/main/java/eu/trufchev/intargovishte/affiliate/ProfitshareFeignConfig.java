@@ -39,7 +39,7 @@ public class ProfitshareFeignConfig {
                 String method = template.method();
                 URI url = URI.create(template.url());
                 String path = url.getPath();
-                // Remove leading slash if present
+                // Remove leading slash if present, but keep trailing slash
                 if (path.startsWith("/")) {
                     path = path.substring(1);
                 }
@@ -61,7 +61,9 @@ public class ProfitshareFeignConfig {
                     signatureString = method + path + "?" + queryString + "/" + apiUser + date;
                 } else {
                     // POST or GET without query: method + path + "/" + apiUser + date
-                    signatureString = method + path + "/" + apiUser + date;
+                    // Remove trailing slash from path if present to avoid double slash
+                    String cleanPath = path.endsWith("/") ? path.substring(0, path.length() - 1) : path;
+                    signatureString = method + cleanPath + "/" + apiUser + date;
                 }
 
                 String hmac = hmacSha1Hex(apiKey, signatureString);
