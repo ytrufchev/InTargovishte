@@ -36,18 +36,21 @@ public class ProfitshareFeignConfig {
     public RequestInterceptor profitshareAuthInterceptor() {
         return (RequestTemplate template) -> {
             try {
-                String method = template.method(); // GET
+                String method = template.method();
                 URI url = URI.create(template.url());
                 String path = url.getPath().substring(1); // remove leading "/"
                 String queryString = (url.getQuery() != null) ? url.getQuery() : "";
 
-                // RFC 1123 date format
-                SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH);
+                // **Corrected Date Format** ⏰
+                // The PHP example uses 'GMT' as a literal string.
+                SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.ENGLISH);
                 dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                 String date = dateFormat.format(new Date());
 
-                String signatureString = method + path + (queryString.isEmpty() ? "" : "?" + queryString)
-                        + "/" + apiUser + date;
+                // **Corrected Signature String** ✅
+                // Replicates the PHP example's structure, including the `?` and removing the extra slash.
+                // The PHP example shows "POSTaffiliate-links/?" + queryString + "/" + ...
+                String signatureString = method + path + (queryString.isEmpty() ? "?" : "?" + queryString) + "/" + apiUser + date;
 
                 String hmac = hmacSha1Hex(apiKey, signatureString);
 
