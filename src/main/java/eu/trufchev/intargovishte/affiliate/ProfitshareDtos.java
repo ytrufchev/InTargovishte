@@ -26,7 +26,7 @@ public class ProfitshareDtos {
 
     // ===== Referral Links =====
     // Fixed: The API returns an array of link objects, not a single result
-    public record ReferralLinkResponse(List<ReferralLinkResult> result) {}
+    public record ReferralLinkResponse(List<ReferralLink> result) {}
 
-    public record ReferralLinkResult(String name, String url, String ps_url) {}
+    public record ReferralLink(String name, String url, String ps_url) {}
 }
