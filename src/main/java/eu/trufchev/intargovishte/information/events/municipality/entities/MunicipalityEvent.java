@@ -19,6 +19,6 @@ public class MunicipalityEvent {
     private String date;
     @Column(name = "title")
     private String title;
-    @Column(name = "description", length = 5000)
+    @Column(name = "description", length = 10000)
     private String description;
 }
