@@ -75,6 +75,12 @@ public class ProfitshareFeignConfig {
         };
     }
 
+    @Bean
+    public Encoder feignFormEncoder(ObjectFactory<HttpMessageConverters> messageConverters) {
+        // This encoder handles both application/json and application/x-www-form-urlencoded
+        return new SpringFormEncoder(new SpringEncoder(messageConverters));
+    }
+
     private String hmacSha1Hex(String key, String data) throws Exception {
         Mac mac = Mac.getInstance("HmacSHA1");
         mac.init(new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA1"));
