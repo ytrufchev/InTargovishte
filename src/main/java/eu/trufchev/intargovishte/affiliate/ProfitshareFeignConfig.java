@@ -53,7 +53,7 @@ public class ProfitshareFeignConfig {
                 // Define logic for each known endpoint type
                 if (method.equals("POST") && signaturePath.equals("affiliate-links/")) {
                     // Special case for POST to affiliate-links, confirmed by working cURL
-                    signatureString = method + signaturePath + "/" + apiUser + date;
+                    signatureString = method + signaturePath + apiUser + date;
                 } else if (method.equals("GET") && !queryString.isEmpty()) {
                     // GET requests with query parameters (e.g., campaigns)
                     signatureString = method + signaturePath + "?" + queryString + "/" + apiUser + date;
