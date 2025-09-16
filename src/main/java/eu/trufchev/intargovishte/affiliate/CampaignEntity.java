@@ -22,7 +22,7 @@ public class CampaignEntity {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private String url;
-
+    private String BannerUrl;
     @Column(length = 500)
     private String referralLink; // Generated once, reused later
 
