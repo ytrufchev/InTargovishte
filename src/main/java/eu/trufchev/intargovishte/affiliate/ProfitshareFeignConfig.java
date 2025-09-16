@@ -4,6 +4,7 @@ import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import feign.codec.Decoder;
 import feign.codec.Encoder;
+import feign.form.FormEncoder;
 import feign.form.spring.SpringFormEncoder;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,12 +79,6 @@ public class ProfitshareFeignConfig {
         };
     }
 
-    @Bean
-    public Encoder feignFormEncoder(ObjectFactory<HttpMessageConverters> messageConverters) {
-        // This encoder handles both application/json and application/x-www-form-urlencoded
-        return new SpringFormEncoder(new SpringEncoder(messageConverters));
-    }
-
     private String hmacSha1Hex(String key, String data) throws Exception {
         Mac mac = Mac.getInstance("HmacSHA1");
         mac.init(new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA1"));
@@ -94,6 +89,11 @@ public class ProfitshareFeignConfig {
             hex.append(String.format("%02x", b));
         }
         return hex.toString();
+    }
+
+    @Bean
+    public Encoder feignEncoder(ObjectFactory<HttpMessageConverters> messageConverters) {
+        return new FormEncoder(new SpringEncoder(messageConverters));
     }
 
     @Bean
@@ -110,4 +110,5 @@ public class ProfitshareFeignConfig {
         };
         return new ResponseEntityDecoder(new SpringDecoder(objectFactory));
     }
+
 }
