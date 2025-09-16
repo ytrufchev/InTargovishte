@@ -14,5 +14,6 @@ public class Campaign {
     String endDate;
     String url;
     Map<String, Banner> banners;
+
 }
 

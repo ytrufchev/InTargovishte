@@ -7,14 +7,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class CampaignSyncService {
 
-    private final CampaignService campaignService; // Fetches from Profitshare
+    private final CampaignService campaignService;
     private final CampaignRepository repository;
-    private final ReferralLinkService referralLinkService; // We'll create this next
+    private final ReferralLinkService referralLinkService;
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -51,6 +52,16 @@ public class CampaignSyncService {
             entity.setEndDate(end);
             entity.setUrl(campaign.getUrl());
             entity.setActive(true);
+
+            // **NEW LOGIC HERE**
+            // Safely extract the banner URL from the campaign DTO
+            String bannerUrl = null;
+            Map<String, Banner> banners = campaign.getBanners();
+            if (banners != null && !banners.isEmpty()) {
+                // Get the URL from the 'src' field of the first Banner in the map
+                bannerUrl = banners.values().iterator().next().getSrc();
+            }
+            entity.setBannerUrl(bannerUrl); // Set the banner URL on the entity
 
             repository.save(entity);
         }
