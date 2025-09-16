@@ -15,6 +15,6 @@ public class ReferralLinkService {
     public String createReferralLink(String campaignUrl) {
         AffiliateLinkRequest request = new AffiliateLinkRequest("Pazaruvai Lesno", campaignUrl);
         ProfitshareDtos.ReferralLinkResponse response = linkClient.createLink(request);
-        return response.result().short_link();
+        return response.result().get(0).ps_url();
     }
 }
