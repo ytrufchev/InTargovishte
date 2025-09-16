@@ -32,14 +32,18 @@ public class ProfitshareFeignConfig {
     @Value("${profitshare.api-key}")
     private String apiKey;
 
-    // Inside ProfitshareFeignConfig
     @Bean
     public RequestInterceptor profitshareAuthInterceptor() {
         return (RequestTemplate template) -> {
             try {
                 String method = template.method();
-                String path = template.path().substring(1);
-                String queryString = template.queryLine() != null ? template.queryLine() : "";
+                URI url = URI.create(template.url());
+                String path = url.getPath();
+                // Remove leading slash if present, but keep trailing slash
+                if (path.startsWith("/")) {
+                    path = path.substring(1);
+                }
+                String queryString = (url.getQuery() != null) ? url.getQuery() : "";
 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.ENGLISH);
                 dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -47,15 +51,19 @@ public class ProfitshareFeignConfig {
 
                 String signatureString;
 
-                if (method.equals("POST")) {
-                    // Correct signature for POST, as confirmed by the working cURL
-                    signatureString = method + path + "_" + apiUser + date;
-                } else if (method.equals("GET") && !queryString.isEmpty()) {
-                    // Correct signature for GET with parameters, from previous examples
-                    signatureString = method + path + "/?" + queryString + "/" + apiUser + date;
+                // Based on working curl examples:
+                // POST: POSTaffiliate-links/*554907f055e66[DATE]
+                // GET with query: GETaffiliate-campaigns/?page=1/*554907f055e66[DATE]
+                // GET without query: GETaffiliate-advertisers/*554907f055e66[DATE]
+
+                if (!queryString.isEmpty()) {
+                    // GET with query parameters: method + path + "?" + queryString + "/" + apiUser + date
+                    signatureString = method + path + "?" + queryString + "/" + apiUser + date;
                 } else {
-                    // Correct signature for GET with no parameters
-                    signatureString = method + path + "/" + apiUser + date;
+                    // POST or GET without query: method + path + "/" + apiUser + date
+                    // Remove trailing slash from path if present to avoid double slash
+                    String cleanPath = path.endsWith("/") ? path.substring(0, path.length() - 1) : path;
+                    signatureString = method + cleanPath + "/" + apiUser + date;
                 }
 
                 String hmac = hmacSha1Hex(apiKey, signatureString);
@@ -64,6 +72,15 @@ public class ProfitshareFeignConfig {
                 template.header("X-PS-Client", apiUser);
                 template.header("X-PS-Accept", "json");
                 template.header("X-PS-Auth", hmac);
+
+                // Debug logging - remove in production
+                System.out.println("Method: " + method);
+                System.out.println("Path: " + path);
+                System.out.println("Query string: " + queryString);
+                System.out.println("API User: " + apiUser);
+                System.out.println("Date: " + date);
+                System.out.println("Signature string: " + signatureString);
+                System.out.println("Generated HMAC: " + hmac);
 
             } catch (Exception e) {
                 throw new RuntimeException("Error generating Profitshare HMAC", e);
