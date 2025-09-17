@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 public class FeignConfiguration {
 
     @Bean
-    public Decoder feignDecoder() {
+    public Decoder vikFeignDecoder() {
         return (response, type) -> {
             // Read the raw byte array from the response body
             byte[] bytes = response.body().asInputStream().readAllBytes();
