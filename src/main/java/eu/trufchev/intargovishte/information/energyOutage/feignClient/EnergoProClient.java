@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Map;
 
-@FeignClient(name = "energoProClient", url = "https://www.energo-pro.bg/bg/profil/xhr/", configuration = EnergoProFeignConfig.class)
+@FeignClient(name = "energoProClient", url = "https://www.energo-pro.bg/bg/profil/xhr/")
 public interface EnergoProClient {
 
     @GetMapping
