@@ -16,7 +16,7 @@ public class CampaignEntity {
 
     @Id
     private Integer id; // Profitshare campaign ID
-
+    
     private String name;
     private String commissionType;
     private LocalDateTime startDate;
