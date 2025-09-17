@@ -8,6 +8,7 @@ import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -21,6 +22,12 @@ public class VikOutageService {
 
     public List<VikOutage> fetchAndParseVikOutage() {
         String htmlResponse = vikOutageClient.getOutage("15", "53", "50");
+        try {
+            byte[] bytes = htmlResponse.getBytes(StandardCharsets.ISO_8859_1);
+            htmlResponse = new String(bytes, "Windows-1251");
+        } catch (Exception e) {
+
+        }
         if (htmlResponse == null || htmlResponse.isBlank()) {
             return new ArrayList<>();
         }
