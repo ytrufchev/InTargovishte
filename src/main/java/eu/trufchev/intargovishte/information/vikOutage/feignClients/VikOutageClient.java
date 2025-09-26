@@ -4,7 +4,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "vikOutageClient", url = "http://viktg.com")
+@FeignClient(name = "vikOutageClient", url = "http://viktg.com",
+        configuration = VikOutageFeignConfig.class)
 public interface VikOutageClient {
 
     @GetMapping("/info/info")
